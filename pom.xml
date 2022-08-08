@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
     <groupId>com.ruoyi</groupId>
     <artifactId>ruoyi</artifactId>
     <version>3.8.3</version>
@@ -11,7 +11,7 @@
     <name>ruoyi</name>
     <url>http://www.ruoyi.vip</url>
     <description>若依管理系统</description>
-    
+
     <properties>
         <ruoyi.version>3.8.3</ruoyi.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,10 +30,11 @@
         <commons.fileupload.version>1.4</commons.fileupload.version>
         <commons.collections.version>3.2.2</commons.collections.version>
         <poi.version>4.1.2</poi.version>
-        <velocity.version>2.3</velocity.version>
+        <velocity.version>1.7</velocity.version>
+        <mybatis-plus.version>3.4.2</mybatis-plus.version>
         <jwt.version>0.9.1</jwt.version>
     </properties>
-	
+
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
@@ -116,11 +117,30 @@
                 <version>${poi.version}</version>
             </dependency>
 
-            <!-- velocity代码生成使用模板 -->
+            <!--velocity代码生成使用模板 -->
             <dependency>
                 <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity-engine-core</artifactId>
+                <artifactId>velocity</artifactId>
                 <version>${velocity.version}</version>
+            </dependency>
+
+            <!-- 阿里JSON解析器 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!-- mybatis-plus插件 -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-extension</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
 
             <!-- collections工具类 -->
@@ -128,13 +148,6 @@
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
                 <version>${commons.collections.version}</version>
-            </dependency>
-
-            <!-- 阿里JSON解析器 -->
-            <dependency>
-                <groupId>com.alibaba.fastjson2</groupId>
-                <artifactId>fastjson2</artifactId>
-                <version>${fastjson.version}</version>
             </dependency>
 
             <!-- Token生成与解析-->
@@ -186,6 +199,12 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <!-- USDT支付模块-->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>tron-center</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -196,6 +215,7 @@
         <module>ruoyi-quartz</module>
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
+        <module>tron-center</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -217,6 +237,14 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <!--打包该目录下的 application.yml -->
+                <directory>src/main/resources</directory>
+                <!-- 启用过滤 即该资源中的变量将会被过滤器中的值替换 -->
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
     <repositories>

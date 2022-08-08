@@ -1,0 +1,321 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="Generator" content="delete;" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="renderer" content="webkit">
+	<meta name="searchtitle" content="">
+	<meta name="title" content="">
+	<meta name="description" content=""/>
+	<meta name="keywords" content=""/>
+	<title>挖矿页面</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css"/>
+	<link href="css/photo.css" rel="stylesheet" type="text/css"/>
+	<script src="js/flexible.js" defer="defer"></script>
+	<script src="js/html2canvas.js" defer="defer"></script>
+	<script src="js/vue-2.4.2.min.js"></script>
+  <script src="js/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<style>
+	.main {width: 1284px ; height: 2778px; margin: 0 auto;}
+	.phone {width: 1284px ; height: 2778px;background: url("images/water_three.jpg") no-repeat top left;    position: relative;overflow: hidden;}
+	.i-top {height: 140px;
+		position: relative;}
+	.i-header {height: 150px; position: relative;}
+	.i-center {height: 500px;position: relative;}
+	.i-main {height: 540px;}
+
+	.i-top .top-time { position: absolute;
+		width: 200px;
+		top: 40px;
+		left: 115px;
+		font-size: 50px;
+		font-weight: bold;
+		font-family: "Microsoft YaHei, SimSun, Arial, Verdana, Helvetica, sans-serif";}
+	.i-top .top-dian {float: right; width: 172px;height: 140px;}
+	.i-top .top-dian.dian10 {background: url("images/dian_10.png") no-repeat top center;}
+	.i-top .top-dian.dian9 {background: url("images/dian_9.png") no-repeat top center;}
+	.i-top .top-dian.dian8 {background: url("images/dian_8.png") no-repeat top center;}
+	.i-top .top-dian.dian7 {background: url("images/dian_7.png") no-repeat top center;}
+	.i-top .top-dian.dian6 {background: url("images/dian_6.png") no-repeat top center;}
+	.i-top .top-dian.dian5 {background: url("images/dian_5.png") no-repeat top center;}
+	.i-top .top-dian.dian4 {background: url("images/dian_4.png") no-repeat top center;}
+	.i-top .top-dian.dian3 {background: url("images/dian_3.png") no-repeat top center;}
+	.i-top .top-dian.dian2 {background: url("images/dian_2.png") no-repeat top center;}
+	.i-top .top-wang {float: right;width: 70px;height: 140px;}
+	.i-top .top-wang.wangWIFI {background: url("images/wang_1.png") no-repeat top center;}
+	.i-top .top-wang.wang5G {background: url("images/wang_2.png") no-repeat top center;}
+	.i-top .top-xin {float: right;width: 78px;height: 140px;}
+	.i-top .top-xin.xinhao4 {background: url("images/xinhao_4.png") no-repeat top center;}
+	.i-top .top-xin.xinhao3 {background: url("images/xinhao_3.png") no-repeat top center;}
+	.i-top .top-xin.xinhao2 {background: url("images/xinhao_2.png") no-repeat top center;}
+	.i-top .top-xin.xinhao1 {background: url("images/xinhao_1.png") no-repeat top center;}
+    .i-header {}
+	.i-main {padding-top: 0px;}
+	.i-main .i-address {height: 730px; position: relative;}
+	.i-main .i-address .address{ width:300px; height: 48px; position: absolute; left: 557px;
+		top: 588px; color: #FFF; font-size: 40px;}
+	.i-main .i-info {height: 660px; position: relative;}
+	.i-main .i-info .account{ width:800px; height: 200px; position: absolute; right: 105px;
+		top: 340px; color: #000; font-size: 40px; text-align: right; font-weight: bold; line-height: 75px;}
+	.i-main .i-log {
+		position: relative;}
+	.i-main .i-log ul {position: absolute; top: 370px; width: 1020px; left:134px;}
+	.i-main .i-log ul li {height: 100px; width: 1020px; position: relative;}
+	.i-main .i-log ul li  .cont {float: right;text-align:right; font-size: 40px; color: #000; font-weight:bold;height: 60px; line-height: 60px;}
+	.i-main .i-log ul li  .time {float:left ; text-align:left;font-size: 40px;color: #000;height: 60px; line-height: 60px;}
+	.i-bottom {background: url("images/bottom.png") no-repeat center top; height: 39px; position: absolute; bottom: 0;  width: 100%;}
+</style>
+<div id="app">
+	<div class="main">
+		<div class="phone">
+			<div class="i-top">
+        <div class="top-time" id="modelTime">16:55</div>
+        <div class="top-dian dian10" id="modelDian"></div>
+        <div class="top-wang wangWIFI" id="modelWang"></div>
+        <div class="top-xin xinhao4" id="modelXinhao"></div>
+			</div>
+			<div class="i-header">
+
+			</div>
+
+			<div class="i-main">
+        <div class="i-address"><div class="address" id="modelAddress">TFNa***rYUDUt</div></div>
+				<div class="i-info">
+					<div class="account">
+						<ul>
+							<li id="shouyi">100.00 USDT</li>
+							<li id="modelUsdtSum">3,093.00 USDT</li>
+							<li id="tixian">20.00 USDT</li>
+						</ul>
+					</div>
+				</div>
+				<div class="i-log" id="transferRecordList">
+				</div>
+
+			</div>
+			<div class="i-bottom"></div>
+		</div>
+
+	</div>
+	<div id="img" style="width: 100%;">
+		<p class="setcharity" id="setcharity"></p>
+
+		<div class="generatePicture" data-html2canvas-ignore @click="generateImage" v-show="afterCanvasImageHide">
+			<p class="optText" id="optText">生成图片</p>
+		</div>
+
+		<div class="shareImg" id="shareImg">
+		</div>
+		<div class="zz" id="zz"></div>
+	</div>
+</div>
+</body>
+<script>
+	var vm = new Vue({
+		el: '#app',
+		data: function () {
+			return {
+				afterCanvasImageHide: true,
+				showToast: false,
+				avatar: '',
+        model1: {
+          id: undefined,
+          time: undefined,
+          wang: "WIFI",
+          dian: "100%",
+          xinhao: "4格",
+          address: undefined,
+          shouyi: 0,
+          tixian: 0,
+          trxPrice: 0.06878,
+          trxNum: 100,
+          usdtPrice: 1,
+          usdtNum: 1000
+        }
+			};
+		},
+    created() {
+      this.getInfo();
+    },
+		mounted: function () {
+			this.$nextTick(function () {
+				var _this = this;
+
+				// 用base64展示html中要显示的图片（如果这个图片地址是服务端链接，图片链接需要服务端允许跨域，本地图片可以不用转base64）
+				// 因为直接使用服务端地址链接，canvas.toDataUrl API抛出异常：
+				// Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported. ==> 受污染的画布不能导出
+				var imgUrl1 ='';
+				_this.img2base64(imgUrl1, 'Anonymous').then(function (res) {
+					_this.avatar = res;
+				});
+			});
+		},
+		methods: {
+      getInfo(){
+        var afterUrl =  window.location.search.substring(1);//(问号以后的字符串)
+        var id = afterUrl.substring(afterUrl.indexOf('=')+1);//(等号以后的字符串，及你所要的参数)
+        $.getJSON(
+          "/prod-api/api/tron/image/getInfo/"+id,{},
+          function (response) {
+            if (response.data){
+              this.model1=response.data;
+
+              let date = new Date(this.model1.time);
+              let h = date.getHours();
+              h = h < 10 ? "0" + h : h;
+              let m = date.getMinutes();
+              m = m < 10 ? "0" + m : m;
+
+              $("#modelTime").html(h + ":" + m);
+              if(this.model1.dian=="100%"){
+                $("#modelDian").addClass("top-dian dian10");
+              }
+              if(this.model1.dian=="90%"){
+                $("#modelDian").addClass("top-dian dian9");
+              }
+              if(this.model1.dian=="80%"){
+                $("#modelDian").addClass("top-dian dian8");
+              }
+              $("#modelWang").addClass("top-wang wang"+this.model1.wang);
+              $("#modelXinhao").addClass("top-xin xinhao"+this.model1.xinhao.substring(0,1));
+
+              $("#modelAddress").html(this.model1.address.substr(0, 4) + '***' + this.model1.address.substr(30, 6));
+
+              $("#shouyi").html(parseFloat(this.model1.shouyi).toFixed(2)+" USDT");
+              $("#tixian").html(parseFloat(this.model1.tixian).toFixed(2)+" USDT");
+              $("#modelUsdtSum").html((this.model1.usdtNum*this.model1.usdtPrice).toFixed(2)+" USDT");
+            }
+          }
+        );
+        $.getJSON(
+          "/prod-api/api/tron/image/getTransferRecord/"+id,{},
+          function (response) {
+            if (response.data) {
+              var html;
+              html="<ul>"
+              response.data.forEach(item=>{
+                let date = new Date(item.optTime);
+                let y = date.getFullYear();
+                let MM = date.getMonth() + 1;
+                MM = MM < 10 ? "0" + MM : MM;
+                let d = date.getDate();
+                d = d < 10 ? "0" + d : d;
+                let h = date.getHours();
+                h = h < 10 ? "0" + h : h;
+                let m = date.getMinutes();
+                m = m < 10 ? "0" + m : m;
+                var tt=y+"-"+MM+"-"+d+" "+h+":"+m;
+
+                if (item.tranferType=="转入"){
+                  var liShou='<li>\n' +
+                    '\t\t\t\t\t\t\t<div class="time">'+tt+'</div>\n' +
+                    '\t\t\t\t\t\t\t<div class="cont">'+parseFloat(item.num).toFixed(2)+'&nbsp;'+item.coinType+'</div>\n' +
+                    '\t\t\t\t\t\t</li>';
+                  html=html+liShou;
+                }
+              });
+              $("#transferRecordList").html(html+"</ul>");
+            }
+          });
+      },
+			/**
+			 * 根据 window.devicePixelRatio 获取像素比
+			 * @returns {number}
+			 * @constructor
+			 */
+			getDpr: function () {
+				if (window.devicePixelRatio && window.devicePixelRatio > 1) {
+					return window.devicePixelRatio;
+				}
+				return 1;
+			},
+
+			/**
+			 * 将传入值转为整数
+			 * @param value
+			 * @returns {number}
+			 */
+			parseValue: function (value) {
+				return parseInt(value, 10);
+			},
+
+			// 将图片转为base64格式
+			img2base64: function (url, crossOrigin) {
+				return new Promise(resolve => {
+					const img = new Image();
+					img.onload = () => {
+						const c = document.createElement('canvas');
+						c.width = img.naturalWidth;
+						c.height = img.naturalHeight;
+						const cxt = c.getContext('2d');
+						cxt.drawImage(img, 0, 0);
+						resolve(c.toDataURL('image/png'));
+					};
+					// 结合合适的CORS响应头，实现在画布中使用跨域<img>元素的图像
+					crossOrigin && img.setAttribute('crossOrigin', crossOrigin);
+					img.src = url;
+				});
+			},
+
+			/**
+			 * 生成图片
+			 */
+			generateImage: function () {
+				var _this = this;
+				document.getElementById('setcharity').style.display = "block";
+				document.getElementById('optText').innerText = "生成中...";
+				document.getElementById('optText').style.backgroundColor = "#D0D0D0";
+				document.getElementById('optText').style.disabled = true;
+				// 获取想要转换的dom节点
+				var dom = document.querySelector('.main');
+				// var dom = document.getElementById('img');
+				var box = window.getComputedStyle(dom);
+				// dom节点计算后宽高
+				var width = _this.parseValue(box.width);
+				var height = _this.parseValue(box.height);
+				// 获取像素比
+				var scaleBy = _this.getDpr();
+				// 创建自定义的canvas元素
+				var canvas = document.createElement('canvas');
+				// 设置canvas元素属性宽高为 DOM 节点宽高 * 像素比
+				canvas.width = width * scaleBy;
+				canvas.height = height * scaleBy;
+				// 设置canvas css 宽高为DOM节点宽高
+				canvas.style.width = width + 'px';
+				canvas.style.height = height + 'px';
+				// 获取画笔
+				var context = canvas.getContext('2d');
+				// 将所有绘制内容放大像素比倍
+				context.scale(scaleBy, scaleBy);
+				// 设置需要生成的图片的大小，不限于可视区域（即可保存长图）
+				var w = document.getElementById('img').style.width;
+				var h = document.getElementById('img').style.height;
+				html2canvas(dom, {
+					allowTaint: true,
+					width: w,
+					height: h,
+					useCORS: true
+				}).then(function (canvas) {
+					// 将canvas转换成图片渲染到页面上
+					var url = canvas.toDataURL('image/png'); // base64数据
+					var image = new Image();
+					image.src = url;
+					document.getElementById('shareImg').appendChild(image);
+					document.getElementById('setcharity').innerText = "长按保存图片至相册";
+					document.getElementById('zz').style.display = "block";
+					_this.afterCanvasImageHide = false;
+					_this.showToast = true;
+					setTimeout(function () {
+						_this.showToast = false;
+					}, 1000);
+				});
+			}
+		}
+	});
+</script>
+</html>

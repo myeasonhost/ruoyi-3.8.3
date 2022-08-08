@@ -35,8 +35,9 @@ const user = {
       const password = userInfo.password
       const code = userInfo.code
       const uuid = userInfo.uuid
+      const googleCode = userInfo.googleCode
       return new Promise((resolve, reject) => {
-        login(username, password, code, uuid).then(res => {
+        login(username, password, code, googleCode, uuid).then(res => {
           setToken(res.token)
           commit('SET_TOKEN', res.token)
           resolve()

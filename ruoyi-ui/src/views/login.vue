@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">若依后台管理系统</h3>
+      <h3 class="title">商户后台管理系统</h3>
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
@@ -36,6 +36,17 @@
         <div class="login-code">
           <img :src="codeUrl" @click="getCode" class="login-code-img"/>
         </div>
+      </el-form-item>
+      <el-form-item prop="googleCode" v-if="googleEnabled">
+        <el-input
+          v-model="loginForm.googleCode"
+          auto-complete="off"
+          placeholder="谷歌验证码"
+          style="width: 63%"
+          @keyup.enter.native="handleLogin"
+        >
+          <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon" />
+        </el-input>
       </el-form-item>
       <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
       <el-form-item style="width:100%;">
@@ -76,6 +87,7 @@ export default {
         password: "admin123",
         rememberMe: false,
         code: "",
+        googleCode: "",
         uuid: ""
       },
       loginRules: {
@@ -85,11 +97,13 @@ export default {
         password: [
           { required: true, trigger: "blur", message: "请输入您的密码" }
         ],
-        code: [{ required: true, trigger: "change", message: "请输入验证码" }]
+        code: [{ required: true, trigger: "change", message: "请输入验证码" }],
+        googleCode: [{ required: true, trigger: "change", message: "请输入谷歌验证码" }]
       },
       loading: false,
       // 验证码开关
       captchaEnabled: true,
+      googleEnabled: false,
       // 注册开关
       register: false,
       redirect: undefined
@@ -111,6 +125,8 @@ export default {
     getCode() {
       getCodeImg().then(res => {
         this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled;
+        this.googleEnabled = res.googleEnabled === undefined ? true : res.googleEnabled;
+
         if (this.captchaEnabled) {
           this.codeUrl = "data:image/gif;base64," + res.img;
           this.loginForm.uuid = res.uuid;

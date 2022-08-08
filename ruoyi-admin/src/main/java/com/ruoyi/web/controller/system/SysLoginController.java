@@ -2,6 +2,10 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 import java.util.Set;
+
+import com.ruoyi.common.core.domain.R;
+import com.ruoyi.tron.service.IOrgAccountInfoService;
+import com.ruoyi.system.service.ISysConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +21,11 @@ import com.ruoyi.framework.web.service.SysLoginService;
 import com.ruoyi.framework.web.service.SysPermissionService;
 import com.ruoyi.system.service.ISysMenuService;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 登录验证
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -34,16 +40,30 @@ public class SysLoginController
     @Autowired
     private SysPermissionService permissionService;
 
+    @Autowired
+    private IOrgAccountInfoService orgAccountInfoService;
+
+    @Autowired
+    private ISysConfigService configService;
+
     /**
      * 登录方法
-     * 
+     *
      * @param loginBody 登录信息
      * @return 结果
      */
     @PostMapping("/login")
-    public AjaxResult login(@RequestBody LoginBody loginBody)
+    public AjaxResult login(@RequestBody LoginBody loginBody, HttpServletRequest request)
     {
         AjaxResult ajax = AjaxResult.success();
+        boolean googleEnabled = configService.selectGoogleEnabled();
+        if (googleEnabled){
+            //新加白名单，谷歌验证码功能
+            R r=orgAccountInfoService.whiteIpAndGoogleCodeLogin(loginBody,request);
+            if (r.getCode()==R.FAIL){
+                return AjaxResult.error(r.getMsg());
+            }
+        }
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
@@ -53,7 +73,7 @@ public class SysLoginController
 
     /**
      * 获取用户信息
-     * 
+     *
      * @return 用户信息
      */
     @GetMapping("getInfo")
@@ -73,7 +93,7 @@ public class SysLoginController
 
     /**
      * 获取路由信息
-     * 
+     *
      * @return 路由信息
      */
     @GetMapping("getRouters")
