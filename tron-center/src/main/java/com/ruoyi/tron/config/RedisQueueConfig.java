@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -18,7 +19,7 @@ public class RedisQueueConfig {
 	 * 初始化监听器
 	 */
 	@Bean
-	public RedisMessageListenerContainer container(JedisConnectionFactory connectionFactory,
+	public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
 												   MessageListenerAdapter listenerAdapterTRX,
 												   MessageListenerAdapter listenerAdapterUSDT,
 												   MessageListenerAdapter listenerAdapterFROMServiceNO,
