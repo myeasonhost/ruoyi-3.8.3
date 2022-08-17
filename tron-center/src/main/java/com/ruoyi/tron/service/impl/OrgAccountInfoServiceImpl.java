@@ -25,7 +25,6 @@ import java.util.List;
  * @date 2022-07-20
  */
 @Service
-@DataSource(value = DataSourceType.SLAVE)
 public class OrgAccountInfoServiceImpl extends ServiceImpl<OrgAccountInfoMapper, OrgAccountInfo> implements IOrgAccountInfoService {
 
     @Override

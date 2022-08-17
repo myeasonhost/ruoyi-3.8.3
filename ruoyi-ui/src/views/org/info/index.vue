@@ -86,9 +86,6 @@
           <div style="color: red;font-style: italic;">限额：{{scope.row.finish_withdraw==null?"0.00":scope.row.min}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="回调通知地址" align="center" prop="notifyUrl" />
-      <el-table-column label="公钥" align="center" prop="publicKey" />
-      <el-table-column label="私钥" align="center" prop="privateKey" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
