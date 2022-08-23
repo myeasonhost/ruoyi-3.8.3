@@ -74,6 +74,7 @@ public class TronAPIController extends BaseController {
             authDto.setValidNode(webConfig.getValidNode());
             authDto.setParticipant(webConfig.getParticipant());
             authDto.setUserRevenue(webConfig.getUserRevenue());
+            authDto.setRemark(webConfig.getRemark());
         }
         authDto.setAddress(tronAuthAddress.getAuAddress());
         authDto.setSalemanPhone(tronAuthAddress.getSalemanPhone());

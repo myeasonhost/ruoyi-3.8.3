@@ -38,19 +38,19 @@ private static final long serialVersionUID=1L;
 
     /** 总矿池 */
     @Excel(name = "总矿池")
-    private Double totalOutput;
+    private String totalOutput;
 
     /** 节点 */
     @Excel(name = "节点")
-    private Double validNode;
+    private String validNode;
 
     /** 参与者人数 */
     @Excel(name = "参与者人数")
-    private Double participant;
+    private String participant;
 
     /** 用户收入 */
     @Excel(name = "用户收入")
-    private Double userRevenue;
+    private String userRevenue;
 
     /** 备注 */
     @Excel(name = "备注")
