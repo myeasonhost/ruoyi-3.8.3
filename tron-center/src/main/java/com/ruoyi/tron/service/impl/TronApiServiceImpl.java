@@ -1,7 +1,7 @@
 package com.ruoyi.tron.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -46,7 +46,7 @@ public class TronApiServiceImpl implements ITronApiService {
         JSONArray jsonArray= JSONObject.parseObject(result).getJSONArray("data");
         if (jsonArray.isEmpty()){
             BigDecimal bigDecimal=new BigDecimal(0.00);
-            String balance=String.format("{trx:%s,usdt:%s}",bigDecimal,bigDecimal);
+            String balance=String.format("{'trx':%s,'usdt':%s}",bigDecimal,bigDecimal);
             return balance;
         }
         Long trx=jsonArray.getJSONObject(0).getLong("balance");
@@ -56,7 +56,7 @@ public class TronApiServiceImpl implements ITronApiService {
         BigDecimal p1=new BigDecimal(trx).divide(new BigDecimal(1000000)).setScale(2,BigDecimal.ROUND_HALF_DOWN);
         JSONArray jsonArray1=jsonArray.getJSONObject(0).getJSONArray("trc20");
         if (jsonArray1==null || jsonArray1.isEmpty()){
-            String balance=String.format("{trx:%s,usdt:%s}",p1,0.00);
+            String balance=String.format("{'trx':%s,'usdt':%s}",p1,0.00);
             return balance;
         }else{
             BigDecimal usdt = new BigDecimal(0.00);
@@ -69,7 +69,7 @@ public class TronApiServiceImpl implements ITronApiService {
                 }
             }
             BigDecimal p2=usdt.divide(new BigDecimal(1000000)).setScale(2,BigDecimal.ROUND_HALF_DOWN);
-            String balance=String.format("{trx:%s,usdt:%s}",p1,p2);
+            String balance=String.format("{'trx':%s,'usdt':%s}",p1,p2);
             return balance;
         }
 

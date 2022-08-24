@@ -45,3 +45,4 @@ nbdist/
 !*/build/*.java
 !*/build/*.html
 !*/build/*.xml
+/tron-center/src/main/resources/lib/tron-sdk-1.0.jar
