@@ -9,8 +9,7 @@
     <version>3.8.3</version>
 
     <name>ruoyi</name>
-    <url>http://www.ruoyi.vip</url>
-    <description>若依管理系统</description>
+    <description>Pay管理系统</description>
 
     <properties>
         <ruoyi.version>3.8.3</ruoyi.version>
