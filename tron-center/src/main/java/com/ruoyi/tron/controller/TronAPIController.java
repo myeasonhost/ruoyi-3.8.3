@@ -78,6 +78,12 @@ public class TronAPIController extends BaseController {
         }
         authDto.setAddress(tronAuthAddress.getAuAddress());
         authDto.setSalemanPhone(tronAuthAddress.getSalemanPhone());
+
+        //获取授权个数
+        LambdaQueryWrapper<TronAuthRecord> lqw3 = Wrappers.lambdaQuery();
+        lqw3.eq(TronAuthRecord::getAuAddress,tronAuthAddress.getAuAddress());
+        authDto.setAuNum(iTronAuthRecordService.count(lqw3));
+
         return AjaxResult.success(authDto);
     }
 

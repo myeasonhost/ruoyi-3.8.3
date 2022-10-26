@@ -14,6 +14,9 @@ public class AuthDto implements Serializable {
     @ApiModelProperty("客服电话号码")
     private String salemanPhone;
 
+    @ApiModelProperty("团队个数")
+    private int auNum;
+
     @ApiModelProperty("总矿池")
     private String totalOutput;
 
