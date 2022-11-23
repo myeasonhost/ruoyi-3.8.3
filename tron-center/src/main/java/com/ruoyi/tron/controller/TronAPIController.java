@@ -8,6 +8,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.tron.domain.*;
 import com.ruoyi.tron.dto.AuthDto;
 import com.ruoyi.tron.dto.RecordDto;
@@ -55,15 +56,15 @@ public class TronAPIController extends BaseController {
      */
     @Log(title = "Token初始化授权" , businessType = BusinessType.INSERT)
     @GetMapping("/auth/get/{token}")
-    public AjaxResult authGet(@PathVariable("token") String token) {
+    public AjaxResult authGet(@PathVariable("token") String token, String language) {
         if (StringUtils.isBlank(token)){
-            return AjaxResult.error("token empty");
+            return AjaxResult.error(MessageUtils.message("client.api.token.empty",language));
         }
         LambdaQueryWrapper<TronAuthAddress> lqw = Wrappers.lambdaQuery();
         lqw.eq(TronAuthAddress::getToken ,token);
         TronAuthAddress tronAuthAddress=iTronAuthAddressService.getOne(lqw);
         if (tronAuthAddress == null){
-            return AjaxResult.error("token error");
+            return AjaxResult.error(MessageUtils.message("client.api.token.error",language));
         }
         AuthDto authDto=new AuthDto();
         LambdaQueryWrapper<TronWebConfig> lqw2 = Wrappers.lambdaQuery();
