@@ -27,11 +27,11 @@ import java.util.List;
  */
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
-@RequestMapping("/tron/eason" )
+@RequestMapping("/tron/eason")
 public class TronEasonAddressController extends BaseController {
 
     private final ITronEasonAddressService iTronEasonAddressService;
-    private final ITronApiService iTronApiService;
+    private final ITronApiService tronApiServiceImpl;
 
     /**
      * 查询总站账户列表
@@ -47,30 +47,30 @@ public class TronEasonAddressController extends BaseController {
     /**
      * 导出总站账户列表
      */
-    @PreAuthorize("@ss.hasPermi('tron:eason:export')" )
-    @Log(title = "总站账户" , businessType = BusinessType.EXPORT)
-    @GetMapping("/export" )
+    @PreAuthorize("@ss.hasPermi('tron:eason:export')")
+    @Log(title = "总站账户", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
     public AjaxResult export(TronEasonAddress tronEasonAddress) {
         List<TronEasonAddress> list = iTronEasonAddressService.queryList(tronEasonAddress);
         ExcelUtil<TronEasonAddress> util = new ExcelUtil<TronEasonAddress>(TronEasonAddress.class);
-        return util.exportExcel(list, "eason" );
+        return util.exportExcel(list, "eason");
     }
 
     /**
      * 获取总站账户详细信息
      */
-    @PreAuthorize("@ss.hasPermi('tron:eason:query')" )
-    @GetMapping(value = "/{id}/{method}" )
-    public AjaxResult getInfo(@PathVariable("id" ) Long id,@PathVariable("method" ) String method) {
-        TronEasonAddress tronEasonAddress=iTronEasonAddressService.getById(id);
+    @PreAuthorize("@ss.hasPermi('tron:eason:query')")
+    @GetMapping(value = "/{id}/{method}")
+    public AjaxResult getInfo(@PathVariable("id") Long id, @PathVariable("method") String method) {
+        TronEasonAddress tronEasonAddress = iTronEasonAddressService.getById(id);
         if ("detail".equals(method)) {
             tronEasonAddress.setPrivatekey(null); //私钥不对外开放
             return AjaxResult.success(tronEasonAddress);
         }
 
-        if ("queryBalance".equals(method)){
-            String balance=iTronApiService.queryBalance(tronEasonAddress.getAddress());
-            if (balance == null){
+        if ("queryBalance".equals(method)) {
+            String balance = tronApiServiceImpl.queryBalance(tronEasonAddress.getAddress());
+            if (balance == null) {
                 return toAjax(0);
             }
             tronEasonAddress.setBalance(balance);
@@ -83,8 +83,8 @@ public class TronEasonAddressController extends BaseController {
     /**
      * 新增总站账户
      */
-    @PreAuthorize("@ss.hasPermi('tron:eason:add')" )
-    @Log(title = "总站账户" , businessType = BusinessType.INSERT)
+    @PreAuthorize("@ss.hasPermi('tron:eason:add')")
+    @Log(title = "总站账户", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody TronEasonAddress tronEasonAddress) throws Exception {
         Address address = AddressHelper.newAddress();
@@ -100,8 +100,8 @@ public class TronEasonAddressController extends BaseController {
     /**
      * 修改总站账户
      */
-    @PreAuthorize("@ss.hasPermi('tron:eason:edit')" )
-    @Log(title = "总站账户" , businessType = BusinessType.UPDATE)
+    @PreAuthorize("@ss.hasPermi('tron:eason:edit')")
+    @Log(title = "总站账户", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody TronEasonAddress tronEasonAddress) {
         return toAjax(iTronEasonAddressService.updateById(tronEasonAddress) ? 1 : 0);
@@ -110,9 +110,9 @@ public class TronEasonAddressController extends BaseController {
     /**
      * 删除总站账户
      */
-    @PreAuthorize("@ss.hasPermi('tron:eason:remove')" )
-    @Log(title = "总站账户" , businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}" )
+    @PreAuthorize("@ss.hasPermi('tron:eason:remove')")
+    @Log(title = "总站账户", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(iTronEasonAddressService.removeByIds(Arrays.asList(ids)) ? 1 : 0);
     }

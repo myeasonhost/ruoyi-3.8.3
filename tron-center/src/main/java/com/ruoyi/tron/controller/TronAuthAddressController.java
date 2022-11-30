@@ -23,7 +23,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.web3j.crypto.*;
+import org.web3j.utils.Numeric;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,11 +39,12 @@ import java.util.List;
  */
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
-@RequestMapping("/tron/auth" )
+@RequestMapping("/tron/auth")
 public class TronAuthAddressController extends BaseController {
 
     private final ITronAuthAddressService iTronAuthAddressService;
-    private final ITronApiService iTronApiService;
+    private final ITronApiService tronApiServiceImpl;
+    private final ITronApiService ethApiServiceImpl;
 
     /**
      * 查询授权列表
@@ -51,10 +55,10 @@ public class TronAuthAddressController extends BaseController {
         startPage();
         LoginUser loginUser = SecurityUtils.getLoginUser();
         List<TronAuthAddress> list = new ArrayList<>();
-        if (SecurityUtils.isAdmin(loginUser.getUser().getUserId())){
+        if (SecurityUtils.isAdmin(loginUser.getUser().getUserId())) {
             list = iTronAuthAddressService.queryList(tronAuthAddress);
         }
-        SysUser sysUser=SecurityUtils.getLoginUser().getUser();
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
         if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
             tronAuthAddress.setAgencyId(sysUser.getUserName());
             list = iTronAuthAddressService.queryList(tronAuthAddress);
@@ -68,20 +72,20 @@ public class TronAuthAddressController extends BaseController {
         rspData.setRows(list);
 
         LambdaQueryWrapper<TronAuthAddress> lqw = Wrappers.lambdaQuery();
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(tronAuthAddress.getAgencyId())){
-            lqw.eq(TronAuthAddress::getAgencyId ,tronAuthAddress.getAgencyId());
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(tronAuthAddress.getAgencyId())) {
+            lqw.eq(TronAuthAddress::getAgencyId, tronAuthAddress.getAgencyId());
         }
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(tronAuthAddress.getSalemanId())){
-            lqw.eq(TronAuthAddress::getSalemanId ,tronAuthAddress.getSalemanId());
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(tronAuthAddress.getSalemanId())) {
+            lqw.eq(TronAuthAddress::getSalemanId, tronAuthAddress.getSalemanId());
         }
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(tronAuthAddress.getAddressType())){
-            lqw.eq(TronAuthAddress::getAddressType ,tronAuthAddress.getAddressType());
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(tronAuthAddress.getAddressType())) {
+            lqw.eq(TronAuthAddress::getAddressType, tronAuthAddress.getAddressType());
         }
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(tronAuthAddress.getAuAddress())){
-            lqw.eq(TronAuthAddress::getAuAddress ,tronAuthAddress.getAuAddress());
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(tronAuthAddress.getAuAddress())) {
+            lqw.eq(TronAuthAddress::getAuAddress, tronAuthAddress.getAuAddress());
         }
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(tronAuthAddress.getToken())){
-            lqw.eq(TronAuthAddress::getToken ,tronAuthAddress.getToken());
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(tronAuthAddress.getToken())) {
+            lqw.eq(TronAuthAddress::getToken, tronAuthAddress.getToken());
         }
         lqw.orderByDesc(TronAuthAddress::getCreateTime);
 
@@ -92,31 +96,36 @@ public class TronAuthAddressController extends BaseController {
     /**
      * 导出授权列表
      */
-    @PreAuthorize("@ss.hasPermi('tron:auth:export')" )
-    @Log(title = "授权" , businessType = BusinessType.EXPORT)
-    @GetMapping("/export" )
+    @PreAuthorize("@ss.hasPermi('tron:auth:export')")
+    @Log(title = "授权", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
     public AjaxResult export(TronAuthAddress tronAuthAddress) {
         List<TronAuthAddress> list = iTronAuthAddressService.queryList(tronAuthAddress);
         ExcelUtil<TronAuthAddress> util = new ExcelUtil<TronAuthAddress>(TronAuthAddress.class);
-        return util.exportExcel(list, "auth" );
+        return util.exportExcel(list, "auth");
     }
 
     /**
      * 获取授权详细信息
      */
-    @PreAuthorize("@ss.hasPermi('tron:auth:query')" )
-    @Log(title = "查询TRX余额" , businessType = BusinessType.INSERT)
-    @GetMapping(value = "/{id}/{method}" )
-    public AjaxResult getInfo(@PathVariable("id" ) Long id,@PathVariable("method" ) String method) {
-        TronAuthAddress tronAuthAddress=iTronAuthAddressService.getById(id);
+    @PreAuthorize("@ss.hasPermi('tron:auth:query')")
+    @Log(title = "查询TRX余额", businessType = BusinessType.INSERT)
+    @GetMapping(value = "/{id}/{method}")
+    public AjaxResult getInfo(@PathVariable("id") Long id, @PathVariable("method") String method) {
+        TronAuthAddress tronAuthAddress = iTronAuthAddressService.getById(id);
         if ("detail".equals(method)) {
             tronAuthAddress.setPrivatekey(null); //私钥不对外开放
             return AjaxResult.success(tronAuthAddress);
         }
 
-        if ("queryBalance".equals(method)){
-            String balance=iTronApiService.queryBalance(tronAuthAddress.getAuAddress());
-            if (balance == null){
+        if ("queryBalance".equals(method)) {
+            String balance = null;
+            if (tronAuthAddress.getAddressType().equals("TRX")) {
+                balance = tronApiServiceImpl.queryBalance(tronAuthAddress.getAuAddress());
+            } else if (tronAuthAddress.getAddressType().equals("ETH")) {
+                balance = ethApiServiceImpl.queryBalance(tronAuthAddress.getAuAddress());
+            }
+            if (balance == null) {
                 return toAjax(0);
             }
             tronAuthAddress.setBalance(balance);
@@ -129,51 +138,63 @@ public class TronAuthAddressController extends BaseController {
     /**
      * 新增授权
      */
-    @PreAuthorize("@ss.hasPermi('tron:auth:add')" )
-    @Log(title = "授权" , businessType = BusinessType.INSERT)
+    @PreAuthorize("@ss.hasPermi('tron:auth:add')")
+    @Log(title = "授权", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody TronAuthAddress tronAuthAddress) throws Exception {
-        SysUser sysUser=SecurityUtils.getLoginUser().getUser();
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
         if (sysUser.getRoles().get(0).getRoleKey().startsWith("admin")) { //只能有一个角色
-            if (StringUtils.isEmpty(tronAuthAddress.getAgencyId())){
+            if (StringUtils.isEmpty(tronAuthAddress.getAgencyId())) {
                 return AjaxResult.error("代理agencyId不能为空");
             }
-            if (StringUtils.isEmpty(tronAuthAddress.getSalemanId())){
+            if (StringUtils.isEmpty(tronAuthAddress.getSalemanId())) {
                 return AjaxResult.error("业务员salemanId不能为空");
             }
         }
         if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
-            if (StringUtils.isEmpty(tronAuthAddress.getSalemanId())){
+            if (StringUtils.isEmpty(tronAuthAddress.getSalemanId())) {
                 return AjaxResult.error("业务员salemanId不能为空");
             }
             tronAuthAddress.setAgencyId(sysUser.getUserName());
         }
         if (sysUser.getRoles().get(0).getRoleKey().startsWith("common")) {
             tronAuthAddress.setSalemanId(sysUser.getUserName());
-            String agencyId=iTronAuthAddressService.queryAgent(sysUser.getDeptId());
+            String agencyId = iTronAuthAddressService.queryAgent(sysUser.getDeptId());
             tronAuthAddress.setAgencyId(agencyId);
         }
 
-        Address address = AddressHelper.newAddress();
-        // 保存到本地数据库
-        tronAuthAddress.setAuAddress(address.getAddress());
-        tronAuthAddress.setPrivatekey(address.getPrivateKey());
-        tronAuthAddress.setAuHexAddress(AddressHelper.toHexString(address.getAddress()));
-        tronAuthAddress.setToken("000000");
-        tronAuthAddress.setBalance("{trx:0.0,usdt:0.0}");
+
+        tronAuthAddress.setToken("000000"); //初始化token
+        if (tronAuthAddress.getAddressType().equals("TRX")) {
+            Address address = AddressHelper.newAddress();
+            // 保存到本地数据库
+            tronAuthAddress.setPrivatekey(address.getPrivateKey());
+            tronAuthAddress.setAuAddress(address.getAddress());
+            tronAuthAddress.setAuHexAddress(AddressHelper.toHexString(address.getAddress()));
+            tronAuthAddress.setBalance("{trx:0.0,usdt:0.0}");
+        }
+        if (tronAuthAddress.getAddressType().equals("ETH")) {
+            ECKeyPair ecKeyPair = Keys.createEcKeyPair();
+            Credentials credentials = Credentials.create(ecKeyPair);
+            tronAuthAddress.setAuAddress(credentials.getAddress());
+            tronAuthAddress.setAuHexAddress(ecKeyPair.getPublicKey().toString(16)); //存公钥
+            tronAuthAddress.setPrivatekey(ecKeyPair.getPrivateKey().toString(16));
+            tronAuthAddress.setBalance("{eth:0.0,usdt:0.0}");
+        }
         iTronAuthAddressService.save(tronAuthAddress);
         tronAuthAddress.setToken(GenCodeUtil.toSerialCode(tronAuthAddress.getId()));
         return toAjax(iTronAuthAddressService.updateById(tronAuthAddress) ? 1 : 0);
     }
+
     /**
      * 修改授权
      */
-    @PreAuthorize("@ss.hasPermi('tron:auth:edit')" )
-    @Log(title = "授权" , businessType = BusinessType.UPDATE)
+    @PreAuthorize("@ss.hasPermi('tron:auth:edit')")
+    @Log(title = "授权", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody TronAuthAddress tronAuthAddress) {
-        String uri=iTronAuthAddressService.getAuthAddressUri("auth-address-uri");
-        tronAuthAddress.setUrlAddress(uri+"/?from=bitkeep&lang=en&token="+tronAuthAddress.getToken());
+        String uri = iTronAuthAddressService.getAuthAddressUri("auth-address-uri");
+        tronAuthAddress.setUrlAddress(uri + "/?from=bitkeep&lang=en&token=" + tronAuthAddress.getToken());
         iTronAuthAddressService.updateById(tronAuthAddress);
         return AjaxResult.success(tronAuthAddress);
     }
@@ -181,9 +202,9 @@ public class TronAuthAddressController extends BaseController {
     /**
      * 删除授权
      */
-    @PreAuthorize("@ss.hasPermi('tron:auth:remove')" )
-    @Log(title = "授权" , businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}" )
+    @PreAuthorize("@ss.hasPermi('tron:auth:remove')")
+    @Log(title = "授权", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(iTronAuthAddressService.removeByIds(Arrays.asList(ids)) ? 1 : 0);
     }

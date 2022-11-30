@@ -36,7 +36,6 @@ import java.util.List;
 public class TronTansferRecordController extends BaseController {
 
     private final ITronTansferRecordService iTronTansferRecordService;
-    private final ITronApiService iTronApiService;
     private final RedisTemplate redisTemplate;
 
     /**

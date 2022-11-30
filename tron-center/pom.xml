@@ -36,6 +36,15 @@
             <artifactId>springfox-boot-starter</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -46,6 +55,26 @@
                 <configuration>
                     <executable>true</executable>
                     <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.web3j</groupId>
+                <artifactId>web3j-maven-plugin</artifactId>
+                <version>4.8.7</version>
+                <configuration>
+                    <!-- 指定Java版智能合约生成的位置 -->
+                    <packageName>com.ruoyi.tron.contract</packageName>
+                    <soliditySourceFiles>
+                        <!-- solidity源文件放置位置 -->
+                        <directory>src/main/resources/solc</directory>
+                        <includes>
+                            <!-- 只将后缀为.sol的文件包括进去 -->
+                            <include>**/*.sol</include>
+                        </includes>
+                    </soliditySourceFiles>
+                    <outputDirectory>
+                        <java>src/main/java</java>
+                    </outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

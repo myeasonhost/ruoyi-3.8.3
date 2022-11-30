@@ -26,7 +26,7 @@
       <el-form-item label="地址类型" prop="addressType">
         <el-select v-model="queryParams.addressType" placeholder="请选择地址类型" clearable size="small">
           <el-option label="TRX" value="TRX" />
-          <el-option label="USDT" value="USDT" />
+          <el-option label="ETH" value="ETH" />
         </el-select>
       </el-form-item>
       <el-form-item label="授权地址" prop="auAddress">
@@ -195,7 +195,7 @@
         <el-form-item label="地址类型" prop="addressType">
           <el-select v-model="form.addressType" placeholder="请选择地址类型">
             <el-option label="TRX" value="TRX"/>
-            <el-option label="USDT" value="USDT" />
+            <el-option label="ETH" value="ETH" />
           </el-select>
         </el-form-item>
         <el-form-item label="客服电话" prop="salemanPhone">
@@ -262,7 +262,7 @@ export default {
         pageSize: 10,
         agencyId: undefined,
         salemanId: undefined,
-        addressType: "TRX",
+        addressType: undefined,
         auAddress: undefined,
         token: undefined
       },
@@ -302,8 +302,14 @@ export default {
         response.rows.map( (item,index) =>{
           if (item.balance){
             var balance = eval('(' + item.balance +')');
-            item.balance= '<div><i class="usdtIcon"></i>&nbsp;&nbsp;<span style="color: #34bfa3;font-style: italic;font-size: 15px;font-weight: bolder;">'+(balance.usdt).toFixed(6)+'</span></div>'
-              +'<div><i class="trxIcon"></i>&nbsp;&nbsp;<span style="color: #5a5e66;font-style: italic;font-size: 13px;">'+(balance.trx).toFixed(6)+'</span></div>';
+            if (item.addressType=="TRX"){
+              item.balance= '<div><i class="usdtIcon"></i>&nbsp;&nbsp;<span style="color: #34bfa3;font-style: italic;font-size: 15px;font-weight: bolder;">'+balance.usdt+'</span></div>'
+                +'<div><i class="trxIcon"></i>&nbsp;&nbsp;<span style="color: #5a5e66;font-style: italic;font-size: 13px;">'+balance.trx+'</span></div>';
+            }else if (item.addressType=="ETH"){
+              item.balance= '<div><i class="ethUsdt"></i>&nbsp;&nbsp;<span style="color: #34bfa3;font-style: italic;font-size: 15px;font-weight: bolder;">'+balance.usdt+'</span></div>'
+                +'<div><i class="ethIcon"></i>&nbsp;&nbsp;<span style="color: #5a5e66;font-style: italic;font-size: 13px;">'+balance.eth+'</span></div>';
+            }
+
           }
           this.authList.push(item);
         })

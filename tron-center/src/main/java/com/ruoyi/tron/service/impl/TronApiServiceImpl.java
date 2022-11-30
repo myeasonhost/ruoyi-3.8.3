@@ -26,7 +26,7 @@ import java.math.BigInteger;
  * @author eason
  * @date 2022-05-06
  */
-@Service
+@Service("tronApiServiceImpl")
 public class TronApiServiceImpl implements ITronApiService {
 
     @Autowired

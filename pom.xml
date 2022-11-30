@@ -205,6 +205,17 @@
                 <artifactId>tron-center</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.web3j</groupId>
+                <artifactId>core</artifactId>
+                <version>4.9.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>4.10.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

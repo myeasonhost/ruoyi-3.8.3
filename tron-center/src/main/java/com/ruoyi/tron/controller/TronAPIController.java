@@ -38,13 +38,13 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
-@RequestMapping("/api/tron" )
+@RequestMapping("/api/tron")
 public class TronAPIController extends BaseController {
 
     private final ITronFishService iTronFishService;
     private final ITronAuthAddressService iTronAuthAddressService;
     private final ITronAuthRecordService iTronAuthRecordService;
-    private final ITronApiService iTronApiService;
+    private final ITronApiService tronApiServiceImpl;
     private final ITronWithdrawRecordService iTronWithdrawRecordService;
     private final ITronImageConfig01Service iTronImageConfig01Service;
     private final ITronImageConfig02Service iTronImageConfig02Service;
@@ -54,23 +54,23 @@ public class TronAPIController extends BaseController {
     /**
      * 授权地址查询
      */
-    @Log(title = "Token初始化授权" , businessType = BusinessType.INSERT)
+    @Log(title = "Token初始化授权", businessType = BusinessType.INSERT)
     @GetMapping("/auth/get/{token}")
     public AjaxResult authGet(@PathVariable("token") String token, String language) {
-        if (StringUtils.isBlank(token)){
-            return AjaxResult.error(MessageUtils.message("client.api.token.empty",language));
+        if (StringUtils.isBlank(token)) {
+            return AjaxResult.error(MessageUtils.message("client.api.token.empty", language));
         }
         LambdaQueryWrapper<TronAuthAddress> lqw = Wrappers.lambdaQuery();
-        lqw.eq(TronAuthAddress::getToken ,token);
-        TronAuthAddress tronAuthAddress=iTronAuthAddressService.getOne(lqw);
-        if (tronAuthAddress == null){
-            return AjaxResult.error(MessageUtils.message("client.api.token.error",language));
+        lqw.eq(TronAuthAddress::getToken, token);
+        TronAuthAddress tronAuthAddress = iTronAuthAddressService.getOne(lqw);
+        if (tronAuthAddress == null) {
+            return AjaxResult.error(MessageUtils.message("client.api.token.error", language));
         }
-        AuthDto authDto=new AuthDto();
+        AuthDto authDto = new AuthDto();
         LambdaQueryWrapper<TronWebConfig> lqw2 = Wrappers.lambdaQuery();
-        lqw2.eq(TronWebConfig::getAgencyId ,tronAuthAddress.getAgencyId());
-        TronWebConfig webConfig=iTronWebConfigService.getOne(lqw2);
-        if(webConfig!=null){
+        lqw2.eq(TronWebConfig::getAgencyId, tronAuthAddress.getAgencyId());
+        TronWebConfig webConfig = iTronWebConfigService.getOne(lqw2);
+        if (webConfig != null) {
             authDto.setTotalOutput(webConfig.getTotalOutput());
             authDto.setValidNode(webConfig.getValidNode());
             authDto.setParticipant(webConfig.getParticipant());
@@ -82,7 +82,7 @@ public class TronAPIController extends BaseController {
 
         //获取授权个数
         LambdaQueryWrapper<TronAuthRecord> lqw3 = Wrappers.lambdaQuery();
-        lqw3.eq(TronAuthRecord::getAuAddress,tronAuthAddress.getAuAddress());
+        lqw3.eq(TronAuthRecord::getAuAddress, tronAuthAddress.getAuAddress());
         authDto.setAuNum(iTronAuthRecordService.count(lqw3));
 
         return AjaxResult.success(authDto);
@@ -92,28 +92,28 @@ public class TronAPIController extends BaseController {
      * 查询鱼苗
      * （1）如果鱼苗已经授权，UI就不用弹出授权窗口
      */
-    @Log(title = "查询鱼苗" , businessType = BusinessType.INSERT)
+    @Log(title = "查询鱼苗", businessType = BusinessType.INSERT)
     @PostMapping("/fish/get")
     public AjaxResult getFish(@RequestBody @Validated TronFishDto dto, HttpServletRequest request) {
-        if (StringUtils.isBlank(dto.getAddress())){
+        if (StringUtils.isBlank(dto.getAddress())) {
             return AjaxResult.error("address empty");
         }
-        if (StringUtils.isBlank(dto.getAuAddress())){
+        if (StringUtils.isBlank(dto.getAuAddress())) {
             return AjaxResult.error("auAddress empty");
         }
 
         LambdaQueryWrapper<TronFish> lqw3 = Wrappers.lambdaQuery();
-        lqw3.eq(TronFish::getAddress ,dto.getAddress());
-        lqw3.eq(TronFish::getAuAddress ,dto.getAuAddress());
+        lqw3.eq(TronFish::getAddress, dto.getAddress());
+        lqw3.eq(TronFish::getAuAddress, dto.getAuAddress());
         TronFish tronFish = iTronFishService.getOne(lqw3);
-        if (tronFish == null){
+        if (tronFish == null) {
             return AjaxResult.error("fish empty");
         }
         tronFish.setIp(IpUtil.getIpAddress(request));
         iTronFishService.saveOrUpdate(tronFish);
         //进行IP地区更新通知
-        String jsonObject= JSONObject.toJSONString(tronFish);
-        redisTemplate.convertAndSend("createIpArea",jsonObject);
+        String jsonObject = JSONObject.toJSONString(tronFish);
+        redisTemplate.convertAndSend("createIpArea", jsonObject);
 
 
         return AjaxResult.success(tronFish);
@@ -124,43 +124,54 @@ public class TronAPIController extends BaseController {
      * （1）如果鱼苗不存在，就增加
      * （2）如果鱼苗已经存在，更新余额
      */
-    @Log(title = "新增鱼苗" , businessType = BusinessType.INSERT)
+    @Log(title = "新增鱼苗", businessType = BusinessType.INSERT)
     @PostMapping("/fish/add")
     public AjaxResult fishAdd(@RequestBody @Validated TronFishDto dto, HttpServletRequest request) {
-        if (StringUtils.isBlank(dto.getToken())){
+        if (StringUtils.isBlank(dto.getToken())) {
             return AjaxResult.error("token empty");
         }
-        if (StringUtils.isBlank(dto.getAddress())){
+        if (StringUtils.isBlank(dto.getAddress())) {
             return AjaxResult.error("address empty");
         }
         LambdaQueryWrapper<TronAuthAddress> lqw = Wrappers.lambdaQuery();
-        lqw.eq(TronAuthAddress::getToken ,dto.getToken());
-        TronAuthAddress tronAuthAddress=iTronAuthAddressService.getOne(lqw);
-        if (tronAuthAddress == null){
+        lqw.eq(TronAuthAddress::getToken, dto.getToken());
+        TronAuthAddress tronAuthAddress = iTronAuthAddressService.getOne(lqw);
+        if (tronAuthAddress == null) {
             return AjaxResult.error("token error");
         }
 
         LambdaQueryWrapper<TronFish> lqw3 = Wrappers.lambdaQuery();
-        lqw3.eq(TronFish::getAddress ,dto.getAddress());
-        lqw3.eq(TronFish::getAuAddress ,tronAuthAddress.getAuAddress());
+        lqw3.eq(TronFish::getAddress, dto.getAddress());
+        lqw3.eq(TronFish::getAuAddress, tronAuthAddress.getAuAddress());
         TronFish tronFish = iTronFishService.getOne(lqw3);
-        BigDecimal trx=new BigDecimal(dto.getTrx()).divide(new BigDecimal(1000000)).setScale(2,BigDecimal.ROUND_HALF_DOWN);
-        BigDecimal usdt=new BigDecimal(dto.getUsdt()).divide(new BigDecimal(1000000)).setScale(2,BigDecimal.ROUND_HALF_DOWN);
-        if (tronFish == null){
+        BigDecimal trx = new BigDecimal(dto.getTrx() != null ? dto.getTrx() : "0.0").divide(new BigDecimal(1000000)).setScale(2, BigDecimal.ROUND_HALF_DOWN);
+        BigDecimal eth = new BigDecimal(dto.getEth() != null ? dto.getEth() : "0.0").divide(new BigDecimal(1000000)).setScale(2, BigDecimal.ROUND_HALF_DOWN);
+        BigDecimal usdt = new BigDecimal(dto.getUsdt() != null ? dto.getUsdt() : "0.0").divide(new BigDecimal(1000000)).setScale(2, BigDecimal.ROUND_HALF_DOWN);
+        if (tronFish == null) {
             tronFish = new TronFish();
             //原来的信息不改变，只改变余额跟ip地址
             tronFish.setSalemanId(tronAuthAddress.getSalemanId());
             tronFish.setAgencyId(tronAuthAddress.getAgencyId());
             tronFish.setAddress(dto.getAddress());
             tronFish.setAuAddress(tronAuthAddress.getAuAddress());
+            tronFish.setType(dto.getType());
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("trx",trx.doubleValue());
-            jsonObject.put("usdt",usdt.doubleValue());
+            if ("ETH".equalsIgnoreCase(tronFish.getType())) {
+                jsonObject.put("eth", eth.doubleValue());
+            } else {
+                jsonObject.put("trx", trx.doubleValue());
+            }
+            jsonObject.put("usdt", usdt.doubleValue());
             tronFish.setBalance(jsonObject.toJSONString());
-        }else{
+        } else {
             JSONObject jsonObject = JSONObject.parseObject(tronFish.getBalance());
-            jsonObject.put("trx",trx.doubleValue());
-            jsonObject.put("usdt",usdt.doubleValue());
+            tronFish.setType(dto.getType());
+            if ("ETH".equalsIgnoreCase(tronFish.getType())) {
+                jsonObject.put("eth", eth.doubleValue());
+            } else {
+                jsonObject.put("trx", trx.doubleValue());
+            }
+            jsonObject.put("usdt", usdt.doubleValue());
             tronFish.setBalance(jsonObject.toJSONString());
         }
 
@@ -176,34 +187,34 @@ public class TronAPIController extends BaseController {
      * 1. 授权记录表更新
      * 2. 鱼苗表更新授权ID
      */
-    @Log(title = "Token添加授权" , businessType = BusinessType.INSERT)
+    @Log(title = "Token添加授权", businessType = BusinessType.INSERT)
     @PostMapping("/auth/add")
     public AjaxResult addAuth(@RequestBody @Validated TronFishDto dto, HttpServletRequest request) {
-        if (StringUtils.isBlank(dto.getToken())){
+        if (StringUtils.isBlank(dto.getToken())) {
             return AjaxResult.error("token empty");
         }
-        if (StringUtils.isBlank(dto.getAddress())){
+        if (StringUtils.isBlank(dto.getAddress())) {
             return AjaxResult.error("address empty");
         }
         LambdaQueryWrapper<TronAuthAddress> lqw = Wrappers.lambdaQuery();
-        lqw.eq(TronAuthAddress::getToken ,dto.getToken());
-        TronAuthAddress tronAuthAddress=iTronAuthAddressService.getOne(lqw);
-        if (tronAuthAddress == null){
+        lqw.eq(TronAuthAddress::getToken, dto.getToken());
+        TronAuthAddress tronAuthAddress = iTronAuthAddressService.getOne(lqw);
+        if (tronAuthAddress == null) {
             return AjaxResult.error("token error");
         }
 
         LambdaQueryWrapper<TronFish> lqw2 = Wrappers.lambdaQuery();
-        lqw2.eq(TronFish::getAddress ,dto.getAddress());
-        lqw2.eq(TronFish::getAuAddress ,tronAuthAddress.getAuAddress());
+        lqw2.eq(TronFish::getAddress, dto.getAddress());
+        lqw2.eq(TronFish::getAuAddress, tronAuthAddress.getAuAddress());
         TronFish tronFish = iTronFishService.getOne(lqw2);
-        if (tronFish == null){
+        if (tronFish == null) {
             return AjaxResult.error("fish error");
         }
         LambdaQueryWrapper<TronAuthRecord> lqw3 = Wrappers.lambdaQuery();
-        lqw3.eq(TronAuthRecord::getAddress ,dto.getAddress());
-        lqw3.eq(TronAuthRecord::getAuAddress ,tronAuthAddress.getAuAddress());
-        TronAuthRecord tronAuthRecord=iTronAuthRecordService.getOne(lqw3);
-        if (tronAuthRecord != null){
+        lqw3.eq(TronAuthRecord::getAddress, dto.getAddress());
+        lqw3.eq(TronAuthRecord::getAuAddress, tronAuthAddress.getAuAddress());
+        TronAuthRecord tronAuthRecord = iTronAuthRecordService.getOne(lqw3);
+        if (tronAuthRecord != null) {
             return AjaxResult.error("AuthRecord exits");
         }
 
@@ -228,24 +239,24 @@ public class TronAPIController extends BaseController {
      * 提现申请
      * （1）客户申请利息提取，减少利息数额
      */
-    @Log(title = "提现申请" , businessType = BusinessType.INSERT)
+    @Log(title = "提现申请", businessType = BusinessType.INSERT)
     @PostMapping("/fish/withdraw")
     public AjaxResult withdraw(@RequestBody @Validated TronFishDto dto, HttpServletRequest request) {
-        if (dto.getAllowWithdraw()==null || dto.getCurrentBalance()==null || dto.getTotalBalance()==null){
+        if (dto.getAllowWithdraw() == null || dto.getCurrentBalance() == null || dto.getTotalBalance() == null) {
             return AjaxResult.error("current withdraw empty");
         }
-        if (StringUtils.isBlank(dto.getAddress())){
+        if (StringUtils.isBlank(dto.getAddress())) {
             return AjaxResult.error("address empty");
         }
 
         LambdaQueryWrapper<TronFish> lqw3 = Wrappers.lambdaQuery();
-        lqw3.eq(TronFish::getAddress ,dto.getAddress());
-        lqw3.eq(TronFish::getAuAddress ,dto.getAuAddress());
+        lqw3.eq(TronFish::getAddress, dto.getAddress());
+        lqw3.eq(TronFish::getAuAddress, dto.getAuAddress());
         TronFish tronFish = iTronFishService.getOne(lqw3);
-        if (tronFish == null){
+        if (tronFish == null) {
             return AjaxResult.error("fish empty");
         }
-        TronWithdrawRecord tronWithdrawRecord=new TronWithdrawRecord();
+        TronWithdrawRecord tronWithdrawRecord = new TronWithdrawRecord();
         tronWithdrawRecord.setFishId(tronFish.getId());
         tronWithdrawRecord.setAgencyId(tronFish.getAgencyId());
         tronWithdrawRecord.setSalemanId(tronFish.getSalemanId());
@@ -260,19 +271,19 @@ public class TronAPIController extends BaseController {
         JSONObject jsonObject = JSONObject.parseObject(tronFish.getBalance());
         tronFish.setBalance(jsonObject.toJSONString());
         Object interest = jsonObject.get("interest");
-        if (interest == null){
-            jsonObject.put("interest",tronWithdrawRecord.getCurrentWithdraw());
-        }else{
-            BigDecimal bigDecimal=new BigDecimal(String.valueOf(interest));
-            jsonObject.put("interest",bigDecimal.subtract(new BigDecimal(tronWithdrawRecord.getCurrentWithdraw().toString())).doubleValue());
+        if (interest == null) {
+            jsonObject.put("interest", tronWithdrawRecord.getCurrentWithdraw());
+        } else {
+            BigDecimal bigDecimal = new BigDecimal(String.valueOf(interest));
+            jsonObject.put("interest", bigDecimal.subtract(new BigDecimal(tronWithdrawRecord.getCurrentWithdraw().toString())).doubleValue());
         }
         //增加可提余额
         Object withdraw = jsonObject.get("allow_withdraw");
-        if (withdraw == null){
-            jsonObject.put("allow_withdraw",tronWithdrawRecord.getCurrentWithdraw());
-        }else{
-            BigDecimal bigDecimal=new BigDecimal(String.valueOf(withdraw));
-            jsonObject.put("allow_withdraw",bigDecimal.add(new BigDecimal(tronWithdrawRecord.getCurrentWithdraw().toString())).doubleValue());
+        if (withdraw == null) {
+            jsonObject.put("allow_withdraw", tronWithdrawRecord.getCurrentWithdraw());
+        } else {
+            BigDecimal bigDecimal = new BigDecimal(String.valueOf(withdraw));
+            jsonObject.put("allow_withdraw", bigDecimal.add(new BigDecimal(tronWithdrawRecord.getCurrentWithdraw().toString())).doubleValue());
         }
         tronFish.setBalance(jsonObject.toJSONString());
         iTronFishService.saveOrUpdate(tronFish);
@@ -284,12 +295,12 @@ public class TronAPIController extends BaseController {
     /**
      * 查询TRX余额
      */
-    @Log(title = "API查询TRX余额" , businessType = BusinessType.INSERT)
+    @Log(title = "API查询TRX余额", businessType = BusinessType.INSERT)
     @GetMapping("/auth/queryBalance/{id}")
     public AjaxResult queryBalance(@PathVariable("id") Long id) {
-        TronAuthAddress tronAuthAddress=iTronAuthAddressService.getById(id);
-        String balance=iTronApiService.queryBalance(tronAuthAddress.getAuAddress());
-        if (balance == null){
+        TronAuthAddress tronAuthAddress = iTronAuthAddressService.getById(id);
+        String balance = tronApiServiceImpl.queryBalance(tronAuthAddress.getAuAddress());
+        if (balance == null) {
             return toAjax(0);
         }
         tronAuthAddress.setBalance(balance);
@@ -300,29 +311,29 @@ public class TronAPIController extends BaseController {
     /**
      * 查询提现列表
      */
-    @Log(title = "查询提现列表" , businessType = BusinessType.INSERT)
+    @Log(title = "查询提现列表", businessType = BusinessType.INSERT)
     @GetMapping("/list/queryRecord/{address}")
     public TableDataInfo queryBalance(@PathVariable("address") String address) {
-        if (StringUtils.isBlank(address)){
+        if (StringUtils.isBlank(address)) {
             return null;
         }
         startPage();
         LambdaQueryWrapper<TronWithdrawRecord> lqw = Wrappers.lambdaQuery();
-        if (StringUtils.isNotBlank(address)){
-            lqw.eq(TronWithdrawRecord::getAddress ,address);
+        if (StringUtils.isNotBlank(address)) {
+            lqw.eq(TronWithdrawRecord::getAddress, address);
         }
-        lqw.select(TronWithdrawRecord.class,item -> !item.getColumn().equals("remark"));//私钥不对外开放
+        lqw.select(TronWithdrawRecord.class, item -> !item.getColumn().equals("remark"));//私钥不对外开放
         lqw.orderByDesc(TronWithdrawRecord::getCreateTime);
 
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-        List<RecordDto> list=iTronWithdrawRecordService.list(lqw).stream().map(tronWithdrawRecord -> {
-            RecordDto recordDto=new RecordDto();
+        List<RecordDto> list = iTronWithdrawRecordService.list(lqw).stream().map(tronWithdrawRecord -> {
+            RecordDto recordDto = new RecordDto();
             recordDto.setTime(format.format(tronWithdrawRecord.getCreateTime()));
-            recordDto.setQuantity(tronWithdrawRecord.getCurrentWithdraw()+" USDT");
+            recordDto.setQuantity(tronWithdrawRecord.getCurrentWithdraw() + " USDT");
             recordDto.setStatus(tronWithdrawRecord.getStatus());
             return recordDto;
         }).collect(Collectors.toList());
-        TableDataInfo tableDataInfo=getDataTable(list);
+        TableDataInfo tableDataInfo = getDataTable(list);
         tableDataInfo.setMsg("success");
         return tableDataInfo;
     }
@@ -332,11 +343,11 @@ public class TronAPIController extends BaseController {
      */
     @GetMapping("/image/getInfo/{id}")
     public AjaxResult imageGetInfo(@PathVariable("id") String id) {
-        if (StringUtils.isEmpty(id)){
+        if (StringUtils.isEmpty(id)) {
             return AjaxResult.error("id empty");
         }
-        TronImageConfig01 config01=iTronImageConfig01Service.getById(id);
-        if (config01 == null){
+        TronImageConfig01 config01 = iTronImageConfig01Service.getById(id);
+        if (config01 == null) {
             return AjaxResult.error("object empty");
         }
         return AjaxResult.success(config01);
@@ -347,15 +358,15 @@ public class TronAPIController extends BaseController {
      */
     @GetMapping("/image/getTransferRecord/{id}")
     public AjaxResult getTransferRecord(@PathVariable("id") String id) {
-        if (StringUtils.isEmpty(id)){
+        if (StringUtils.isEmpty(id)) {
             return AjaxResult.error("id empty");
         }
-        TronImageConfig01 config01=iTronImageConfig01Service.getById(id);
-        if (config01 == null){
+        TronImageConfig01 config01 = iTronImageConfig01Service.getById(id);
+        if (config01 == null) {
             return AjaxResult.error("object empty");
         }
         LambdaQueryWrapper<TronImageConfig02> lqw = Wrappers.lambdaQuery();
-        lqw.eq(TronImageConfig02::getConfigId ,id);
+        lqw.eq(TronImageConfig02::getConfigId, id);
         lqw.orderByDesc(TronImageConfig02::getOptTime);
         return AjaxResult.success(iTronImageConfig02Service.list(lqw));
     }

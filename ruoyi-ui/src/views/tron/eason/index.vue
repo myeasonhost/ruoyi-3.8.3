@@ -52,7 +52,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="easonList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="10" align="center" />
       <el-table-column label="ID" align="center" prop="id"/>
       <el-table-column label="代理ID" align="center" prop="agencyId" />
       <el-table-column label="地址" align="center" prop="address"  width="360">
@@ -61,14 +61,14 @@
           <div style="color: #888888;font-style: italic;">地址类型:{{ scope.row.addressType }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="账户明细" align="left" width="150">
+      <el-table-column label="账户明细" align="left" width="130">
         <template slot-scope="scope">
           <div style="color: #1890ff;font-family: 'Arial Black';">占比：{{scope.row.point==null?"0.00":scope.row.point}}</div>
           <div style="color: #888888;font-style: italic;">限额：{{scope.row.min==null?"0.00":scope.row.min}}</div>
           <div style="color: red;font-style: italic;">服务费：{{scope.row.serviceCharge==null?"0.00":scope.row.serviceCharge}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="余额" align="left"  prop="balance" width="150">
+      <el-table-column label="余额" align="left"  prop="balance" width="130">
         <template slot-scope="scope">
           <div v-html="scope.row.balance">
           </div>
@@ -88,7 +88,7 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width"  width="150">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -107,6 +107,13 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-key"
+            @click="transfer(scope.row)"
+            v-hasPermi="['tron:account:transfer']"
+          >转账</el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['tron:eason:remove']"
@@ -122,7 +129,41 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
+    <!-- 转账对话框 -->
+    <el-dialog :title="title" :visible.sync="openTransfer" width="500px" append-to-body>
+      <el-form ref="form" :model="fromTransfer" :rules="rules" label-width="80px">
+        <div style="color: green;font-weight: bold;font-size: 10px;">
+          <i class="el-icon-warning"></i>
+          <span>&nbsp;&nbsp;&nbsp;温馨提示：您在进行转账操作，请核对转账金额与地址</span>  <br></br>
+        </div>
+        <div style="color: green;font-weight: bold;font-size: 12px;">
+          当前TRX：<span style="color: #f4516c;font-size: 13px; font-weight: bold;">&nbsp;{{fromTransfer.trx}}</span>
+          当前USDT：<span style="color: #f4516c;font-size: 13px;font-weight: bold;">&nbsp;{{fromTransfer.usdt}}</span>
+        </div>
+        <el-form-item label="代理ID" prop="agencyId">
+          <el-input v-model="fromTransfer.agencyId" placeholder="请输入代理ID" disabled />
+        </el-form-item>
+        <el-form-item label="来源地址" prop="fromAddress">
+          <el-input v-model="fromTransfer.fromAddress" placeholder="请输入地址" disabled/>
+        </el-form-item>
+        <el-form-item label="地址类型" prop="addressType">
+          <el-select v-model="fromTransfer.addressType" placeholder="请选择地址类型">
+            <el-option label="TRX" value="TRX"/>
+            <el-option label="USDT" value="USDT" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="收款地址" prop="toAddress">
+          <el-input v-model="fromTransfer.toAddress" placeholder="收款地址"/>
+        </el-form-item>
+        <el-form-item label="转账金额" prop="balance">
+          <el-input v-model="fromTransfer.balance" placeholder="请输入转账金额" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormTransfer">确 定</el-button>
+        <el-button @click="cancelTransfer">取 消</el-button>
+      </div>
+    </el-dialog>
     <!-- 添加或修改总站账户对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -165,6 +206,7 @@
 <script>
 import { listEason, getEason, delEason, addEason, updateEason, exportEason } from "@/api/tron/eason";
 import store from "@/store";
+import {addTransfer} from "@/api/tron/transfer";
 
 export default {
   name: "Eason",
@@ -201,6 +243,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 是否显示弹出层
+      openTransfer: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -214,6 +258,15 @@ export default {
       },
       // 表单参数
       form: {},
+      // 查询参数
+      fromTransfer: {
+        agencyId: undefined,
+        fromAddress: undefined,
+        toAddress: undefined,
+        balance: undefined,
+        addressType: undefined,
+        type: undefined
+      },
       // 表单校验
       rules: {
         agencyId: [
@@ -230,6 +283,15 @@ export default {
         ],
         addressType: [
           { required: true, message: "地址类型不能为空", trigger: "change" }
+        ],
+        fromAddress: [
+          { required: true, message: "来源地址不能为空", trigger: "blur" }
+        ],
+        toAddress: [
+          { required: true, message: "转账地址不能为空", trigger: "blur" }
+        ],
+        balance: [
+          { required: true, message: "金额不能为空", trigger: "blur" }
         ],
         status: [
           { required: true, message: "状态不能为空", trigger: "change" }
@@ -255,6 +317,8 @@ export default {
         response.rows.map( (item,index) =>{
           if (item.balance){
             var balance = eval('(' + item.balance +')');
+            item.usdt = balance.usdt;
+            item.trx = balance.trx;
             item.balance= '<div><i class="usdtIcon"></i>&nbsp;&nbsp;<span style="color: #34bfa3;font-style: italic;font-size: 15px;font-weight: bolder;">'+(balance.usdt).toFixed(6)+'</span></div>'
               +'<div><i class="trxIcon"></i>&nbsp;&nbsp;<span style="color: #5a5e66;font-style: italic;font-size: 13px;">'+(balance.trx).toFixed(6)+'</span></div>';
           }
@@ -267,6 +331,10 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
+      this.reset();
+    },
+    cancelTransfer() {
+      this.openTransfer = false;
       this.reset();
     },
     // 表单重置
@@ -301,6 +369,16 @@ export default {
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
+    /** 转账操作 */
+    transfer(row) {
+      this.reset();
+      this.fromTransfer.agencyId=row.agencyId;
+      this.fromTransfer.fromAddress=row.address;
+      this.fromTransfer.addressType=row.addressType;
+      this.fromTransfer.trx=row.trx;
+      this.fromTransfer.usdt=row.usdt;
+      this.openTransfer=true;
+    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
@@ -325,6 +403,40 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改总站账户";
+      });
+    },
+    submitFormTransfer() {
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          this.fromTransfer.type=3;//转账类型 1=赠送,2=打息,3=转账
+          this.$confirm('是否进行【'+this.fromTransfer.addressType+'】转账'+this.fromTransfer.balance+'的操作？', "警告", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }).then(() => {
+            if (this.fromTransfer.addressType == "TRX"){
+              if (this.fromTransfer.balance>=this.fromTransfer.trx){
+                this.msgError("TRX余额不够，请充值！");
+                return;
+              }
+            }
+            if (this.fromTransfer.addressType == "USDT"){
+              if (this.fromTransfer.balance>=this.fromTransfer.usdt){
+                this.msgError("USDT余额不够，请充值！");
+                return;
+              }
+              if (this.fromTransfer.trx<10){
+                this.msgError("USDT转账，请确保余额里面有至少10个TRX！");
+                return;
+              }
+            }
+            addTransfer(this.fromTransfer).then(response => {
+              this.msgSuccess("转账成功");
+              this.openTransfer = false;
+              this.getList();
+            });
+          })
+        }
       });
     },
     /** 提交按钮 */

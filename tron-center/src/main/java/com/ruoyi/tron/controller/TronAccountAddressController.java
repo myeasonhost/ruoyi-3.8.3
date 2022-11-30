@@ -30,11 +30,11 @@ import java.util.List;
  */
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
-@RequestMapping("/tron/account" )
+@RequestMapping("/tron/account")
 public class TronAccountAddressController extends BaseController {
 
     private final ITronAccountAddressService iTronAccountAddressService;
-    private final ITronApiService iTronApiService;
+    private final ITronApiService tronApiServiceImpl;
 
     /**
      * 查询站内账号列表
@@ -45,10 +45,10 @@ public class TronAccountAddressController extends BaseController {
         startPage();
         LoginUser loginUser = SecurityUtils.getLoginUser();
         List<TronAccountAddress> list = new ArrayList<>();
-        if (SecurityUtils.isAdmin(loginUser.getUser().getUserId())){
+        if (SecurityUtils.isAdmin(loginUser.getUser().getUserId())) {
             list = iTronAccountAddressService.queryList(tronAccountAddress);
         }
-        SysUser sysUser=SecurityUtils.getLoginUser().getUser();
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
         if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
             tronAccountAddress.setAgencyId(sysUser.getUserName());
             list = iTronAccountAddressService.queryList(tronAccountAddress);
@@ -59,30 +59,30 @@ public class TronAccountAddressController extends BaseController {
     /**
      * 导出站内账号列表
      */
-    @PreAuthorize("@ss.hasPermi('tron:account:export')" )
-    @Log(title = "站内账号" , businessType = BusinessType.EXPORT)
-    @GetMapping("/export" )
+    @PreAuthorize("@ss.hasPermi('tron:account:export')")
+    @Log(title = "站内账号", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
     public AjaxResult export(TronAccountAddress tronAccountAddress) {
         List<TronAccountAddress> list = iTronAccountAddressService.queryList(tronAccountAddress);
         ExcelUtil<TronAccountAddress> util = new ExcelUtil<TronAccountAddress>(TronAccountAddress.class);
-        return util.exportExcel(list, "account" );
+        return util.exportExcel(list, "account");
     }
 
     /**
      * 获取站内账号详细信息
      */
-    @PreAuthorize("@ss.hasPermi('tron:account:query')" )
-    @GetMapping(value = "/{id}/{method}" )
-    public AjaxResult getInfo(@PathVariable("id" ) Long id,@PathVariable("method" ) String method) {
-        TronAccountAddress tronAccountAddress=iTronAccountAddressService.getById(id);
+    @PreAuthorize("@ss.hasPermi('tron:account:query')")
+    @GetMapping(value = "/{id}/{method}")
+    public AjaxResult getInfo(@PathVariable("id") Long id, @PathVariable("method") String method) {
+        TronAccountAddress tronAccountAddress = iTronAccountAddressService.getById(id);
         if ("detail".equals(method)) {
             tronAccountAddress.setPrivateKey(null); //私钥不对外开放
             return AjaxResult.success(tronAccountAddress);
         }
 
-        if ("queryBalance".equals(method)){
-            String balance=iTronApiService.queryBalance(tronAccountAddress.getAddress());
-            if (balance == null){
+        if ("queryBalance".equals(method)) {
+            String balance = tronApiServiceImpl.queryBalance(tronAccountAddress.getAddress());
+            if (balance == null) {
                 return toAjax(0);
             }
             tronAccountAddress.setBalance(balance);
@@ -95,11 +95,11 @@ public class TronAccountAddressController extends BaseController {
     /**
      * 新增站内账号
      */
-    @PreAuthorize("@ss.hasPermi('tron:account:add')" )
-    @Log(title = "站内账号" , businessType = BusinessType.INSERT)
+    @PreAuthorize("@ss.hasPermi('tron:account:add')")
+    @Log(title = "站内账号", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody TronAccountAddress tronAccountAddress) throws Exception {
-        SysUser sysUser=SecurityUtils.getLoginUser().getUser();
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
         tronAccountAddress.setAgencyId(sysUser.getUserName());
         tronAccountAddress.setHexAddress(AddressHelper.toHexString(tronAccountAddress.getAddress()));
         tronAccountAddress.setBalance("{trx:0.0,usdt:0.0}");
@@ -109,8 +109,8 @@ public class TronAccountAddressController extends BaseController {
     /**
      * 修改站内账号
      */
-    @PreAuthorize("@ss.hasPermi('tron:account:edit')" )
-    @Log(title = "站内账号" , businessType = BusinessType.UPDATE)
+    @PreAuthorize("@ss.hasPermi('tron:account:edit')")
+    @Log(title = "站内账号", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody TronAccountAddress tronAccountAddress) {
         return toAjax(iTronAccountAddressService.updateById(tronAccountAddress) ? 1 : 0);
@@ -119,9 +119,9 @@ public class TronAccountAddressController extends BaseController {
     /**
      * 删除站内账号
      */
-    @PreAuthorize("@ss.hasPermi('tron:account:remove')" )
-    @Log(title = "站内账号" , businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}" )
+    @PreAuthorize("@ss.hasPermi('tron:account:remove')")
+    @Log(title = "站内账号", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(iTronAccountAddressService.removeByIds(Arrays.asList(ids)) ? 1 : 0);
     }

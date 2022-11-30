@@ -100,8 +100,9 @@
     </el-row>
 
     <el-table v-loading="loading" :data="fishList" @selection-change="handleSelectionChange" :border="true">
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" align="center" />
       <el-table-column label="鱼苗ID" align="center" prop="id" v-if="false"/>
+      <el-table-column label="鱼苗类型" align="center" prop="type"/>
       <el-table-column label="上级/业务员" align="center" prop="salemanId" width="100">
         <template slot-scope="scope">
           <div style="">{{ scope.row.agencyId }}</div>
@@ -121,8 +122,8 @@
           <div style="color: #1890ff;font-family: 'Arial Black';">{{ scope.row.address}}</div>
           <div style="color: #888888;font-style: italic;">{{ scope.row.auAddress }}</div>
           <div>
-          <span style="color: red;font-style: italic;">{{ scope.row.auRecordId!=null?"已授权":"" }}</span>
-          <span style="color: gray;font-style: italic;">{{ scope.row.auRecordId==null?"未授权":"" }}</span>
+            <span style="color: red;font-style: italic;">{{ scope.row.auRecordId!=null?"已授权":"" }}</span>
+            <span style="color: gray;font-style: italic;">{{ scope.row.auRecordId==null?"未授权":"" }}</span>
           </div>
           <div>
             <span style="color: red;font-weight: bold;">{{ scope.row.remark}}</span>
@@ -518,8 +519,16 @@ export default {
             var balance = eval('(' + item.balance +')');
             item.usdt = balance.usdt;
             item.trx = balance.trx;
-            item.balance= '<div><i class="usdtIcon"></i>&nbsp;&nbsp;<span style="color: #34bfa3;font-style: italic;font-size: 15px;font-weight: bolder;">'+item.usdt+'</span></div>'
-              +'<div><i class="trxIcon"></i>&nbsp;&nbsp;<span style="color: #5a5e66;font-style: italic;font-size: 13px;">'+item.trx+'</span></div>';
+            item.eth = balance.eth;
+
+            if (item.type=="TRX"){
+              item.balance= '<div><i class="usdtIcon"></i>&nbsp;&nbsp;<span style="color: #34bfa3;font-style: italic;font-size: 15px;font-weight: bolder;">'+item.usdt+'</span></div>'
+                +'<div><i class="trxIcon"></i>&nbsp;&nbsp;<span style="color: #5a5e66;font-style: italic;font-size: 13px;">'+item.trx+'</span></div>';
+            }else if (item.type=="ETH"){
+              item.balance= '<div><i class="ethUsdt"></i>&nbsp;&nbsp;<span style="color: #34bfa3;font-style: italic;font-size: 15px;font-weight: bolder;">'+item.usdt+'</span></div>'
+                +'<div><i class="ethIcon"></i>&nbsp;&nbsp;<span style="color: #5a5e66;font-style: italic;font-size: 13px;">'+item.eth+'</span></div>';
+            }
+
             item.interest = balance.interest;
             item.allow_withdraw = balance.allow_withdraw;
             item.finish_withdraw = balance.finish_withdraw;

@@ -56,6 +56,9 @@ private static final long serialVersionUID=1L;
     @Excel(name = "余额")
     private String balance;
 
+    /** 类型 */
+    @Excel(name = "类型")
+    private String type;
 
     @TableField(exist = false)
     private String fromAddressbalance;

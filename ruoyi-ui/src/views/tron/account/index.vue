@@ -230,6 +230,9 @@ export default {
         address: [
           { required: true, message: "授权地址-Base58格式不能为空", trigger: "blur" }
         ],
+        fromAddress: [
+          { required: true, message: "来源地址不能为空", trigger: "blur" }
+        ],
         toAddress: [
           { required: true, message: "转账地址不能为空", trigger: "blur" }
         ],

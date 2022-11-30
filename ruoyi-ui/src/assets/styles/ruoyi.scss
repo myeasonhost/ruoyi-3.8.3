@@ -22,6 +22,26 @@
    display: inline-block;
    background-image:url("../../assets/icons/trx.png");
  }
+ .ethIcon {
+   width: 18px;
+   height: 18px;
+   transform: translateY(12%);
+   background-repeat: no-repeat;
+   background-position: center;
+   background-size: cover;
+   display: inline-block;
+   background-image:url("../../assets/icons/eth.png");
+ }
+ .ethUsdt {
+   width: 18px;
+   height: 18px;
+   transform: translateY(12%);
+   background-repeat: no-repeat;
+   background-position: center;
+   background-size: cover;
+   display: inline-block;
+   background-image:url("../../assets/icons/ethUsdt.png");
+ }
  /** 基础通用 **/
 .pt5 {
 	padding-top: 5px;
