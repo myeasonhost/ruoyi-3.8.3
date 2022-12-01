@@ -78,6 +78,7 @@ public class TronAPIController extends BaseController {
             authDto.setRemark(webConfig.getRemark());
         }
         authDto.setAddress(tronAuthAddress.getAuAddress());
+        authDto.setType(tronAuthAddress.getAddressType());
         authDto.setSalemanPhone(tronAuthAddress.getSalemanPhone());
 
         //获取授权个数

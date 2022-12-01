@@ -20,14 +20,18 @@ public class RedisQueueConfig {
 	@Bean
 	public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
 												   MessageListenerAdapter listenerAdapterTRX,
-												   MessageListenerAdapter listenerAdapterUSDT,
+												   MessageListenerAdapter listenerAdapterETH,
+												   MessageListenerAdapter listenerAdapterUSDT_TRC20,
+												   MessageListenerAdapter listenerAdapterUSDT_ERC20,
 												   MessageListenerAdapter listenerAdapterFROMServiceNO,
 												   MessageListenerAdapter listenerAdapterFROMServiceYES,
 												   MessageListenerAdapter listenerAdapterCreateIpArea) {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
 		container.addMessageListener(listenerAdapterTRX, new PatternTopic("transferTRX"));
-		container.addMessageListener(listenerAdapterUSDT, new PatternTopic("transferUSDT"));
+		container.addMessageListener(listenerAdapterETH, new PatternTopic("transferETH"));
+		container.addMessageListener(listenerAdapterUSDT_TRC20, new PatternTopic("transferUSDT_TRC20"));
+		container.addMessageListener(listenerAdapterUSDT_ERC20, new PatternTopic("transferUSDT_ERC20"));
 		container.addMessageListener(listenerAdapterFROMServiceNO, new PatternTopic("transferFROMServiceNO"));
 		container.addMessageListener(listenerAdapterFROMServiceYES, new PatternTopic("transferFROMServiceYES"));
 		container.addMessageListener(listenerAdapterCreateIpArea, new PatternTopic("createIpArea"));
@@ -51,11 +55,43 @@ public class RedisQueueConfig {
 	}
 
 	/**
+	 * 配置监听器1
+	 */
+	@Bean
+	public MessageListenerAdapter listenerAdapterETH(Receiver receiver) {
+		MessageListenerAdapter messageListenerAdapter = new MessageListenerAdapter(receiver, "transferETH");
+		// 使用Jackson2JsonRedisSerialize 替换默认序列化(默认采用的是JDK序列化)
+		Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+		ObjectMapper om = new ObjectMapper();
+		om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+		om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+		jackson2JsonRedisSerializer.setObjectMapper(om);
+		messageListenerAdapter.setSerializer(jackson2JsonRedisSerializer);
+		return messageListenerAdapter;
+	}
+
+	/**
 	 * 配置监听器2
 	 */
 	@Bean
-	public MessageListenerAdapter listenerAdapterUSDT(Receiver receiver) {
-		MessageListenerAdapter messageListenerAdapter = new MessageListenerAdapter(receiver, "transferUSDT");
+	public MessageListenerAdapter listenerAdapterUSDT_TRC20(Receiver receiver) {
+		MessageListenerAdapter messageListenerAdapter = new MessageListenerAdapter(receiver, "transferUSDT_TRC20");
+		// 使用Jackson2JsonRedisSerialize 替换默认序列化(默认采用的是JDK序列化)
+		Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+		ObjectMapper om = new ObjectMapper();
+		om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+		om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+		jackson2JsonRedisSerializer.setObjectMapper(om);
+		messageListenerAdapter.setSerializer(jackson2JsonRedisSerializer);
+		return messageListenerAdapter;
+	}
+
+	/**
+	 * 配置监听器2
+	 */
+	@Bean
+	public MessageListenerAdapter listenerAdapterUSDT_ERC20(Receiver receiver) {
+		MessageListenerAdapter messageListenerAdapter = new MessageListenerAdapter(receiver, "transferUSDT_ERC20");
 		// 使用Jackson2JsonRedisSerialize 替换默认序列化(默认采用的是JDK序列化)
 		Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
 		ObjectMapper om = new ObjectMapper();

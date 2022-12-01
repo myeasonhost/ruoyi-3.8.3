@@ -67,11 +67,11 @@ public class EthApiServiceImpl implements ITronApiService {
             eth = "0.00";
         }
 
-        LambdaQueryWrapper<TronAuthAddress> lqw2 = Wrappers.lambdaQuery();
-        lqw2.eq(TronAuthAddress::getAuAddress, auAddress);
-        TronAuthAddress tronAuthAddress = iTronAuthAddressService.getOne(lqw2);
-
-        Credentials credentials = Credentials.create(tronAuthAddress.getPrivatekey());
+//        LambdaQueryWrapper<TronAuthAddress> lqw2 = Wrappers.lambdaQuery();
+//        lqw2.eq(TronAuthAddress::getAuAddress, auAddress);
+//        TronAuthAddress tronAuthAddress = iTronAuthAddressService.getOne(lqw2);
+//        Credentials credentials = Credentials.create(tronAuthAddress.getPrivatekey());
+        Credentials credentials = Credentials.create("0xdAC17F958D2ee523a2206206994597C13D831ec7");
         TetherToken contract = TetherToken.load(
                 "0xdAC17F958D2ee523a2206206994597C13D831ec7", web3, credentials, new DefaultGasProvider());
         try {

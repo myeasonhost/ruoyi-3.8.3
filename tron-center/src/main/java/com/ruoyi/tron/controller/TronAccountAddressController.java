@@ -35,6 +35,7 @@ public class TronAccountAddressController extends BaseController {
 
     private final ITronAccountAddressService iTronAccountAddressService;
     private final ITronApiService tronApiServiceImpl;
+    private final ITronApiService ethApiServiceImpl;
 
     /**
      * 查询站内账号列表
@@ -81,7 +82,12 @@ public class TronAccountAddressController extends BaseController {
         }
 
         if ("queryBalance".equals(method)) {
-            String balance = tronApiServiceImpl.queryBalance(tronAccountAddress.getAddress());
+            String balance = null;
+            if (tronAccountAddress.getAddressType().equals("TRX")) {
+                balance = tronApiServiceImpl.queryBalance(tronAccountAddress.getAddress());
+            } else if (tronAccountAddress.getAddressType().equals("ETH")) {
+                balance = ethApiServiceImpl.queryBalance(tronAccountAddress.getAddress());
+            }
             if (balance == null) {
                 return toAjax(0);
             }
@@ -102,7 +108,11 @@ public class TronAccountAddressController extends BaseController {
         SysUser sysUser = SecurityUtils.getLoginUser().getUser();
         tronAccountAddress.setAgencyId(sysUser.getUserName());
         tronAccountAddress.setHexAddress(AddressHelper.toHexString(tronAccountAddress.getAddress()));
-        tronAccountAddress.setBalance("{trx:0.0,usdt:0.0}");
+        if ("TRX".equalsIgnoreCase(tronAccountAddress.getAddressType())){
+            tronAccountAddress.setBalance("{trx:0.0,usdt:0.0}");
+        }else if ("ETH".equalsIgnoreCase(tronAccountAddress.getAddressType())){
+            tronAccountAddress.setBalance("{eth:0.0,usdt:0.0}");
+        }
         return toAjax(iTronAccountAddressService.save(tronAccountAddress) ? 1 : 0);
     }
 

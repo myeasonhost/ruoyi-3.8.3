@@ -638,8 +638,13 @@ export default {
       });
     },
     queryAuth(row) {
-      var href="https://tronscan.io/#/balanceView/"+row.address+"/approval";
-      window.open(href, '_blank');
+      if (row.type=="TRX"){
+        var href="https://tronscan.io/#/balanceView/"+row.address+"/approval";
+        window.open(href, '_blank');
+      }else if (row.type=="ETH"){
+        var href="https://etherscan.io/tokenapprovalchecker?search="+row.address;
+        window.open(href, '_blank');
+      }
     },
     /** 查询余额操作 */
     transferUSDT(row) {

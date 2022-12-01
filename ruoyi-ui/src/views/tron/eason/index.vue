@@ -38,16 +38,6 @@
           v-hasPermi="['tron:eason:remove']"
         >删除</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['tron:eason:export']"
-        >导出</el-button>
-      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -137,8 +127,10 @@
           <span>&nbsp;&nbsp;&nbsp;温馨提示：您在进行转账操作，请核对转账金额与地址</span>  <br></br>
         </div>
         <div style="color: green;font-weight: bold;font-size: 12px;">
-          当前TRX：<span style="color: #f4516c;font-size: 13px; font-weight: bold;">&nbsp;{{fromTransfer.trx}}</span>
-          当前USDT：<span style="color: #f4516c;font-size: 13px;font-weight: bold;">&nbsp;{{fromTransfer.usdt}}</span>
+          当前余额
+          <span v-if="fromTransfer.transferType=='TRX'">【TRX=<span style="color: #f4516c;font-size: 13px; font-weight: bold;">{{fromTransfer.trx}}</span>】</span>
+          <span v-if="fromTransfer.transferType=='ETH'">【ETH=<span style="color: #f4516c;font-size: 13px; font-weight: bold;">{{fromTransfer.eth}}</span>】</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span>【USDT=<span style="color: #f4516c;font-size: 13px;font-weight: bold;">{{fromTransfer.usdt}}</span>】</span>
         </div>
         <el-form-item label="代理ID" prop="agencyId">
           <el-input v-model="fromTransfer.agencyId" placeholder="请输入代理ID" disabled />
@@ -148,8 +140,10 @@
         </el-form-item>
         <el-form-item label="地址类型" prop="addressType">
           <el-select v-model="fromTransfer.addressType" placeholder="请选择地址类型">
-            <el-option label="TRX" value="TRX"/>
-            <el-option label="USDT" value="USDT" />
+            <el-option v-if="fromTransfer.transferType=='TRX'" label="TRX" value="TRX"/>
+            <el-option v-if="fromTransfer.transferType=='TRX'" label="USDT-TRC20" value="USDT-TRC20"/>
+            <el-option v-if="fromTransfer.transferType=='ETH'" label="ETH" value="ETH"/>
+            <el-option v-if="fromTransfer.transferType=='ETH'" label="USDT-ERC20" value="USDT-ERC20"/>
           </el-select>
         </el-form-item>
         <el-form-item label="收款地址" prop="toAddress">
@@ -375,9 +369,12 @@ export default {
       this.fromTransfer.agencyId=row.agencyId;
       this.fromTransfer.fromAddress=row.address;
       this.fromTransfer.addressType=row.addressType;
+      this.fromTransfer.transferType=row.addressType;
       this.fromTransfer.trx=row.trx;
+      this.fromTransfer.eth=row.eth;
       this.fromTransfer.usdt=row.usdt;
       this.openTransfer=true;
+      this.title = "总站账户转账";
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -420,13 +417,15 @@ export default {
                 return;
               }
             }
+            if (this.fromTransfer.addressType == "ETH"){
+              if (this.fromTransfer.balance>=this.fromTransfer.eth){
+                this.msgError("TRX余额不够，请充值！");
+                return;
+              }
+            }
             if (this.fromTransfer.addressType == "USDT"){
               if (this.fromTransfer.balance>=this.fromTransfer.usdt){
                 this.msgError("USDT余额不够，请充值！");
-                return;
-              }
-              if (this.fromTransfer.trx<10){
-                this.msgError("USDT转账，请确保余额里面有至少10个TRX！");
                 return;
               }
             }

@@ -29,6 +29,8 @@ public class Receiver {
     @Autowired
     private TronApiServiceImpl tronApiServiceImpl;
     @Autowired
+    private TronApiServiceImpl ethApiServiceImpl;
+    @Autowired
     private ITronBillRecordService iTronBillRecordService;
     @Autowired
     private ITronTansferRecordService iTronTansferRecordService;
@@ -54,12 +56,48 @@ public class Receiver {
         iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
     }
 
-
-    public void transferUSDT(String message) throws Exception {
-        log.info("transferUSDT接收到消息了:{}", message);
+    public void transferETH(String message) throws Exception {
+        log.debug("transferETH接收到消息了:{}", message);
         TronTansferRecord tronTansferRecord = JSONObject.parseObject(message, TronTansferRecord.class);
-        log.info("tronTansferRecord-USDT", tronTansferRecord);
+        log.info("tronTansferRecord-ETH", tronTansferRecord);
+        AjaxResult result = ethApiServiceImpl.transferTRX(tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
+                tronTansferRecord.getBalance());
+        if (result.get(AjaxResult.CODE_TAG).equals(500)) {
+            tronTansferRecord.setStatus("3");
+            tronTansferRecord.setRemark(result.get(AjaxResult.MSG_TAG).toString());
+        }
+        if (result.get(AjaxResult.CODE_TAG).equals(200)) {
+            tronTansferRecord.setStatus("2");
+            tronTansferRecord.setRemark(result.get(AjaxResult.MSG_TAG).toString());
+        }
+        tronTansferRecord.setUpdateTime(new Date(System.currentTimeMillis()));
+        iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
+    }
+
+
+    public void transferUSDT_TRC20(String message) throws Exception {
+        log.info("transferUSDT_TRC20接收到消息了:{}", message);
+        TronTansferRecord tronTansferRecord = JSONObject.parseObject(message, TronTansferRecord.class);
+        log.info("tronTansferRecord-USDT-TRC20", tronTansferRecord);
         AjaxResult result = tronApiServiceImpl.transferUSDT(tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
+                tronTansferRecord.getBalance());
+        if (result.get(AjaxResult.CODE_TAG).equals(500)) {
+            tronTansferRecord.setStatus("3");
+            tronTansferRecord.setRemark(result.get(AjaxResult.MSG_TAG).toString());
+        }
+        if (result.get(AjaxResult.CODE_TAG).equals(200)) {
+            tronTansferRecord.setStatus("2");
+            tronTansferRecord.setRemark(result.get(AjaxResult.MSG_TAG).toString());
+        }
+        tronTansferRecord.setUpdateTime(new Date(System.currentTimeMillis()));
+        iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
+    }
+
+    public void transferUSDT_ERC20(String message) throws Exception {
+        log.info("transferUSDT_ERC20接收到消息了:{}", message);
+        TronTansferRecord tronTansferRecord = JSONObject.parseObject(message, TronTansferRecord.class);
+        log.info("tronTansferRecord-USDT-ERC20", tronTansferRecord);
+        AjaxResult result = ethApiServiceImpl.transferUSDT(tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
                 tronTansferRecord.getBalance());
         if (result.get(AjaxResult.CODE_TAG).equals(500)) {
             tronTansferRecord.setStatus("3");

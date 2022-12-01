@@ -13,7 +13,7 @@
       <el-form-item label="地址类型" prop="addressType">
         <el-select v-model="queryParams.addressType" placeholder="请选择地址类型" clearable size="small">
           <el-option label="TRX" value="TRX" />
-          <el-option label="USDT" value="USDT" />
+          <el-option label="ETH" value="ETH" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -44,16 +44,6 @@
           v-hasPermi="['tron:account:remove']"
         >删除</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['tron:account:export']"
-        >导出</el-button>
-      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -62,7 +52,7 @@
       <el-table-column label="ID" align="center" prop="id" width="80"/>
       <el-table-column label="代理ID" align="center" prop="agencyId"width="80" />
       <el-table-column label="地址类型" align="center" prop="addressType" width="80"/>
-      <el-table-column label="地址(Hex格式)" align="center" prop="address" width="400"/>
+      <el-table-column label="地址" align="center" prop="address" width="400"/>
       <el-table-column label="余额" align="left"  prop="balance" width="150">
         <template slot-scope="scope">
           <div v-html="scope.row.balance">
@@ -112,19 +102,23 @@
           <span>&nbsp;&nbsp;&nbsp;温馨提示：您在进行转账操作，请核对转账金额与地址</span>  <br></br>
         </div>
         <div style="color: green;font-weight: bold;font-size: 12px;">
-          当前TRX：<span style="color: #f4516c;font-size: 13px; font-weight: bold;">&nbsp;{{fromTransfer.trx}}</span>
-          当前USDT：<span style="color: #f4516c;font-size: 13px;font-weight: bold;">&nbsp;{{fromTransfer.usdt}}</span>
+          当前余额
+          <span v-if="fromTransfer.transferType=='TRX'">【TRX=<span style="color: #f4516c;font-size: 13px; font-weight: bold;">{{fromTransfer.trx}}</span>】</span>
+          <span v-if="fromTransfer.transferType=='ETH'">【ETH=<span style="color: #f4516c;font-size: 13px; font-weight: bold;">{{fromTransfer.eth}}</span>】</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span>【USDT=<span style="color: #f4516c;font-size: 13px;font-weight: bold;">{{fromTransfer.usdt}}</span>】</span>
         </div>
         <el-form-item label="代理ID" prop="agencyId">
           <el-input v-model="fromTransfer.agencyId" placeholder="请输入代理ID" disabled />
         </el-form-item>
         <el-form-item label="来源地址" prop="fromAddress">
-          <el-input v-model="fromTransfer.fromAddress" placeholder="请输入地址-Base58格式" disabled/>
+          <el-input v-model="fromTransfer.fromAddress" placeholder="请输入地址" disabled/>
         </el-form-item>
         <el-form-item label="地址类型" prop="addressType">
           <el-select v-model="fromTransfer.addressType" placeholder="请选择地址类型">
-            <el-option label="TRX" value="TRX"/>
-            <el-option label="USDT" value="USDT" />
+            <el-option v-if="fromTransfer.transferType=='TRX'" label="TRX" value="TRX"/>
+            <el-option v-if="fromTransfer.transferType=='TRX'" label="USDT-TRC20" value="USDT-TRC20"/>
+            <el-option v-if="fromTransfer.transferType=='ETH'" label="ETH" value="ETH"/>
+            <el-option v-if="fromTransfer.transferType=='ETH'" label="USDT-ERC20" value="USDT-ERC20"/>
           </el-select>
         </el-form-item>
         <el-form-item label="收款地址" prop="toAddress">
@@ -146,11 +140,11 @@
         <el-form-item label="地址类型" prop="addressType">
           <el-select v-model="form.addressType" placeholder="请选择地址类型">
             <el-option label="TRX" value="TRX"/>
-            <el-option label="USDT" value="USDT" />
+            <el-option label="ETH" value="ETH" />
           </el-select>
         </el-form-item>
         <el-form-item label="地址" prop="address">
-          <el-input v-model="form.address" placeholder="请输入地址-Base58格式"/>
+          <el-input v-model="form.address" placeholder="请输入地址"/>
         </el-form-item>
         <el-form-item label="私钥" prop="privateKey">
           <el-input v-model="form.privateKey" placeholder="请输入私钥" />
@@ -202,7 +196,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         agencyId: undefined,
-        addressType: "TRX",
+        addressType: undefined,
         address: undefined,
         hexAddress: undefined,
         privateKey: undefined,
@@ -268,10 +262,16 @@ export default {
             var balance = eval('(' + item.balance +')');
             item.usdt = balance.usdt;
             item.trx = balance.trx;
-            item.balance= '<div><i class="usdtIcon"></i>&nbsp;&nbsp;<span style="color: #34bfa3;font-style: italic;font-size: 15px;font-weight: bolder;">'+item.usdt+'</span></div>'
-              +'<div><i class="trxIcon"></i>&nbsp;&nbsp;<span style="color: #5a5e66;font-style: italic;font-size: 13px;">'+item.trx+'</span></div>';
-          }
+            item.eth = balance.eth;
 
+            if (item.addressType=="TRX"){
+              item.balance= '<div><i class="usdtIcon"></i>&nbsp;&nbsp;<span style="color: #34bfa3;font-style: italic;font-size: 15px;font-weight: bolder;">'+item.usdt+'</span></div>'
+                +'<div><i class="trxIcon"></i>&nbsp;&nbsp;<span style="color: #5a5e66;font-style: italic;font-size: 13px;">'+item.trx+'</span></div>';
+            }else if (item.addressType=="ETH"){
+              item.balance= '<div><i class="ethUsdt"></i>&nbsp;&nbsp;<span style="color: #34bfa3;font-style: italic;font-size: 15px;font-weight: bolder;">'+item.usdt+'</span></div>'
+                +'<div><i class="ethIcon"></i>&nbsp;&nbsp;<span style="color: #5a5e66;font-style: italic;font-size: 13px;">'+item.eth+'</span></div>';
+            }
+          }
           this.accountList.push(item);
         })
 
@@ -335,9 +335,12 @@ export default {
       this.fromTransfer.agencyId=row.agencyId;
       this.fromTransfer.fromAddress=row.address;
       this.fromTransfer.addressType=row.addressType;
+      this.fromTransfer.transferType=row.addressType;
       this.fromTransfer.trx=row.trx;
+      this.fromTransfer.eth=row.eth;
       this.fromTransfer.usdt=row.usdt;
       this.openTransfer=true;
+      this.title = "站内转账";
     },
     /** 新增按钮操作 */
     handleAdd() {

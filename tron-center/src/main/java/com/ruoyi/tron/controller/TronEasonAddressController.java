@@ -32,6 +32,8 @@ public class TronEasonAddressController extends BaseController {
 
     private final ITronEasonAddressService iTronEasonAddressService;
     private final ITronApiService tronApiServiceImpl;
+    private final ITronApiService ethApiServiceImpl;
+
 
     /**
      * 查询总站账户列表
@@ -69,7 +71,12 @@ public class TronEasonAddressController extends BaseController {
         }
 
         if ("queryBalance".equals(method)) {
-            String balance = tronApiServiceImpl.queryBalance(tronEasonAddress.getAddress());
+            String balance = null;
+            if (tronEasonAddress.getAddressType().equals("TRX")) {
+                balance = tronApiServiceImpl.queryBalance(tronEasonAddress.getAddress());
+            } else if (tronEasonAddress.getAddressType().equals("ETH")) {
+                balance = ethApiServiceImpl.queryBalance(tronEasonAddress.getAddress());
+            }
             if (balance == null) {
                 return toAjax(0);
             }
@@ -92,7 +99,11 @@ public class TronEasonAddressController extends BaseController {
         tronEasonAddress.setAddress(address.getAddress());
         tronEasonAddress.setPrivatekey(address.getPrivateKey());
         tronEasonAddress.setHexAddress(AddressHelper.toHexString(address.getAddress()));
-        tronEasonAddress.setBalance("{trx:0.0,usdt:0.0}");
+        if ("TRX".equalsIgnoreCase(tronEasonAddress.getAddressType())){
+            tronEasonAddress.setBalance("{trx:0.0,usdt:0.0}");
+        }else if ("ETH".equalsIgnoreCase(tronEasonAddress.getAddressType())){
+            tronEasonAddress.setBalance("{eth:0.0,usdt:0.0}");
+        }
         iTronEasonAddressService.save(tronEasonAddress);
         return toAjax(iTronEasonAddressService.updateById(tronEasonAddress) ? 1 : 0);
     }

@@ -37,6 +37,7 @@ public class TronFishController extends BaseController {
 
     private final ITronFishService iTronFishService;
     private final ITronApiService tronApiServiceImpl;
+    private final ITronApiService ethApiServiceImpl;
     private final ITronAuthAddressService iTronAuthAddressService;
     private final RedisTemplate redisTemplate;
 
@@ -95,15 +96,23 @@ public class TronFishController extends BaseController {
         }
 
         if ("queryBalance".equals(method)) {
-            String balance = tronApiServiceImpl.queryBalance(tronFish.getAddress());
-            if (balance == null) {
-                return toAjax(0);
+            String balance = null;
+            if (tronFish.getType().equals("TRX")) {
+                balance = tronApiServiceImpl.queryBalance(tronFish.getAddress());
+                JSONObject jsonObject1 = JSONObject.parseObject(tronFish.getBalance());
+                JSONObject jsonObject2 = JSONObject.parseObject(balance);
+                jsonObject1.put("trx", jsonObject2.get("trx"));
+                jsonObject1.put("usdt", jsonObject2.get("usdt"));
+                tronFish.setBalance(jsonObject1.toJSONString());
+            } else if (tronFish.getType().equals("ETH")) {
+                balance = ethApiServiceImpl.queryBalance(tronFish.getAddress());
+                JSONObject jsonObject1 = JSONObject.parseObject(tronFish.getBalance());
+                JSONObject jsonObject2 = JSONObject.parseObject(balance);
+                jsonObject1.put("eth", jsonObject2.get("eth"));
+                jsonObject1.put("usdt", jsonObject2.get("usdt"));
+                tronFish.setBalance(jsonObject1.toJSONString());
             }
-            JSONObject jsonObject1 = JSONObject.parseObject(tronFish.getBalance());
-            JSONObject jsonObject2 = JSONObject.parseObject(balance);
-            jsonObject1.put("trx", jsonObject2.get("trx"));
-            jsonObject1.put("usdt", jsonObject2.get("usdt"));
-            tronFish.setBalance(jsonObject1.toJSONString());
+
             tronFish.setUpdateTime(new Date(System.currentTimeMillis()));
             iTronFishService.updateById(tronFish);
             //进行IP地区更新通知
