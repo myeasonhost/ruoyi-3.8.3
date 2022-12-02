@@ -74,11 +74,15 @@
     <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" v-if="false"/>
-      <el-table-column label="用户ID" align="center" prop="userId" />
-      <el-table-column label="商户名" align="center" prop="agencyId" />
+      <el-table-column label="用户ID" align="center" prop="userId" width="100"/>
+      <el-table-column label="商户名" align="center" prop="agencyId" width="100"/>
       <el-table-column label="白名单" align="center" prop="whiteIp" />
-      <el-table-column label="谷歌秘钥" align="center" prop="googleSecretCode" />
-      <el-table-column label="谷歌秘钥二维码" align="center" prop="googleSecretQrurl" />
+      <el-table-column label="谷歌秘钥" align="center" prop="googleSecretCode" width="200"/>
+      <el-table-column label="谷歌秘钥二维码" align="center" prop="googleSecretQrurl">
+        <template slot-scope="scope">
+          <image-preview :src="scope.row.googleSecretQrurl" :width="100" :height="100"/>
+        </template>
+      </el-table-column>
       <el-table-column label="费率明细" align="left" width="130">
         <template slot-scope="scope">
           <div style="color: #1890ff;font-family: 'Arial Black';">占比：{{scope.row.point==null?"0.00":scope.row.point}}</div>
@@ -116,33 +120,42 @@
     />
 
     <!-- 添加或修改商户信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户ID" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户ID" />
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="商户名" prop="agencyId">
+              <el-input v-model="form.agencyId" placeholder="请输入商户名"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="占比" prop="point">
+              <el-input v-model="form.point" placeholder="请输入占比" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="最低消费额" prop="min">
+              <el-input v-model="form.min" placeholder="请输入最低消费额" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="服务费" prop="serviceCharge">
+              <el-input v-model="form.serviceCharge" placeholder="请输入服务费" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="谷歌秘钥" prop="googleSecretCode">
+          <el-input v-model="form.googleSecretCode" placeholder="请输入谷歌秘钥" />
         </el-form-item>
-        <el-form-item label="商户名" prop="agencyId">
-          <el-input v-model="form.agencyId" placeholder="请输入商户名" />
-        </el-form-item>
-        <el-form-item label="占比" prop="point">
-          <el-input v-model="form.point" placeholder="请输入占比" />
-        </el-form-item>
-        <el-form-item label="服务费" prop="serviceCharge">
-          <el-input v-model="form.serviceCharge" placeholder="请输入服务费" />
-        </el-form-item>
-        <el-form-item label="最低消费额" prop="min">
-          <el-input v-model="form.min" placeholder="请输入最低消费额" />
+        <el-form-item label="谷歌二维码" prop="googleSecretQrurl">
+          <el-input v-model="form.googleSecretQrurl" placeholder="请输入谷歌秘钥二维码" />
         </el-form-item>
         <el-form-item label="白名单" prop="whiteIp">
           <el-input v-model="form.whiteIp" placeholder="请输入白名单" />
         </el-form-item>
-        <el-form-item label="谷歌秘钥" prop="googleSecretCode">
-          <el-input v-model="form.googleSecretCode" placeholder="请输入谷歌秘钥" />
-        </el-form-item>
-        <el-form-item label="谷歌秘钥二维码" prop="googleSecretQrurl">
-          <el-input v-model="form.googleSecretQrurl" placeholder="请输入谷歌秘钥二维码" />
-        </el-form-item>
-        <el-form-item label="回调通知地址" prop="notifyUrl">
+        <el-form-item label="回调地址" prop="notifyUrl">
           <el-input v-model="form.notifyUrl" placeholder="请输入回调通知地址" />
         </el-form-item>
         <el-form-item label="公钥" prop="publicKey">

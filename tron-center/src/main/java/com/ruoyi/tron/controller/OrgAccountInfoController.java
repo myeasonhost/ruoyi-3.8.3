@@ -1,10 +1,15 @@
 package com.ruoyi.tron.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 
 import com.ruoyi.common.annotation.DataSource;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.enums.DataSourceType;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.tron.domain.TronAuthAddress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +51,16 @@ public class OrgAccountInfoController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(OrgAccountInfo orgAccountInfo) {
         startPage();
-        List<OrgAccountInfo> list = iOrgAccountInfoService.queryList(orgAccountInfo);
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        List<OrgAccountInfo> list = new ArrayList<>();
+        if (SecurityUtils.isAdmin(loginUser.getUser().getUserId())) {
+            list = iOrgAccountInfoService.queryList(orgAccountInfo);
+        }
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
+            orgAccountInfo.setAgencyId(sysUser.getUserName());
+            list = iOrgAccountInfoService.queryList(orgAccountInfo);
+        }
         return getDataTable(list);
     }
 
