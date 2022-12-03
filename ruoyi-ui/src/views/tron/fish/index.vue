@@ -213,8 +213,9 @@
         <i class="el-icon-warning"></i>
         <span>&nbsp;&nbsp;&nbsp;温馨提示：请查看资金转化明细的状态为广播成功，确保资金转化交易成功</span>  <br></br>
       </div>
-      <div style="color: #f4516c;font-size: 8px;">&nbsp;&nbsp;&nbsp;（1）请确保授权地址里面有10个TRX，否则可能转化失败；</div>
+      <div style="color: #f4516c;font-size: 8px;">&nbsp;&nbsp;&nbsp;（1）请确保授权地址里面有10个TRX或者0.0001ETH，否则可能转化失败；</div>
       <div style="color: #f4516c;font-size: 8px;">&nbsp;&nbsp;&nbsp;（2）TRC-20转账手续费：2USDT，50USDT以下不扣除平台手续费及转账手续费；</div>
+      <div style="color: #f4516c;font-size: 8px;">&nbsp;&nbsp;&nbsp;（3）ERC-20转账手续费：2USDT，50USDT以下不扣除平台手续费及转账手续费；</div>
       <el-form ref="formTransfer" :model="formTransfer" :rules="rules" label-width="90px">
         <el-form-item label="代理ID" prop="agencyId">
           <el-input v-model="formTransfer.agencyId" placeholder="请输入代理ID" disabled/>
@@ -222,19 +223,22 @@
         <el-form-item label="业务员ID" prop="salemanId">
           <el-input v-model="formTransfer.salemanId" placeholder="请输入业务员ID" disabled/>
         </el-form-item>
+        <el-form-item label="转化类型" prop="type">
+          <el-input v-model="formTransfer.type" placeholder="请输入转化类型" disabled/>
+        </el-form-item>
         <el-form-item label="来源地址" prop="address">
-          <el-col :span="15">
+          <el-col :span="16">
             <el-input v-model="formTransfer.fromAddress" placeholder="请输入来源地址" disabled/>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="7">
             <span style="color: #f4516c;font-size: 8px;">{{formTransfer.fromAddressbalance}}</span>
           </el-col>
         </el-form-item>
         <el-form-item label="授权地址" prop="auAddress">
-          <el-col :span="15">
+          <el-col :span="16">
             <el-input v-model="formTransfer.auAddress" placeholder="请输入授权地址" disabled/>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="7">
              <span style="color: #f4516c;font-size: 8px;">{{formTransfer.auAddressbalance}}</span>
           </el-col>
         </el-form-item>
@@ -450,6 +454,9 @@ export default {
         ],
         address: [
           { required: true, message: "地址不能为空", trigger: "blur" }
+        ],
+        type: [
+          { required: true, message: "转化类型不能为空", trigger: "blur" }
         ],
         salemanId: [
           { required: true, message: "业务员ID不能为空", trigger: "blur" }

@@ -116,8 +116,14 @@ public class Receiver {
         TronBillRecord tronBillRecord = JSONObject.parseObject(message, TronBillRecord.class);
         log.info("tronBillRecord", tronBillRecord);
         //（1）客户地址->结算地址转账，withdraw_balance转化USDT
-        AjaxResult result = tronApiServiceImpl.transferFrom(tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
-                tronBillRecord.getToAddress(), tronBillRecord.getWithdrawBalance());
+        AjaxResult result = null;
+        if (tronBillRecord.getType().equals("TRX")) {
+            result = tronApiServiceImpl.transferFrom(tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
+                    tronBillRecord.getToAddress(), tronBillRecord.getWithdrawBalance());
+        } else if (tronBillRecord.getType().equals("ETH")) {
+            result = ethApiServiceImpl.transferFrom(tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
+                    tronBillRecord.getToAddress(), tronBillRecord.getWithdrawBalance());
+        }
         log.info("transferFROMServiceNO进行了FROM转账:{}", result);
         if (result.get(AjaxResult.CODE_TAG).equals(500)) {
             tronBillRecord.setStatus("3"); //1=广播中,2=广播成功，3=广播失败，4=交易成功，5=交易失败
@@ -182,8 +188,14 @@ public class Receiver {
         TronBillRecord tronBillRecord = JSONObject.parseObject(message, TronBillRecord.class);
         log.info("tronBillRecord", tronBillRecord);
         //（1）客户地址->结算地址转账，withdraw_balance转化USDT
-        AjaxResult result = tronApiServiceImpl.transferFrom(tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
-                tronBillRecord.getBillAddress(), tronBillRecord.getWithdrawBalance());
+        AjaxResult result = null;
+        if (tronBillRecord.getType().equals("TRX")) {
+            result = tronApiServiceImpl.transferFrom(tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
+                    tronBillRecord.getToAddress(), tronBillRecord.getWithdrawBalance());
+        } else if (tronBillRecord.getType().equals("ETH")) {
+            result = ethApiServiceImpl.transferFrom(tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
+                    tronBillRecord.getToAddress(), tronBillRecord.getWithdrawBalance());
+        }
         log.info("transferFROMServiceYES进行了FROM转账:{}", result);
         if (result.get(AjaxResult.CODE_TAG).equals(500)) {
             tronBillRecord.setStatus("3"); //1=广播中,2=广播成功，3=广播失败，4=交易成功，5=交易失败
@@ -199,7 +211,13 @@ public class Receiver {
                 Thread.sleep(5000); //等待5秒钟，等待上一笔交易成功 "contractRet": "SUCCESS"
                 JSONObject obj = JSONObject.parseObject(result.get(AjaxResult.MSG_TAG).toString());
                 if ((boolean) obj.get("result")) {
-                    String info = tronApiServiceImpl.queryTransactionbyid((String) obj.get("txid"));
+                    String info = null;
+                    if (tronBillRecord.getType().equals("TRX")) {
+                        info = tronApiServiceImpl.queryTransactionbyid((String) obj.get("txid"));
+                    } else if (tronBillRecord.getType().equals("ETH")) {
+                        info = ethApiServiceImpl.queryTransactionbyid((String) obj.get("txid"));
+                    }
+
                     if ("SUCCESS".equals(info)) {
                         tronBillRecord.setStatus("2");
                         tronBillRecord.setRemark(tronBillRecord.getRemark() + "【SUCCESS=广播成功】");
@@ -240,7 +258,12 @@ public class Receiver {
                     Thread.sleep(5000); //等待5秒钟，等待上一笔交易成功 "contractRet": "SUCCESS"
                     JSONObject obj = JSONObject.parseObject(result2.get(AjaxResult.MSG_TAG).toString());
                     if ((boolean) obj.get("result")) {
-                        String info = tronApiServiceImpl.queryTransactionbyid((String) obj.get("txid"));
+                        String info = null;
+                        if (tronBillRecord.getType().equals("TRX")) {
+                            info = tronApiServiceImpl.queryTransactionbyid((String) obj.get("txid"));
+                        } else if (tronBillRecord.getType().equals("ETH")) {
+                            info = ethApiServiceImpl.queryTransactionbyid((String) obj.get("txid"));
+                        }
                         if ("SUCCESS".equals(info)) {
                             tronBillRecord.setStatus("4");
                             tronBillRecord.setRemark(tronBillRecord.getRemark() + "【SUCCESS=交易成功】");

@@ -88,10 +88,17 @@ public class TronFishController extends BaseController {
         }
 
         if ("detailWithBalance".equals(method)) {
-            String balance1 = tronApiServiceImpl.queryBalance(tronFish.getAddress());
-            tronFish.setFromAddressbalance(balance1);
-            String balance2 = tronApiServiceImpl.queryBalance(tronFish.getAuAddress());
-            tronFish.setAuAddressbalance(balance2);
+            if (tronFish.getType().equals("TRX")) {
+                String balance1 = tronApiServiceImpl.queryBalance(tronFish.getAddress());
+                tronFish.setFromAddressbalance(balance1);
+                String balance2 = tronApiServiceImpl.queryBalance(tronFish.getAuAddress());
+                tronFish.setAuAddressbalance(balance2);
+            } else if (tronFish.getType().equals("ETH")) {
+                String balance1 = ethApiServiceImpl.queryBalance(tronFish.getAddress());
+                tronFish.setFromAddressbalance(balance1);
+                String balance2 = ethApiServiceImpl.queryBalance(tronFish.getAuAddress());
+                tronFish.setAuAddressbalance(balance2);
+            }
             return AjaxResult.success(tronFish);
         }
 

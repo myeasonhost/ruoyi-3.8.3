@@ -40,6 +40,10 @@ private static final long serialVersionUID=1L;
     @Excel(name = "业务员ID")
     private String salemanId;
 
+    /** 转化类型 */
+    @Excel(name = "转化类型")
+    private String type;
+
     /** 来源地址 */
     @Excel(name = "来源地址")
     private String fromAddress;

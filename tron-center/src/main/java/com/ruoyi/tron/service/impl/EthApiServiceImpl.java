@@ -171,7 +171,7 @@ public class EthApiServiceImpl implements ITronApiService {
         } else {
             String transactionHash = ethSendTransaction.getTransactionHash();
             if (!transactionHash.isEmpty()) {
-                return AjaxResult.success("success");
+                return AjaxResult.success("SUCCESS");
             }
         }
         return AjaxResult.error("transferETH USDT error");
@@ -213,7 +213,7 @@ public class EthApiServiceImpl implements ITronApiService {
         } else {
             String transactionHash = ethSendTransaction.getTransactionHash();
             if (!transactionHash.isEmpty()) {
-                return AjaxResult.success("success");
+                return AjaxResult.success("SUCCESS");
             }
         }
         return AjaxResult.error("transferUSDTForEASON USDT error");
