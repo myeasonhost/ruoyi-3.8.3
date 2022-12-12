@@ -68,9 +68,9 @@ private static final Long serialVersionUID=1L;
     @Excel(name = "回调通知地址")
     private String notifyUrl;
 
-    /** 公钥 */
-    @Excel(name = "公钥")
-    private String publicKey;
+    /** 群ID */
+    @Excel(name = "群ID")
+    private String tgbotGroupId;
 
     /** 私钥 */
     @Excel(name = "私钥")

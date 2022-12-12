@@ -158,8 +158,8 @@
         <el-form-item label="回调地址" prop="notifyUrl">
           <el-input v-model="form.notifyUrl" placeholder="请输入回调通知地址" />
         </el-form-item>
-        <el-form-item label="公钥" prop="publicKey">
-          <el-input v-model="form.publicKey" placeholder="请输入公钥" />
+        <el-form-item label="飞机群ID" prop="tgbotGroupId">
+          <el-input v-model="form.tgbotGroupId" placeholder="请输入飞机群ID" />
         </el-form-item>
         <el-form-item label="私钥" prop="privateKey">
           <el-input v-model="form.privateKey" placeholder="请输入私钥" />
@@ -216,7 +216,7 @@ export default {
         googleSecretCode: undefined,
         googleSecretQrurl: undefined,
         notifyUrl: undefined,
-        publicKey: undefined,
+        tgbotGroupId: undefined,
         privateKey: undefined,
       },
       // 表单参数
@@ -241,7 +241,7 @@ export default {
         googleSecretQrurl: [
           { required: true, message: "谷歌秘钥二维码不能为空", trigger: "blur" }
         ],
-        publicKey: [
+        tgbotGroupId: [
           { required: true, message: "公钥不能为空", trigger: "blur" }
         ],
         privateKey: [
@@ -281,7 +281,7 @@ export default {
         googleSecretCode: undefined,
         googleSecretQrurl: undefined,
         notifyUrl: undefined,
-        publicKey: undefined,
+        tgbotGroupId: undefined,
         privateKey: undefined,
         remark: undefined,
         createTime: undefined,

