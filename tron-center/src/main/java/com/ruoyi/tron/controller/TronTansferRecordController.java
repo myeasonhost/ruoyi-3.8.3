@@ -106,12 +106,12 @@ public class TronTansferRecordController extends BaseController {
         if ("USDT-TRC20".equals(tronTansferRecord.getAddressType())) {
             //进行USDT转账通知
             String jsonObject= JSONObject.toJSONString(tronTansferRecord);
-            redisTemplate.convertAndSend("transferUSDT-TRC20",jsonObject);
+            redisTemplate.convertAndSend("transferUSDT_TRC20",jsonObject);
         }
         if ("USDT-ERC20".equals(tronTansferRecord.getAddressType())) {
             //进行USDT转账通知
             String jsonObject= JSONObject.toJSONString(tronTansferRecord);
-            redisTemplate.convertAndSend("transferUSDT-ERC20",jsonObject);
+            redisTemplate.convertAndSend("transferUSDT_ERC20",jsonObject);
         }
         return toAjax(1 );
     }

