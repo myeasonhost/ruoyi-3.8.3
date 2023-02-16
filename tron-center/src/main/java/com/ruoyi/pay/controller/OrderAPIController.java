@@ -1,5 +1,6 @@
 package com.ruoyi.pay.controller;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
@@ -16,10 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * API管理Controller
@@ -43,21 +43,32 @@ public class OrderAPIController extends BaseController {
      */
     @ApiOperation(value = "支付订单生成", notes = "用于生成 USDT.TRC20 的支付数据。商户可选择直接跳转至官方收银台供用户支付，也可以使用数据自定义收银台。在用户支付成功后，系统将即时进行 回调通知。")
     @PostMapping("/createWallet1")
-    public AjaxResult create(@RequestBody CreateAddress createAddress) {
-        log.info("【支付订单】支付订单生成sign:{},参数:{}", createAddress, createAddress.getSign());
-        if (createAddress.getUserId() == null) {
-            return AjaxResult.error("用户ID不能为空");
-        }
-        if (createAddress.getOrganizationId() == null) {
-            return AjaxResult.error("商户ID不能为空");
-        }
-        String sgin = DigestUtil.md5Hex(createAddress.toString());
-        if (!sgin.equals(createAddress.getSign())) {
-            log.error("【支付订单】本地正确sign={},错误三方sign={}", sgin, createAddress.getSign());
-            return AjaxResult.error("sign签名错误");
-        }
-        OrgAccountOrder orgAccountOrder = new OrgAccountOrder();
-
+    public AjaxResult create(@RequestParam @NotNull(message = "金额不能为空") String amount,
+                             @RequestParam String currency,
+                             @RequestParam String coin_code,
+                             @RequestParam String notify_url,
+                             @RequestParam String redirect_url,
+                             @RequestParam String order_id,
+                             @RequestParam String customer_id,
+                             @RequestParam String product_name,
+                             @RequestParam String locale,
+                             @RequestParam String signature) {
+        log.info("【支付订单】支付订单生成sign:{},参数:{}", amount, currency);
+//        if (createAddress.getUserId() == null) {
+//            return AjaxResult.error("用户ID不能为空");
+//        }
+//        if (createAddress.getOrganizationId() == null) {
+//            return AjaxResult.error("商户ID不能为空");
+//        }
+//        String sgin = DigestUtil.md5Hex(createAddress.toString());
+//        if (!sgin.equals(createAddress.getSign())) {
+//            log.error("【支付订单】本地正确sign={},错误三方sign={}", sgin, createAddress.getSign());
+//            return AjaxResult.error("sign签名错误");
+//        }
+//        OrgAccountOrder orgAccountOrder = new OrgAccountOrder();
+//        orgAccountOrder.setSiteId(createAddress.getOrganizationId().toString());
+//        String orderId = "MB" + IdUtil.getSnowflakeNextIdStr();
+//        orgAccountOrder.setOrderId(orderId);
 
         return AjaxResult.success();
     }
