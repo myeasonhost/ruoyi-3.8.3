@@ -65,6 +65,7 @@ public class TronAuthAddressServiceImpl extends ServiceImpl<TronAuthAddressMappe
         return username;
     }
 
+
     @Override
     public String getAuthAddressUri(String configKey) {
         String config_value=this.baseMapper.executeQuery("SELECT config_value FROM sys_config WHERE config_key='"+configKey+"'");

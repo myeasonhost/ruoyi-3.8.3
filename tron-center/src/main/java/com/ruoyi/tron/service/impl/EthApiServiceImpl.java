@@ -55,6 +55,11 @@ public class EthApiServiceImpl implements ITronApiService {
     private ITronEasonAddressService iTronEasonAddressService;
 
     @Override
+    public Boolean validateAddress(String address) throws Exception {
+        return false;
+    }
+
+    @Override
     public String queryBalance(String auAddress) {
         // defaults to http://localhost:8545/
         Web3j web3 = Web3j.build(new HttpService("https://mainnet.infura.io/v3/23efd2dc07164509a9089b9960c3f92b"));

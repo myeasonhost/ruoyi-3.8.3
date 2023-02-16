@@ -53,6 +53,7 @@ public class OrgAccountInfoServiceImpl extends ServiceImpl<OrgAccountInfoMapper,
             return R.fail("谷歌验证码错误");
         }
         if (StringUtils.isEmpty(orgAccountInfo.getWhiteIp()) || !orgAccountInfo.getWhiteIp().contains(visitedIp + ",")) {
+            log.error(orgAccountInfo.getWhiteIp()+"不在白名单内【"+visitedIp+"】");
             return R.fail("白名单错误");
         }
         return R.ok();
