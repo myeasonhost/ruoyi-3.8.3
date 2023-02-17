@@ -77,3 +77,20 @@ spring:
                 max-active: 8
                 # #连接池最大阻塞等待时间（使用负值表示没有限制）
                 max-wait: -1ms
+spring.rabbitmq.host: 192.168.1.230
+spring.rabbitmq.port: 5672
+spring.rabbitmq.username: guest
+spring.rabbitmq.password: guest
+spring.rabbitmq.virtual-host: /
+spring.rabbitmq.publisher-confirm-type: correlated
+
+# 超时订单通知-发送者
+spring.cloud.stream.bindings.payTimeOutput.destination: payTimeOutput
+spring.cloud.stream.bindings.payTimeOutput.content-type: application/json
+spring.cloud.stream.rabbit.bindings.payTimeOutput.producer.delayed-exchange: true
+
+# 超时订单通知-接收者
+spring.cloud.stream.bindings.payTimeInput.destination: payTimeOutput
+spring.cloud.stream.bindings.payTimeInput.content-type: application/json
+spring.cloud.stream.bindings.payTimeInput.group: notify
+spring.cloud.stream.bindings.payTimeInput.consumer.concurrency: 1

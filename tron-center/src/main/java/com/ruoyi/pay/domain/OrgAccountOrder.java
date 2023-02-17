@@ -33,7 +33,7 @@ public class OrgAccountOrder implements Serializable {
      * 支付订单号
      */
     @TableId(value = "id")
-    private String id;
+    private Long id;
 
     /**
      * 商户ID
@@ -82,6 +82,12 @@ public class OrgAccountOrder implements Serializable {
      */
     @Excel(name = "支付币种")
     private String coinCode;
+
+    /**
+     * 收款地址
+     */
+    @Excel(name = "收款地址")
+    private String coinAddress;
 
     /**
      * 0=支付中,2=支付成功，3=支付超时

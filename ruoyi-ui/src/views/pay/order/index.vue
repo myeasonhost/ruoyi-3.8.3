@@ -51,18 +51,21 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange" size="small">
       <el-table-column label="支付订单号" align="center" prop="id" v-if="false"/>
       <el-table-column label="商户ID" align="center" prop="siteId"/>
-      <el-table-column label="商户订单号" align="center" prop="orderId"/>
+      <el-table-column label="商户订单号" align="center" prop="orderId" width="180"/>
       <el-table-column label="用户名" align="center" prop="userId"/>
       <el-table-column label="产品名" align="center" prop="productName"/>
-      <el-table-column label="金额" align="center" prop="amount"/>
-      <el-table-column label="支付明细" align="center">
+      <el-table-column label="支付明细" align="left" width="120">
         <template slot-scope="scope">
-          <div style="color: #666666;">支付金额：{{ scope.row.coinAmount }}</div>
-          <div style="color: #666666;">支付币种：{{ scope.row.coinAmount }}</div>
-          <div style="color: #666666;">订单币种：{{ scope.row.currency }}</div>
+          <div style="color: #13ce66;font-family: 'Arial Black';font-size: xx-small;">上分金额：{{ scope.row.amount }}</div>
+          <div style="color: #f4516c;font-family: 'Arial Black';font-size: xx-small;">支付金额：{{
+              scope.row.coinAmount
+            }}
+          </div>
+          <div style="color: #666666;font-size: xx-small;">支付币种：{{ scope.row.coinCode }}</div>
+          <div style="color: #666666;font-size: xx-small;">订单币种：{{ scope.row.currency }}</div>
         </template>
       </el-table-column>
       <el-table-column label="支付状态" align="center" prop="status">
@@ -72,15 +75,11 @@
       </el-table-column>
       <el-table-column label="通知状态" align="center" prop="notifySucceed">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.mbpay_notify_status" :value="scope.row.notifySucceed"/>
+          <dict-tag :options="dict.type.tron_notify_state" :value="scope.row.notifySucceed"/>
         </template>
       </el-table-column>
-      <el-table-column label="订单过期时间" align="center" prop="timeout">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.timeout, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="支付时间" align="center" prop="payTime" width="180">
+      <el-table-column label="收款地址" align="center" prop="coinAddress" width="150"/>
+      <el-table-column label="支付时间" align="center" prop="payTime" width="150">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.payTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
@@ -91,10 +90,11 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-phone-outline"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['pay:order:edit']"
-          >修改
+            v-if="scope.row.status!=2"
+          >手动回调
           </el-button>
           <el-button
             size="mini"
@@ -102,6 +102,7 @@
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['pay:order:remove']"
+            v-if="scope.row.status!=2"
           >删除
           </el-button>
         </template>
@@ -116,55 +117,30 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改支付订单对话框 -->
+    <!-- 添加或修改三方代收订单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="商户ID" prop="siteId">
-          <el-input v-model="form.siteId" placeholder="请输入商户ID"/>
+        <el-form-item label="订单号" prop="orderId">
+          <el-input v-model="form.orderId" placeholder="请输入商户订单号" disabled/>
         </el-form-item>
-        <el-form-item label="商户订单号" prop="orderId">
-          <el-input v-model="form.orderId" placeholder="请输入商户订单号"/>
-        </el-form-item>
-        <el-form-item label="用户名" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户名"/>
+        <el-form-item label="用户ID" prop="userId">
+          <el-input v-model="form.userId" placeholder="请输入用户ID" disabled/>
         </el-form-item>
         <el-form-item label="产品名" prop="productName">
-          <el-input v-model="form.productName" placeholder="请输入产品名"/>
+          <el-input v-model="form.productName" placeholder="请输入产品名" disabled/>
         </el-form-item>
-        <el-form-item label="金额" prop="amount">
-          <el-input v-model="form.amount" placeholder="请输入金额"/>
+        <el-form-item label="上分金额" prop="amount">
+          <el-input v-model="form.amount" placeholder="请输入金额" disabled/>
         </el-form-item>
-        <el-form-item label="订单币种单位。支持USD" prop="currency">
-          <el-input v-model="form.currency" placeholder="请输入订单币种单位。支持USD"/>
-        </el-form-item>
-        <el-form-item label="支付金额" prop="coinAmount">
-          <el-input v-model="form.coinAmount" placeholder="请输入支付金额"/>
-        </el-form-item>
-        <el-form-item label="支付币种" prop="coinCode">
-          <el-input v-model="form.coinCode" placeholder="请输入支付币种"/>
-        </el-form-item>
-        <el-form-item label="0=支付中,2=支付成功，3=支付超时">
+        <el-form-item label="状态">
           <el-radio-group v-model="form.status">
-            <el-radio label="1">请选择字典生成</el-radio>
+            <el-radio
+              v-for="dict in dict.type.three_status"
+              :key="dict.value"
+              :label="dict.value"
+            >{{ dict.label }}
+            </el-radio>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item label="0=未通知，1=通知成功，2=通知失败" prop="notifySucceed">
-          <el-input v-model="form.notifySucceed" placeholder="请输入0=未通知，1=通知成功，2=通知失败"/>
-        </el-form-item>
-        <el-form-item label="通知次数" prop="notifyTimes">
-          <el-input v-model="form.notifyTimes" placeholder="请输入通知次数"/>
-        </el-form-item>
-        <el-form-item label="订单过期时间" prop="timeout">
-          <el-input v-model="form.timeout" placeholder="请输入订单过期时间"/>
-        </el-form-item>
-        <el-form-item label="支付时间" prop="payTime">
-          <el-date-picker clearable size="small"
-                          v-model="form.payTime"
-                          type="datetime"
-                          value-format="yyyy-MM-dd HH:mm:ss"
-                          placeholder="选择支付时间"
-          >
-          </el-date-picker>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注"/>
@@ -183,7 +159,7 @@ import { addOrder, delOrder, exportOrder, getOrder, listOrder, updateOrder } fro
 
 export default {
   name: 'Order',
-  dicts: ['three_status', 'mbpay_notify_status'],
+  dicts: ['three_status', 'tron_notify_state'],
   components: {},
   data() {
     return {
@@ -266,6 +242,7 @@ export default {
         currency: undefined,
         coinAmount: undefined,
         coinCode: undefined,
+        coinAddress: undefined,
         status: '0',
         notifySucceed: undefined,
         notifyTimes: undefined,
