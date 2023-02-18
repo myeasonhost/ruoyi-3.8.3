@@ -1,6 +1,7 @@
 package com.ruoyi.pay.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -122,9 +123,9 @@ public class OrderAPIController extends BaseController {
             lambdaQueryWrapper3.eq(OrgAccountOrder::getSiteId, payEntity.getMch_id());
             lambdaQueryWrapper3.eq(OrgAccountOrder::getStatus, "1"); //1=支付中,2=支付成功，3=支付超时
             lambdaQueryWrapper3.eq(OrgAccountOrder::getCoinAmount, coinAmountStr);
-            lambdaQueryWrapper3.lt(OrgAccountOrder::getCreateTime, new Date()); //新订单时间>金额相同的旧订单
-            OrgAccountOrder orgAccountOrder1 = this.iOrgAccountOrderService.getOne(lambdaQueryWrapper3);
-            if (orgAccountOrder1 == null) {
+            lambdaQueryWrapper3.gt(OrgAccountOrder::getExpirationTime, new Date()); //当前时间未过期
+            List<OrgAccountOrder> list = this.iOrgAccountOrderService.list(lambdaQueryWrapper3);
+            if (list.isEmpty()) {
                 break;
             }
         }
@@ -137,11 +138,12 @@ public class OrderAPIController extends BaseController {
         orgAccountOrder.setRedirectUrl(payEntity.getRedirect_url());
         String cashierUrl = responseEncryptResult("fT6phq0wkOPRlAoyToidAnkogUV7ttGo", orgAccountAddress.getAddress());
         orgAccountOrder.setCashierUrl(cashierUrl);
+        Integer timeout = configServiceImpl.getPayTimeOut();
+        orgAccountOrder.setTimeout(timeout.toString());
+        orgAccountOrder.setExpirationTime(DateUtil.offsetMinute(orgAccountOrder.getCreateTime(), timeout));
         orgAccountOrder.setCreateTime(new Date(System.currentTimeMillis()));
         this.iOrgAccountOrderService.save(orgAccountOrder);
         //（4）发送超时消息通知
-        Integer timeout = configServiceImpl.getPayTimeOut();
-        orgAccountOrder.setTimeout(timeout.toString());
         messageProducer.payTimeOutput(orgAccountOrder, 60 * timeout); //30分钟超时
         //（5）生成返回信息
         OrderResultModel resultModel = new OrderResultModel();

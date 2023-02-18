@@ -94,7 +94,7 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['pay:order:edit']"
             v-if="scope.row.status!=2"
-          >手动回调
+          >手动补单
           </el-button>
           <el-button
             size="mini"
@@ -119,6 +119,14 @@
 
     <!-- 添加或修改三方代收订单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <div style="color: green;font-weight: bold;font-size: 10px;">
+        <div>
+          <i class="el-icon-warning"></i>
+          <span>&nbsp;&nbsp;&nbsp;温馨提示：如果客户金额充值错误</span>
+        </div>
+        <div style="color: #f4516c;font-size: 8px;">&nbsp;&nbsp;&nbsp;（1）请核对充值信息之后，更正上分金额+充值金额，重新手动补单</div>
+        <div style="color: #f4516c;font-size: 8px;">&nbsp;&nbsp;&nbsp;（2）补单请更正状态订单为【支付成功】进行上分</div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="订单号" prop="orderId">
           <el-input v-model="form.orderId" placeholder="请输入商户订单号" disabled/>
@@ -130,7 +138,10 @@
           <el-input v-model="form.productName" placeholder="请输入产品名" disabled/>
         </el-form-item>
         <el-form-item label="上分金额" prop="amount">
-          <el-input v-model="form.amount" placeholder="请输入金额" disabled/>
+          <el-input v-model="form.amount" placeholder="请更正上分金额" type='number' min='0.01' step='0.01' onkeyup="value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')"/>
+        </el-form-item>
+        <el-form-item label="充值金额" prop="coinAmount">
+          <el-input v-model="form.coinAmount" placeholder="请更正充值金额" type='number' min='0.01' step='0.01' onkeyup="value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')"/>
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -200,14 +211,14 @@ export default {
         orderId: [
           { required: true, message: '商户订单号不能为空', trigger: 'blur' }
         ],
-        userId: [
-          { required: true, message: '用户名不能为空', trigger: 'blur' }
+        amount: [
+          { required: true, message: '上分金额不能为空', trigger: 'blur' }
         ],
-        productName: [
-          { required: true, message: '产品名不能为空', trigger: 'blur' }
+        coinAmount: [
+          { required: true, message: '充值金额不能为空', trigger: 'blur' }
         ],
-        createTime: [
-          { required: true, message: '产品名不能为空', trigger: 'blur' }
+        remark: [
+          { required: true, message: '备注不能为空', trigger: 'blur' }
         ]
       }
     }

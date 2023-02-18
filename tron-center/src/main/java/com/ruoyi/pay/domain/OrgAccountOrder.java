@@ -164,6 +164,7 @@ public class OrgAccountOrder implements Serializable {
     @Excel(name = "备注")
     private String remark;
 
+    private Date expirationTime;
     /**
      * $column.columnComment
      */
