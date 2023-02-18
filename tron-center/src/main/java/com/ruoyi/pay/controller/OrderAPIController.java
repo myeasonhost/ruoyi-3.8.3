@@ -83,10 +83,19 @@ public class OrderAPIController extends BaseController {
         LambdaQueryWrapper<OrgAccountAddress> lambdaQueryWrapper2 = new LambdaQueryWrapper();
         lambdaQueryWrapper2.eq(OrgAccountAddress::getAgencyId, payEntity.getMch_id());
         lambdaQueryWrapper2.eq(OrgAccountAddress::getStatus, "0"); //帐号状态（0正常 1停用）
-        OrgAccountAddress orgAccountAddress = this.iOrgAccountAddressService.getOne(lambdaQueryWrapper2);
-        if (orgAccountAddress == null) {
+        List<OrgAccountAddress> listAddress = iOrgAccountAddressService.list(lambdaQueryWrapper2);
+        if (listAddress.isEmpty()) {
             return AjaxResult.error("商户收款地址没有配置");
         }
+        LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper3 = new LambdaQueryWrapper();
+        lambdaQueryWrapper3.eq(OrgAccountOrder::getSiteId, payEntity.getMch_id());
+        lambdaQueryWrapper3.eq(OrgAccountOrder::getOrderId, payEntity.getOrder_id());
+        OrgAccountOrder orgAccountOrder1 = iOrgAccountOrderService.getOne(lambdaQueryWrapper3);
+        if (orgAccountOrder1 != null) {
+            return AjaxResult.error("商户order_id已经存在");
+        }
+        Collections.shuffle(listAddress); //打乱顺序
+        OrgAccountAddress orgAccountAddress = listAddress.get(0);
         //（1）sign签名验证与校验
         Map<String, Object> treeMap = new TreeMap<>(BeanUtil.beanToMap(payEntity));
         treeMap.remove("sign");
@@ -107,9 +116,10 @@ public class OrderAPIController extends BaseController {
         }
         //（2）生成订单
         OrgAccountOrder orgAccountOrder = new OrgAccountOrder();
+        String payId = "MB" + IdUtil.getSnowflakeNextIdStr();
+        orgAccountOrder.setId(payId);
         orgAccountOrder.setSiteId(payEntity.getMch_id());
-        String orderId = "MB" + IdUtil.getSnowflakeNextIdStr();
-        orgAccountOrder.setOrderId(orderId);
+        orgAccountOrder.setOrderId(payEntity.getOrder_id());
         orgAccountOrder.setUserId(payEntity.getCustomer_id());
         orgAccountOrder.setProductName(payEntity.getProduct_name());
         orgAccountOrder.setAmount(payEntity.getAmount()); //订单金额
@@ -119,12 +129,12 @@ public class OrderAPIController extends BaseController {
         while (true) {
             Double coinAmount = NumberUtil.add(Double.parseDouble(payEntity.getAmount()), RandomUtil.randomDouble(0.01, 0.99));
             coinAmountStr = NumberUtil.roundStr(coinAmount, 2);
-            LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper3 = new LambdaQueryWrapper();
-            lambdaQueryWrapper3.eq(OrgAccountOrder::getSiteId, payEntity.getMch_id());
-            lambdaQueryWrapper3.eq(OrgAccountOrder::getStatus, "1"); //1=支付中,2=支付成功，3=支付超时
-            lambdaQueryWrapper3.eq(OrgAccountOrder::getCoinAmount, coinAmountStr);
-            lambdaQueryWrapper3.gt(OrgAccountOrder::getExpirationTime, new Date()); //当前时间未过期
-            List<OrgAccountOrder> list = this.iOrgAccountOrderService.list(lambdaQueryWrapper3);
+            LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper4 = new LambdaQueryWrapper();
+            lambdaQueryWrapper4.eq(OrgAccountOrder::getSiteId, payEntity.getMch_id());
+            lambdaQueryWrapper4.eq(OrgAccountOrder::getStatus, "1"); //1=支付中,2=支付成功，3=支付超时
+            lambdaQueryWrapper4.eq(OrgAccountOrder::getCoinAmount, coinAmountStr);
+            lambdaQueryWrapper4.gt(OrgAccountOrder::getExpirationTime, new Date()); //当前时间未过期
+            List<OrgAccountOrder> list = this.iOrgAccountOrderService.list(lambdaQueryWrapper4);
             if (list.isEmpty()) {
                 break;
             }

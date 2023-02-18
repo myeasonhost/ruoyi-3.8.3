@@ -10,9 +10,9 @@ export function listAddress(query) {
 }
 
 // 查询收款地址详细
-export function getAddress(id) {
+export function getAddress(id, method) {
   return request({
-    url: '/pay/address/' + id,
+    url: '/pay/address/' + id + '/' + method,
     method: 'get'
   })
 }
@@ -38,7 +38,7 @@ export function updateAddress(data) {
 // 修改收款状态地址
 export function changeStatus(id, status) {
   return request({
-    url: '/pay/address/' + id + "/" + status,
+    url: '/pay/address/' + id + '/' + status,
     method: 'put'
   })
 }

@@ -33,6 +33,7 @@ public class OrgAccountAddressController extends BaseController {
 
     private final IOrgAccountAddressService iOrgAccountAddressService;
     private final ITronApiService tronApiServiceImpl;
+    private final ITronApiService ethApiServiceImpl;
 
     /**
      * 查询收款地址列表
@@ -61,9 +62,29 @@ public class OrgAccountAddressController extends BaseController {
      * 获取收款地址详细信息
      */
     @PreAuthorize("@ss.hasPermi('pay:address:query')")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return AjaxResult.success(iOrgAccountAddressService.getById(id));
+    @GetMapping(value = "/{id}/{method}")
+    public AjaxResult getInfo(@PathVariable("id") Long id, @PathVariable("method") String method) {
+        OrgAccountAddress accountAddress = iOrgAccountAddressService.getById(id);
+        if ("detail".equals(method)) {
+            accountAddress.setPrivatekey(null); //私钥不对外开放
+            return AjaxResult.success(accountAddress);
+        }
+
+        if ("queryBalance".equals(method)) {
+            String balance = null;
+            if (accountAddress.getAddressType().equals("TRX")) {
+                balance = tronApiServiceImpl.queryBalance(accountAddress.getAddress());
+            } else if (accountAddress.getAddressType().equals("ETH")) {
+                balance = ethApiServiceImpl.queryBalance(accountAddress.getAddress());
+            }
+            if (balance == null) {
+                return toAjax(0);
+            }
+            accountAddress.setBalance(balance);
+            iOrgAccountAddressService.updateById(accountAddress);
+            return AjaxResult.success(balance);
+        }
+        return AjaxResult.error("查询失败");
     }
 
     /**

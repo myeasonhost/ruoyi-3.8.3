@@ -12,4 +12,8 @@ public interface UserSink {
     /*** 支付超时通知消息 ***/
     @Input("payTimeInput")
     SubscribableChannel payTimeInput();
+
+    /*** 支付订单回调通知 ***/
+    @Input("callBackInput")
+    SubscribableChannel callBackInput();
 }

@@ -13,5 +13,7 @@ public interface Source {
     /*** 支付超时通知消息 ***/
     @Output("payTimeOutput")
     MessageChannel payTimeOutput();
-
+    /*** 支付订单回调通知 ***/
+    @Output("callBackOutput")
+    MessageChannel callBackOutput();
 }

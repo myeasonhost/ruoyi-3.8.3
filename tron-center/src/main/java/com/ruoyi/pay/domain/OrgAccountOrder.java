@@ -1,5 +1,6 @@
 package com.ruoyi.pay.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -32,8 +33,8 @@ public class OrgAccountOrder implements Serializable {
     /**
      * 支付订单号
      */
-    @TableId(value = "id")
-    private Long id;
+    @TableId(value = "id", type = IdType.INPUT)
+    private String id;
 
     /**
      * 商户ID
@@ -105,7 +106,7 @@ public class OrgAccountOrder implements Serializable {
      * 通知次数
      */
     @Excel(name = "通知次数")
-    private Long notifyTimes;
+    private int notifyTimes;
 
     /**
      * 最后通知时间
@@ -163,6 +164,8 @@ public class OrgAccountOrder implements Serializable {
      */
     @Excel(name = "备注")
     private String remark;
+
+    private String transactionId;
 
     private Date expirationTime;
     /**

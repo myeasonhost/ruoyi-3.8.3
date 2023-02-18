@@ -94,3 +94,14 @@ spring.cloud.stream.bindings.payTimeInput.destination: payTimeOutput
 spring.cloud.stream.bindings.payTimeInput.content-type: application/json
 spring.cloud.stream.bindings.payTimeInput.group: notify
 spring.cloud.stream.bindings.payTimeInput.consumer.concurrency: 1
+
+# 回调订单通知-发送者
+spring.cloud.stream.bindings.callBackOutput.destination: callBackOutput
+spring.cloud.stream.bindings.callBackOutput.content-type: application/json
+spring.cloud.stream.rabbit.bindings.callBackOutput.producer.delayed-exchange: true
+
+# 回调订单通知-接收者
+spring.cloud.stream.bindings.callBackInput.destination: callBackOutput
+spring.cloud.stream.bindings.callBackInput.content-type: application/json
+spring.cloud.stream.bindings.callBackInput.group: callback
+spring.cloud.stream.bindings.callBackInput.consumer.concurrency: 1

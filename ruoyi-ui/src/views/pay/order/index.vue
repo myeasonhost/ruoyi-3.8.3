@@ -53,10 +53,10 @@
 
     <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange" size="small">
       <el-table-column label="支付订单号" align="center" prop="id" v-if="false"/>
-      <el-table-column label="商户ID" align="center" prop="siteId"/>
-      <el-table-column label="商户订单号" align="center" prop="orderId" width="180"/>
-      <el-table-column label="用户名" align="center" prop="userId"/>
-      <el-table-column label="产品名" align="center" prop="productName"/>
+      <el-table-column label="商户ID" align="center" prop="siteId" width="70"/>
+      <el-table-column label="商户订单号" align="center" prop="orderId" width="170"/>
+      <el-table-column label="用户ID" align="center" prop="userId" width="70"/>
+      <el-table-column label="产品名" align="center" prop="productName" width="100"/>
       <el-table-column label="支付明细" align="left" width="120">
         <template slot-scope="scope">
           <div style="color: #13ce66;font-family: 'Arial Black';font-size: xx-small;">上分金额：{{ scope.row.amount }}</div>
@@ -79,9 +79,14 @@
         </template>
       </el-table-column>
       <el-table-column label="收款地址" align="center" prop="coinAddress" width="150"/>
-      <el-table-column label="支付时间" align="center" prop="payTime" width="150">
+      <el-table-column label="支付时间" align="center" prop="payTime" width="90">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.payTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="90">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark"/>
@@ -104,6 +109,15 @@
             v-hasPermi="['pay:order:remove']"
             v-if="scope.row.status!=2"
           >删除
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-warning-outline"
+            @click="queryTX(scope.row)"
+            v-hasPermi="['pay:order:query']"
+            v-if="scope.row.status==2"
+          >查询波场交易记录
           </el-button>
         </template>
       </el-table-column>
@@ -138,10 +152,14 @@
           <el-input v-model="form.productName" placeholder="请输入产品名" disabled/>
         </el-form-item>
         <el-form-item label="上分金额" prop="amount">
-          <el-input v-model="form.amount" placeholder="请更正上分金额" type='number' min='0.01' step='0.01' onkeyup="value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')"/>
+          <el-input v-model="form.amount" placeholder="请更正上分金额" type="number" min="0.01" step="0.01"
+                    onkeyup="value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')"
+          />
         </el-form-item>
         <el-form-item label="充值金额" prop="coinAmount">
-          <el-input v-model="form.coinAmount" placeholder="请更正充值金额" type='number' min='0.01' step='0.01' onkeyup="value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')"/>
+          <el-input v-model="form.coinAmount" placeholder="请更正充值金额" type="number" min="0.01" step="0.01"
+                    onkeyup="value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')"
+          />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -280,6 +298,10 @@ export default {
     resetQuery() {
       this.resetForm('queryForm')
       this.handleQuery()
+    },
+    queryTX(row) {
+      var href = 'https://tronscan.io/#/transaction/' + row.transactionId
+      window.open(href, '_blank')
     },
     // 多选框选中数据
     handleSelectionChange(selection) {

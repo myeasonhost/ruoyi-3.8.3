@@ -59,6 +59,14 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-search"
+            @click="queryBalance(scope.row)"
+            v-hasPermi="['pay:address:query']"
+          >查询余额
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['pay:address:edit']"
@@ -93,15 +101,15 @@
           <span>&nbsp;&nbsp;&nbsp;温馨提示：请确保至少一条地址信息处于启用状态，否则无法发起订单收款。</span><br></br>
         </div>
         <el-form-item label="代理ID" prop="agencyId">
-          <el-input v-model="form.agencyId" placeholder="请输入代理ID" disabled/>
+          <el-input v-model="form.agencyId" placeholder="请输入代理ID"/>
         </el-form-item>
         <el-form-item label="地址类型" prop="addressType">
-          <el-select v-model="form.addressType" placeholder="请选择地址类型" disabled>
+          <el-select v-model="form.addressType" placeholder="请选择地址类型">
             <el-option label="TRX" value="TRX"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="用户地址" prop="address" disabled>
-          <el-input v-model="form.address" placeholder="请输入波场网络以T开头的地址" disabled/>
+        <el-form-item label="用户地址" prop="address">
+          <el-input v-model="form.address" placeholder="请输入波场网络以T开头的地址"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注"/>
@@ -179,6 +187,7 @@ export default {
     /** 查询收款地址列表 */
     getList() {
       this.loading = true
+      this.addressList = []
       listAddress(this.queryParams).then(response => {
         response.rows.map((item, index) => {
           if (item.balance) {
@@ -205,7 +214,7 @@ export default {
     // 状态修改
     handleStatusChange(row) {
       let text = row.status === '0' ? '启用' : '停用'
-      this.$modal.confirm('确认要"' + text + '""' + row.address + '"地址吗？').then(function() {
+      this.$modal.confirm('确认要' + text + '【' + row.address + '】地址吗？').then(function() {
         return changeStatus(row.id, row.status)
       }).then(() => {
         this.$modal.msgSuccess(text + '成功')
@@ -256,11 +265,20 @@ export default {
       this.open = true
       this.title = '添加收款地址'
     },
+    /** 查询余额操作 */
+    queryBalance(row) {
+      this.reset()
+      const id = row.id || this.ids
+      getAddress(id, 'queryBalance').then(response => {
+        this.msgSuccess('余额查询成功')
+        this.getList()
+      })
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
       const id = row.id || this.ids
-      getAddress(id).then(response => {
+      getAddress(id, 'detail').then(response => {
         this.form = response.data
         this.open = true
         this.title = '修改收款地址'
