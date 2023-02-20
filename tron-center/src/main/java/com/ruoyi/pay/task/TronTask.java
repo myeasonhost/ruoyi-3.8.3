@@ -55,8 +55,8 @@ public class TronTask {
         //（1）查找支付订单中，未过期的订单，最早的时间
         LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper = new LambdaQueryWrapper();
         lambdaQueryWrapper.eq(OrgAccountOrder::getStatus, "1"); //1=支付中,2=支付成功，3=支付超时
-//        lambdaQueryWrapper.gt(OrgAccountOrder::getExpirationTime, new Date()); //当前时间未过期
-//        lambdaQueryWrapper.orderByAsc(OrgAccountOrder::getExpirationTime);
+        lambdaQueryWrapper.gt(OrgAccountOrder::getExpirationTime, new Date()); //当前时间未过期
+        lambdaQueryWrapper.orderByAsc(OrgAccountOrder::getExpirationTime);
         List<OrgAccountOrder> list = this.iOrgAccountOrderService.list(lambdaQueryWrapper);
         if (list.isEmpty()) {
             return;

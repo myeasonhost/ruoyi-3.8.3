@@ -96,6 +96,39 @@
                     <warName>${project.artifactId}</warName>
                 </configuration>
            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.spotify</groupId>-->
+<!--                <artifactId>docker-maven-plugin</artifactId>-->
+<!--                <version>1.0.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>build-image</id>-->
+<!--                        <phase>install</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <imageName>server-admin</imageName>-->
+<!--                    <imageTags>-->
+<!--                        <imageTag>latest</imageTag>-->
+<!--                    </imageTags>-->
+<!--                    <baseImage>openjdk:8</baseImage>-->
+<!--                    <workdir>/ROOT</workdir>-->
+<!--    &lt;!&ndash;                    <dockerDirectory>${basedir}/src/main/resources/docker</dockerDirectory> &lt;!&ndash; 指定 Dockerfile 路径&ndash;&gt;&ndash;&gt;-->
+<!--                    <entryPoint>["java", "-jar", "${project.build.finalName}.jar","&#45;&#45;spring.profiles.active=prod"]</entryPoint>-->
+<!--                    &lt;!&ndash; 这里是复制 jar 包到 docker 容器指定目录配置，也可以写到 Docokerfile 中 &ndash;&gt;-->
+<!--                    <resources>-->
+<!--                        <resource>-->
+<!--                            <targetPath>/ROOT</targetPath>-->
+<!--                            <directory>${project.build.directory}</directory>-->
+<!--                            <include>${project.build.finalName}.jar</include>-->
+<!--                        </resource>-->
+<!--                    </resources>-->
+<!--                    <dockerHost>http://52.76.123.77:8888</dockerHost>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
         <finalName>${project.artifactId}</finalName>
     </build>

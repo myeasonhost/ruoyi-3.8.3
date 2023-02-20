@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="商户ID" prop="siteId">
+      <el-form-item label="商户ID" prop="siteId" v-hasPermi="['*:*:*']">
         <el-input
           v-model="queryParams.siteId"
           placeholder="请输入商户ID"

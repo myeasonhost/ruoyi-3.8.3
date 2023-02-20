@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="代理ID" prop="agencyId">
+      <el-form-item label="代理ID" prop="agencyId" v-hasPermi="['*:*:*']">
         <el-input
           v-model="queryParams.agencyId"
           placeholder="请输入代理ID"
@@ -9,6 +9,16 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="地址状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
+          <el-option
+            v-for="dict in dict.type.sys_normal_disable"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -100,7 +110,7 @@
           <i class="el-icon-warning"></i>
           <span>&nbsp;&nbsp;&nbsp;温馨提示：请确保至少一条地址信息处于启用状态，否则无法发起订单收款。</span><br></br>
         </div>
-        <el-form-item label="代理ID" prop="agencyId">
+        <el-form-item label="代理ID" prop="agencyId" v-hasPermi="['*:*:*']">
           <el-input v-model="form.agencyId" placeholder="请输入代理ID"/>
         </el-form-item>
         <el-form-item label="地址类型" prop="addressType">
@@ -128,7 +138,7 @@ import { addAddress, changeStatus, delAddress, getAddress, listAddress, updateAd
 
 export default {
   name: 'Address',
-  components: {},
+  dicts: ['sys_normal_disable'],
   data() {
     return {
       // 遮罩层
@@ -162,9 +172,6 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        agencyId: [
-          { required: true, message: '代理ID不能为空', trigger: 'blur' }
-        ],
         addressType: [
           { required: true, message: '地址类型不能为空', trigger: 'change' }
         ],

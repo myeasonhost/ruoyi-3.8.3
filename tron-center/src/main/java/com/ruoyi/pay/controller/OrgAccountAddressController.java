@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.pay.domain.OrgAccountAddress;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,7 +46,16 @@ public class OrgAccountAddressController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(OrgAccountAddress orgAccountAddress) {
         startPage();
-        List<OrgAccountAddress> list = iOrgAccountAddressService.queryList(orgAccountAddress);
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        List<OrgAccountAddress> list = new ArrayList<>();
+        if (SecurityUtils.isAdmin(loginUser.getUser().getUserId())) {
+            list = iOrgAccountAddressService.queryList(orgAccountAddress);
+        }
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
+            orgAccountAddress.setAgencyId(sysUser.getUserName());
+            list = iOrgAccountAddressService.queryList(orgAccountAddress);
+        }
         return getDataTable(list);
     }
 
@@ -95,6 +108,16 @@ public class OrgAccountAddressController extends BaseController {
     @Log(title = "收款地址", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody OrgAccountAddress orgAccountAddress) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("admin")) { //只能有一个角色
+            if (StringUtils.isEmpty(orgAccountAddress.getAgencyId())) {
+                return AjaxResult.error("代理agencyId不能为空");
+            }
+        }
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
+            orgAccountAddress.setAgencyId(sysUser.getUserName());
+        }
+
         if (StringUtils.isEmpty(orgAccountAddress.getAddress())) {
             return AjaxResult.error("收款地址不能为空");
         }

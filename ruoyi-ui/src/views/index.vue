@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-editor-container">
 
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+<!--    <panel-group @handleSetLineChartData="handleSetLineChartData" />-->
 
 <!--    <el-row :gutter="32">-->
 <!--      <el-col :xs="24" :sm="24" :lg="8">-->

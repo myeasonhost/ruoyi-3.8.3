@@ -1,27 +1,26 @@
 package com.ruoyi.pay.controller;
 
-import java.util.List;
-import java.util.Arrays;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.pay.domain.OrgAccountOrder;
-import com.ruoyi.pay.service.IOrgAccountOrderService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.pay.domain.OrgAccountOrder;
+import com.ruoyi.pay.message.MessageProducer;
+import com.ruoyi.pay.service.IOrgAccountOrderService;
+import com.ruoyi.tron.domain.TronAccountAddress;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 支付订单Controller
@@ -35,6 +34,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 public class OrgAccountOrderController extends BaseController {
 
     private final IOrgAccountOrderService iOrgAccountOrderService;
+    private final MessageProducer messageProducer;
 
     /**
      * 查询支付订单列表
@@ -43,7 +43,16 @@ public class OrgAccountOrderController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(OrgAccountOrder orgAccountOrder) {
         startPage();
-        List<OrgAccountOrder> list = iOrgAccountOrderService.queryList(orgAccountOrder);
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        List<OrgAccountOrder> list = new ArrayList<>();
+        if (SecurityUtils.isAdmin(loginUser.getUser().getUserId())) {
+            list = iOrgAccountOrderService.queryList(orgAccountOrder);
+        }
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
+            orgAccountOrder.setSiteId(sysUser.getUserName());
+            list = iOrgAccountOrderService.queryList(orgAccountOrder);
+        }
         return getDataTable(list);
     }
 
@@ -85,6 +94,10 @@ public class OrgAccountOrderController extends BaseController {
     @Log(title = "支付订单" , businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody OrgAccountOrder orgAccountOrder) {
+        if ("2".equals(orgAccountOrder.getStatus())){
+            //发送回调消息
+            messageProducer.callBackOutput(orgAccountOrder, 0);
+        }
         return toAjax(iOrgAccountOrderService.updateById(orgAccountOrder) ? 1 : 0);
     }
 
