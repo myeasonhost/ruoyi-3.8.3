@@ -12,7 +12,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.pay.domain.OrgAccountOrder;
 import com.ruoyi.pay.message.MessageProducer;
 import com.ruoyi.pay.service.IOrgAccountOrderService;
-import com.ruoyi.tron.domain.TronAccountAddress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,7 +30,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
-@RequestMapping("/pay/order" )
+@RequestMapping("/pay/order")
 public class OrgAccountOrderController extends BaseController {
 
     private final IOrgAccountOrderService iOrgAccountOrderService;
@@ -59,29 +59,29 @@ public class OrgAccountOrderController extends BaseController {
     /**
      * 导出支付订单列表
      */
-    @PreAuthorize("@ss.hasPermi('pay:order:export')" )
-    @Log(title = "支付订单" , businessType = BusinessType.EXPORT)
-    @GetMapping("/export" )
+    @PreAuthorize("@ss.hasPermi('pay:order:export')")
+    @Log(title = "支付订单", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
     public AjaxResult export(OrgAccountOrder orgAccountOrder) {
         List<OrgAccountOrder> list = iOrgAccountOrderService.queryList(orgAccountOrder);
         ExcelUtil<OrgAccountOrder> util = new ExcelUtil<OrgAccountOrder>(OrgAccountOrder.class);
-        return util.exportExcel(list, "order" );
+        return util.exportExcel(list, "order");
     }
 
     /**
      * 获取支付订单详细信息
      */
-    @PreAuthorize("@ss.hasPermi('pay:order:query')" )
-    @GetMapping(value = "/{id}" )
-    public AjaxResult getInfo(@PathVariable("id" ) String id) {
+    @PreAuthorize("@ss.hasPermi('pay:order:query')")
+    @GetMapping(value = "/{id}")
+    public AjaxResult getInfo(@PathVariable("id") String id) {
         return AjaxResult.success(iOrgAccountOrderService.getById(id));
     }
 
     /**
      * 新增支付订单
      */
-    @PreAuthorize("@ss.hasPermi('pay:order:add')" )
-    @Log(title = "支付订单" , businessType = BusinessType.INSERT)
+    @PreAuthorize("@ss.hasPermi('pay:order:add')")
+    @Log(title = "支付订单", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody OrgAccountOrder orgAccountOrder) {
         return toAjax(iOrgAccountOrderService.save(orgAccountOrder) ? 1 : 0);
@@ -90,23 +90,25 @@ public class OrgAccountOrderController extends BaseController {
     /**
      * 修改支付订单
      */
-    @PreAuthorize("@ss.hasPermi('pay:order:edit')" )
-    @Log(title = "支付订单" , businessType = BusinessType.UPDATE)
+    @PreAuthorize("@ss.hasPermi('pay:order:edit')")
+    @Log(title = "支付订单", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody OrgAccountOrder orgAccountOrder) {
-        if ("2".equals(orgAccountOrder.getStatus())){
+        orgAccountOrder.setPayTime(new Date());//手动支付时间更新
+        boolean flag = iOrgAccountOrderService.updateById(orgAccountOrder);
+        if ("2".equals(orgAccountOrder.getStatus()) && flag) {
             //发送回调消息
             messageProducer.callBackOutput(orgAccountOrder, 0);
         }
-        return toAjax(iOrgAccountOrderService.updateById(orgAccountOrder) ? 1 : 0);
+        return toAjax(flag ? 1 : 0);
     }
 
     /**
      * 删除支付订单
      */
-    @PreAuthorize("@ss.hasPermi('pay:order:remove')" )
-    @Log(title = "支付订单" , businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}" )
+    @PreAuthorize("@ss.hasPermi('pay:order:remove')")
+    @Log(title = "支付订单", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
         return toAjax(iOrgAccountOrderService.removeByIds(Arrays.asList(ids)) ? 1 : 0);
     }

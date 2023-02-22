@@ -54,7 +54,7 @@ public class CallbackNotifyWorker {
         appParamMap.put("currency", order.getCurrency());
         appParamMap.put("coin_code", order.getCoinCode());
         appParamMap.put("coin_amount", order.getCoinAmount());
-        appParamMap.put("pay_time", order.getPayTime().getTime());
+        appParamMap.put("pay_time", order.getPayTime() == null ? System.currentTimeMillis() : order.getPayTime().getTime());
         appParamMap.put("status", order.getStatus()); //1=支付中,2=支付成功，3=支付超时
         appParamMap.put("hash", order.getTransactionId());
 
