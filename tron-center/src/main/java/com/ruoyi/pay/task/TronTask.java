@@ -73,7 +73,7 @@ public class TronTask {
             JSONObject jsonObject = JSONUtil.parseObj(result);
             JSONArray jsonData; //支付扫描记录数据
 
-            String amountTarget = NumberUtil.mul(orgAccountOrder.getCoinAmount(), "1000000").toString();
+            String amountTarget = NumberUtil.toStr(NumberUtil.mul(orgAccountOrder.getCoinAmount(), "1000000"));
 
             //（3）分页-扫描订单支付记录
             while (true) {

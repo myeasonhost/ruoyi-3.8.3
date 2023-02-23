@@ -146,12 +146,14 @@ public class OrderAPIController extends BaseController {
         orgAccountOrder.setStatus("1"); //1=支付中,2=支付成功，3=支付超时
         orgAccountOrder.setNotifyUrl(payEntity.getNotify_url());
         orgAccountOrder.setRedirectUrl(payEntity.getRedirect_url());
-        String cashierUrl = responseEncryptResult("fT6phq0wkOPRlAoyToidAnkogUV7ttGo", orgAccountAddress.getAddress());
-        orgAccountOrder.setCashierUrl(cashierUrl);
         Integer timeout = configServiceImpl.getPayTimeOut();
         orgAccountOrder.setTimeout(timeout.toString());
         orgAccountOrder.setExpirationTime(DateUtil.offsetMinute(orgAccountOrder.getCreateTime(), timeout));
         orgAccountOrder.setCreateTime(new Date(System.currentTimeMillis()));
+        String cashierUrl = responseEncryptResult("fT6phq0wkOPRlAoyToidAnkogUV7ttGo",
+                orgAccountAddress.getAddress() + "," + orgAccountOrder.getCoinAmount() + "," + orgAccountOrder.getTimeout()+","+orgAccountOrder.getCreateTime().getTime(),
+                payEntity.getLocale());
+        orgAccountOrder.setCashierUrl(cashierUrl);
         this.iOrgAccountOrderService.save(orgAccountOrder);
         //（4）发送超时消息通知
         messageProducer.payTimeOutput(orgAccountOrder, 60 * timeout); //30分钟超时
@@ -167,7 +169,7 @@ public class OrderAPIController extends BaseController {
         return AjaxResult.success(resultModel);
     }
 
-    public static String responseEncryptResult(String key, String result) {
+    public static String responseEncryptResult(String key, String result, String locale) {
         Des3 des3 = new Des3();
         String rndKey = getRndString();
         des3.setKey(rndKey);
@@ -178,7 +180,7 @@ public class OrderAPIController extends BaseController {
         String dateString = (new Long(date)).toString();
         des3.setKey(key);
         String pwd = new String(Base64.encodeBase64(des3.encrypt((rndKey + dateString).getBytes())));
-        return "http://52.52.144.209:85/?data=" + sMessage + "&key=" + pwd;
+        return "http://52.52.144.209:85/?data=" + sMessage + "&key=" + pwd + "&locale=" + locale;
     }
 
     private static String getRndString() {
