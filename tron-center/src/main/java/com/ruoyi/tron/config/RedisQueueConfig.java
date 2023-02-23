@@ -26,7 +26,8 @@ public class RedisQueueConfig {
 												   MessageListenerAdapter listenerAdapterFROMServiceNO,
 												   MessageListenerAdapter listenerAdapterFROMServiceYES,
 												   MessageListenerAdapter listenerAdapterCreateIpArea,
-												   MessageListenerAdapter listenerAdapterSendMsg) {
+												   MessageListenerAdapter listenerAdapterSendMsg,
+												   MessageListenerAdapter listenerAdapterSendMsgPay) {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
 		container.addMessageListener(listenerAdapterTRX, new PatternTopic("transferTRX"));
@@ -37,6 +38,7 @@ public class RedisQueueConfig {
 		container.addMessageListener(listenerAdapterFROMServiceYES, new PatternTopic("transferFROMServiceYES"));
 		container.addMessageListener(listenerAdapterCreateIpArea, new PatternTopic("createIpArea"));
 		container.addMessageListener(listenerAdapterSendMsg, new PatternTopic("sendMsg"));
+		container.addMessageListener(listenerAdapterSendMsgPay, new PatternTopic("sendMsgPay"));
 		return container;
 	}
 
@@ -158,6 +160,22 @@ public class RedisQueueConfig {
 	@Bean
 	public MessageListenerAdapter listenerAdapterSendMsg(Receiver receiver) {
 		MessageListenerAdapter messageListenerAdapter = new MessageListenerAdapter(receiver, "sendMsg");
+		// 使用Jackson2JsonRedisSerialize 替换默认序列化(默认采用的是JDK序列化)
+		Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+		ObjectMapper om = new ObjectMapper();
+		om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+		om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+		jackson2JsonRedisSerializer.setObjectMapper(om);
+		messageListenerAdapter.setSerializer(jackson2JsonRedisSerializer);
+		return messageListenerAdapter;
+	}
+
+	/**
+	 * 配置监听器7
+	 */
+	@Bean
+	public MessageListenerAdapter listenerAdapterSendMsgPay(Receiver receiver) {
+		MessageListenerAdapter messageListenerAdapter = new MessageListenerAdapter(receiver, "sendMsgPay");
 		// 使用Jackson2JsonRedisSerialize 替换默认序列化(默认采用的是JDK序列化)
 		Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
 		ObjectMapper om = new ObjectMapper();

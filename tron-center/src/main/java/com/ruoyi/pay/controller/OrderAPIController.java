@@ -6,6 +6,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,6 +55,7 @@ public class OrderAPIController extends BaseController {
     private final ISysConfigService configServiceImpl;
     private final IOrgAccountAddressService iOrgAccountAddressService;
     private final MessageProducer messageProducer;
+    private final RedisTemplate redisTemplate;
 
     /**
      * 支付订单生成
@@ -127,7 +130,8 @@ public class OrderAPIController extends BaseController {
         //（3）生成支付金额
         String coinAmountStr;
         while (true) {
-            Double coinAmount = NumberUtil.add(Double.parseDouble(payEntity.getAmount()), RandomUtil.randomDouble(0.01, 0.99));
+            Double rate = configServiceImpl.getPayRate();
+            Double coinAmount = NumberUtil.add(Double.parseDouble(payEntity.getAmount()), RandomUtil.randomDouble(0.01, rate));
             coinAmountStr = NumberUtil.roundStr(coinAmount, 2);
             LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper4 = new LambdaQueryWrapper();
             lambdaQueryWrapper4.eq(OrgAccountOrder::getSiteId, payEntity.getMch_id());
@@ -151,12 +155,15 @@ public class OrderAPIController extends BaseController {
         orgAccountOrder.setExpirationTime(DateUtil.offsetMinute(orgAccountOrder.getCreateTime(), timeout));
         orgAccountOrder.setCreateTime(new Date(System.currentTimeMillis()));
         String cashierUrl = responseEncryptResult("fT6phq0wkOPRlAoyToidAnkogUV7ttGo",
-                orgAccountAddress.getAddress() + "," + orgAccountOrder.getCoinAmount() + "," + orgAccountOrder.getTimeout()+","+orgAccountOrder.getCreateTime().getTime(),
+                orgAccountAddress.getAddress() + "," + orgAccountOrder.getCoinAmount() + "," + orgAccountOrder.getTimeout() + "," + orgAccountOrder.getCreateTime().getTime(),
                 payEntity.getLocale());
         orgAccountOrder.setCashierUrl(cashierUrl);
         this.iOrgAccountOrderService.save(orgAccountOrder);
         //（4）发送超时消息通知
         messageProducer.payTimeOutput(orgAccountOrder, 60 * timeout); //30分钟超时
+        String jsonObject = JSONObject.toJSONString(orgAccountOrder);
+        redisTemplate.convertAndSend("sendMsgPay", jsonObject);
+
         //（5）生成返回信息
         OrderResultModel resultModel = new OrderResultModel();
         resultModel.setAmount(orgAccountOrder.getAmount());
@@ -169,7 +176,7 @@ public class OrderAPIController extends BaseController {
         return AjaxResult.success(resultModel);
     }
 
-    public static String responseEncryptResult(String key, String result, String locale) {
+    public String responseEncryptResult(String key, String result, String locale) {
         Des3 des3 = new Des3();
         String rndKey = getRndString();
         des3.setKey(rndKey);
@@ -180,7 +187,8 @@ public class OrderAPIController extends BaseController {
         String dateString = (new Long(date)).toString();
         des3.setKey(key);
         String pwd = new String(Base64.encodeBase64(des3.encrypt((rndKey + dateString).getBytes())));
-        return "http://52.52.144.209:85/?data=" + sMessage + "&key=" + pwd + "&locale=" + locale;
+
+        return configServiceImpl.getCashierUrl() + "?data=" + sMessage + "&key=" + pwd + "&locale=" + locale;
     }
 
     private static String getRndString() {
@@ -197,7 +205,7 @@ public class OrderAPIController extends BaseController {
     public static void main(String[] args) {
         for (int i = 0; i < 90; i++) {
             DecimalFormat df = new DecimalFormat("0.00");
-            Double d = RandomUtil.randomDouble(0.01, 0.99);
+            Double d = RandomUtil.randomDouble(0.01, 0.5);
             System.out.println(df.format(d));
         }
     }

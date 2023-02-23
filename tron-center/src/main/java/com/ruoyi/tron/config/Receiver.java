@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.pay.domain.OrgAccountOrder;
 import com.ruoyi.tron.domain.OrgAccountInfo;
 import com.ruoyi.tron.domain.TronBillRecord;
 import com.ruoyi.tron.domain.TronFish;
@@ -65,7 +66,7 @@ public class Receiver {
         LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
         lqw.eq(OrgAccountInfo::getAgencyId, tronTansferRecord.getAgencyId());
         OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
-        if (orgAccountInfo==null && orgAccountInfo.getTgbotGroupId()==null){
+        if (orgAccountInfo == null && orgAccountInfo.getTgbotGroupId() == null) {
             return;
         }
         StringBuffer stringBuffer = new StringBuffer();
@@ -106,7 +107,7 @@ public class Receiver {
         LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
         lqw.eq(OrgAccountInfo::getAgencyId, tronTansferRecord.getAgencyId());
         OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
-        if (orgAccountInfo==null && orgAccountInfo.getTgbotGroupId()==null){
+        if (orgAccountInfo == null && orgAccountInfo.getTgbotGroupId() == null) {
             return;
         }
         StringBuffer stringBuffer = new StringBuffer();
@@ -148,7 +149,7 @@ public class Receiver {
         LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
         lqw.eq(OrgAccountInfo::getAgencyId, tronTansferRecord.getAgencyId());
         OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
-        if (orgAccountInfo==null && orgAccountInfo.getTgbotGroupId()==null){
+        if (orgAccountInfo == null && orgAccountInfo.getTgbotGroupId() == null) {
             return;
         }
         StringBuffer stringBuffer = new StringBuffer();
@@ -190,7 +191,7 @@ public class Receiver {
         LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
         lqw.eq(OrgAccountInfo::getAgencyId, tronTansferRecord.getAgencyId());
         OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
-        if (orgAccountInfo==null && orgAccountInfo.getTgbotGroupId()==null){
+        if (orgAccountInfo == null && orgAccountInfo.getTgbotGroupId() == null) {
             return;
         }
         StringBuffer stringBuffer = new StringBuffer();
@@ -441,7 +442,7 @@ public class Receiver {
         LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
         lqw.eq(OrgAccountInfo::getAgencyId, fish.getAgencyId());
         OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
-        if (orgAccountInfo==null && orgAccountInfo.getTgbotGroupId()==null){
+        if (orgAccountInfo == null && orgAccountInfo.getTgbotGroupId() == null) {
             return;
         }
         StringBuffer stringBuffer = new StringBuffer();
@@ -468,6 +469,35 @@ public class Receiver {
             return;
         }
         log.info("sendMsg-bot返回结果={}", result2);
+    }
+
+    public void sendMsgPay(String message) throws Exception {
+        log.debug("sendMsgPay接收到消息了:{}", message);
+        OrgAccountOrder orgAccountOrder = JSONObject.parseObject(message, OrgAccountOrder.class);
+
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("商户订单号：" + orgAccountOrder.getOrderId() + "\n");
+        stringBuffer.append("上分金额：" + orgAccountOrder.getAmount() + "\n");
+        stringBuffer.append("支付金额：" + orgAccountOrder.getCoinAmount() + "\n");
+        stringBuffer.append("支付币种：" + orgAccountOrder.getCoinCode() + "\n");
+        stringBuffer.append("支付状态：" + (orgAccountOrder.getStatus().equals("2") ? "支付成功" : "支付中") + "\n");
+        stringBuffer.append("收款地址：" + orgAccountOrder.getCoinAddress() + "\n");
+
+        LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
+        lqw.eq(OrgAccountInfo::getAgencyId, orgAccountOrder.getSiteId());
+        OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
+        if (orgAccountInfo == null && orgAccountInfo.getTgbotGroupId() == null) {
+            return;
+        }
+
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=" + orgAccountInfo.getTgbotGroupId() + "&text=" + stringBuffer.toString();
+        log.info("sendMsgPay-bot发送请求={}", url2);
+
+        String result2 = restTemplate.getForObject(url2, String.class);
+        if (result2.isEmpty()) {
+            return;
+        }
+        log.info("sendMsgPay-bot返回结果={}", result2);
     }
 
 }

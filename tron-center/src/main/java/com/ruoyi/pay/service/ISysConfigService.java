@@ -13,4 +13,8 @@ public interface ISysConfigService extends IService<SystemConfig> {
 
     Integer getPayTimeOut();
 
+    Double getPayRate();
+
+    String getCashierUrl();
+
 }

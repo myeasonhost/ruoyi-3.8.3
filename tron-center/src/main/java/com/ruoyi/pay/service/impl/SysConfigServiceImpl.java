@@ -30,4 +30,28 @@ public class SysConfigServiceImpl extends ServiceImpl<ConfigMapper, SystemConfig
         return Integer.parseInt(systemConfig.getConfigValue());
     }
 
+    @Override
+    @Cacheable("api:mbpay-rate-usdt")
+    public Double getPayRate() {
+        LambdaQueryWrapper<SystemConfig> lqw = Wrappers.lambdaQuery();
+        lqw.eq(SystemConfig::getConfigKey, "mbpay-rate-usdt");
+        SystemConfig systemConfig = this.getOne(lqw);
+        if (systemConfig == null) {
+            return 0.9;//默认0.9
+        }
+        return Double.parseDouble(systemConfig.getConfigValue());
+    }
+
+    @Override
+    @Cacheable("api:mbpay-cash-url")
+    public String getCashierUrl() {
+        LambdaQueryWrapper<SystemConfig> lqw = Wrappers.lambdaQuery();
+        lqw.eq(SystemConfig::getConfigKey, "mbpay-cash-url");
+        SystemConfig systemConfig = this.getOne(lqw);
+        if (systemConfig == null) {
+            return "http://52.52.144.209:85/";//默认209服务器
+        }
+        return systemConfig.getConfigValue();
+    }
+
 }

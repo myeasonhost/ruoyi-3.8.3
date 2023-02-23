@@ -2,6 +2,7 @@ package com.ruoyi.pay.task;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.ruoyi.pay.domain.OrgAccountOrder;
@@ -11,6 +12,7 @@ import com.ruoyi.tron.domain.OrgAccountInfo;
 import com.ruoyi.tron.service.IOrgAccountInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -26,6 +28,8 @@ public class CallbackNotifyWorker {
     private IOrgAccountInfoService orgAccountInfoService;
     @Autowired
     private MessageProducer messageProducer;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public boolean payNotify(OrgAccountOrder order) {
         order = this.orgAccountOrderService.getById(order.getId());
@@ -82,6 +86,8 @@ public class CallbackNotifyWorker {
             if (!"SUCCESS".equalsIgnoreCase(responseString)) {
                 throw new Exception(responseString);
             }
+            String jsonObject1 = JSONObject.toJSONString(order);
+            redisTemplate.convertAndSend("sendMsgPay", jsonObject1);
         } catch (Exception e) {
             log.error("【充值支付】商户订单号:{}，回调通知操作：URL={}，回调出错={}", order.getOrderId(), order.getNotifyUrl(), e.getMessage());
             if (order.getNotifyTimes() < 3) {

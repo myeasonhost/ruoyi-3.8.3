@@ -55,6 +55,11 @@ spring:
     basename: i18n/messages
   profiles:
     active: @profiles.active@
+  cache:
+    type: redis
+    redis:
+      #1分钟
+      time-to-live: 60000
   # 文件上传
   servlet:
      multipart:
@@ -67,6 +72,7 @@ spring:
     restart:
       # 热部署开关
       enabled: true
+
 
 # token配置
 token:
