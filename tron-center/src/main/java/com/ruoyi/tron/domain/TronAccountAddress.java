@@ -56,6 +56,10 @@ private static final long serialVersionUID=1L;
     @Excel(name = "余额集合")
     private String balance;
 
+    /** 状态 */
+    @Excel(name = "状态")
+    private String status;
+
     /** 备注 */
     @Excel(name = "备注")
     private String remark;

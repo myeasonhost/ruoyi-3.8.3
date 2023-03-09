@@ -12,14 +12,19 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.pay.domain.OrgAccountAddress;
 import com.ruoyi.pay.domain.OrgAccountOrder;
+import com.ruoyi.pay.domain.OrgAccountOrderDaip;
 import com.ruoyi.pay.message.MessageProducer;
 import com.ruoyi.pay.model.OrderResultModel;
+import com.ruoyi.pay.model.PdaiResultModel;
 import com.ruoyi.pay.service.IOrgAccountAddressService;
+import com.ruoyi.pay.service.IOrgAccountOrderDaipService;
 import com.ruoyi.pay.service.IOrgAccountOrderService;
 import com.ruoyi.pay.service.ISysConfigService;
 import com.ruoyi.pay.utils.Des3;
 import com.ruoyi.tron.domain.OrgAccountInfo;
+import com.ruoyi.tron.domain.TronAccountAddress;
 import com.ruoyi.tron.service.IOrgAccountInfoService;
+import com.ruoyi.tron.service.ITronAccountAddressService;
 import io.swagger.annotations.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -48,12 +53,14 @@ import java.util.*;
 @Api(value = "MBPay", tags = {"支付接口"})
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
-@RequestMapping("/api/pay")
+@RequestMapping("/api")
 public class OrderAPIController extends BaseController {
     private final IOrgAccountInfoService orgAccountInfoService;
     private final IOrgAccountOrderService iOrgAccountOrderService;
+    private final IOrgAccountOrderDaipService iOrgAccountOrderDaipService;
     private final ISysConfigService configServiceImpl;
     private final IOrgAccountAddressService iOrgAccountAddressService;
+    private final ITronAccountAddressService iTronAccountAddressService;
     private final MessageProducer messageProducer;
     private final RedisTemplate redisTemplate;
 
@@ -74,8 +81,8 @@ public class OrderAPIController extends BaseController {
             @ApiImplicitParam(name = "locale", value = "语言", dataType = "String", dataTypeClass = String.class),
             @ApiImplicitParam(name = "signature", value = "签名", dataType = "String", dataTypeClass = String.class)
     })
-    @RequestMapping("/create")
-    public AjaxResult create(@Validated PayEntity payEntity) {
+    @RequestMapping("/pay/create")
+    public AjaxResult payCreate(@Validated PayEntity payEntity) {
         log.info("【支付订单】支付订单生成参数:{}", payEntity);
         LambdaQueryWrapper<OrgAccountInfo> lambdaQueryWrapper = new LambdaQueryWrapper();
         lambdaQueryWrapper.eq(OrgAccountInfo::getAgencyId, payEntity.getMch_id());
@@ -173,6 +180,101 @@ public class OrderAPIController extends BaseController {
         resultModel.setCoin_address(orgAccountAddress.getAddress());
         resultModel.setCashier_url(cashierUrl);
         resultModel.setTimeout(orgAccountOrder.getTimeout());
+        return AjaxResult.success(resultModel);
+    }
+
+    /**
+     * 代付订单生成
+     */
+    @ApiOperation(value = "代付订单生成", notes = "用于生成 USDT.TRC20 的代付数据。商户发起代付的申请之后，系统将即时进行为指定账户付款。")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mch_id", value = "商户ID", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "amount", value = "金额", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "currency", value = "订单币种（CNY/USD）", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "coin_code", value = "支付币种（USDT/RMB）", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "notify_url", value = "回调通知地址", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "order_id", value = "商户订单号", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "customer_id", value = "用户ID", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "product_name", value = "产品名", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "locale", value = "语言", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "address", value = "用户收款地址", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "signature", value = "签名", dataType = "String", dataTypeClass = String.class)
+    })
+    @RequestMapping("/pdai/create")
+    public AjaxResult pdaiCreate(@Validated PdaiEntity payEntity) {
+        log.info("【代付订单】代付订单生成参数:{}", payEntity);
+        LambdaQueryWrapper<OrgAccountInfo> lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.eq(OrgAccountInfo::getAgencyId, payEntity.getMch_id());
+        OrgAccountInfo orgAccountInfo = orgAccountInfoService.getOne(lambdaQueryWrapper);
+        if (orgAccountInfo == null) {
+            return AjaxResult.error("商户mch_id不存在");
+        }
+        LambdaQueryWrapper<TronAccountAddress> lambdaQueryWrapper2 = new LambdaQueryWrapper();
+        lambdaQueryWrapper2.eq(TronAccountAddress::getAgencyId, payEntity.getMch_id());
+        lambdaQueryWrapper2.eq(TronAccountAddress::getStatus, "0"); //帐号状态（0正常 1停用）
+        List<TronAccountAddress> listAddress = iTronAccountAddressService.list(lambdaQueryWrapper2);
+        if (listAddress.isEmpty()) {
+            return AjaxResult.error("商户出款地址没有配置");
+        }
+        LambdaQueryWrapper<OrgAccountOrderDaip> lambdaQueryWrapper3 = new LambdaQueryWrapper();
+        lambdaQueryWrapper3.eq(OrgAccountOrderDaip::getSiteId, payEntity.getMch_id());
+        lambdaQueryWrapper3.eq(OrgAccountOrderDaip::getOrderId, payEntity.getOrder_id());
+        OrgAccountOrderDaip orgAccountOrderDaip1 = iOrgAccountOrderDaipService.getOne(lambdaQueryWrapper3);
+        if (orgAccountOrderDaip1 != null) {
+            return AjaxResult.error("商户order_id已经存在");
+        }
+        Collections.shuffle(listAddress); //打乱顺序
+        TronAccountAddress orgAccountAddress = listAddress.get(0);
+        //（1）sign签名验证与校验
+        Map<String, Object> treeMap = new TreeMap<>(BeanUtil.beanToMap(payEntity));
+        treeMap.remove("sign");
+        StringBuffer orgin = new StringBuffer();
+        Iterator iter = treeMap.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = (String) iter.next();
+            orgin.append("&").append(name).append("=").append(treeMap.get(name));
+        }
+        orgin.append("&").append("key").append("=").append(orgAccountInfo.getPrivateKey());
+        orgin.deleteCharAt(0);
+        log.info("【支付订单】sign加密串{}", orgin);
+        String sign = DigestUtil.md5Hex(orgin.toString());
+        log.info("【支付订单】sign生成={}", sign);
+        if (!sign.equals(payEntity.getSign())) {
+            log.error("【支付订单】本地正确sign={},错误三方sign={}", sign, payEntity.getSign());
+            return AjaxResult.error("sign签名错误");
+        }
+        //（2）生成订单
+        OrgAccountOrderDaip orgAccountOrder = new OrgAccountOrderDaip();
+        String payId = "DF" + IdUtil.getSnowflakeNextIdStr();
+        orgAccountOrder.setId(payId);
+        orgAccountOrder.setSiteId(payEntity.getMch_id());
+        orgAccountOrder.setOrderId(payEntity.getOrder_id());
+        orgAccountOrder.setUserId(payEntity.getCustomer_id());
+        orgAccountOrder.setProductName(payEntity.getProduct_name());
+        orgAccountOrder.setAmount(payEntity.getAmount()); //订单金额
+        orgAccountOrder.setCurrency(payEntity.getCurrency());
+        orgAccountOrder.setCoinAmount(orgAccountOrder.getCoinAmount());//支付金额(默认订单金额，暂时不加汇率换算)
+        orgAccountOrder.setCoinCode(payEntity.getCoin_code());
+        orgAccountOrder.setOutAddress(orgAccountAddress.getAddress());
+        orgAccountOrder.setCoinAddress(payEntity.getAddress());
+        orgAccountOrder.setStatus("1"); //1=提现中,2=提现成功，3=提现失败
+        orgAccountOrder.setNotifyUrl(payEntity.getNotify_url());
+        orgAccountOrder.setCreateTime(new Date(System.currentTimeMillis()));
+
+        this.iOrgAccountOrderDaipService.save(orgAccountOrder);
+        //（4）发送提现消息通知
+        messageProducer.pdaiOutput(orgAccountOrder, 0); //进行转账操作
+//        String jsonObject = JSONObject.toJSONString(orgAccountOrder);
+//        redisTemplate.convertAndSend("sendMsgPay", jsonObject);
+
+        //（5）生成返回信息
+        PdaiResultModel resultModel = new PdaiResultModel();
+        resultModel.setAmount(orgAccountOrder.getAmount());
+        resultModel.setCurrency(orgAccountOrder.getCurrency());
+        resultModel.setCoin_code(orgAccountOrder.getCoinCode());
+        resultModel.setCoin_amount(orgAccountOrder.getCoinAmount());
+        resultModel.setCoin_address(payEntity.getAddress());
+        resultModel.setOut_address(orgAccountAddress.getAddress());
         return AjaxResult.success(resultModel);
     }
 
@@ -302,4 +404,49 @@ class PayEntity {
                 ", sign='" + sign + '\'' +
                 '}';
     }
+}
+
+@Data
+@ApiModel(value = "PdaiEntity", description = "代付订单实体")
+class PdaiEntity {
+    @ApiModelProperty("商户id")
+    @NotNull(message = "mch_id不能为空")
+    private String mch_id;
+
+    @ApiModelProperty("金额")
+    @NotNull(message = "amount不能为空")
+    @DecimalMin(value = "0", message = "amount必须大于0")
+    private String amount;
+
+    @ApiModelProperty("订单币种单位（CNY/USD）")
+    private String currency = "USD";
+
+    @ApiModelProperty("支付币种（USDT/RMB）")
+    private String coin_code = "USDT";
+
+    @ApiModelProperty("回调通知地址")
+    @NotNull(message = "notify_url回调地址不能为空")
+    @URL(message = "notify_url回调地址不合法")
+    private String notify_url;
+
+    @ApiModelProperty("商户订单号")
+    @NotNull(message = "order_id不能为空")
+    private String order_id;
+
+    @ApiModelProperty("用户ID")
+    @NotNull(message = "customer_id不能为空")
+    private String customer_id;
+
+    @ApiModelProperty("产品名")
+    @NotNull(message = "product_name不能为空")
+    private String product_name;
+
+    @ApiModelProperty("用户收款地址")
+    @NotNull(message = "用户地址不能为空")
+    private String address;
+
+    @ApiModelProperty("签名")
+    @NotNull(message = "签名不能为空")
+    private String sign;
+
 }
