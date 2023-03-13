@@ -41,9 +41,15 @@ public class MessageConsumer {
     }
 
     @StreamListener("pdaiInput")
-    public void pdaiInput(Message<OrgAccountOrderDaip> message, @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) throws Exception {
-        log.info("【提现通知】收到提现通知消息:{},deliveryTag={}", message.getPayload(), deliveryTag);
+    public void pdaiInput(Message<OrgAccountOrderDaip> message) throws Exception {
+        log.info("【提现通知】收到提现通知消息:{},deliveryTag={}", message.getPayload());
         pdaiWorker.payNotify(message.getPayload());
+    }
+
+    @StreamListener("pdaiCallBackInput")
+    public void pdaiCallBackInput(Message<OrgAccountOrderDaip> message, @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) throws Exception {
+        log.info("【回调通知】收到提现通知消息:{},deliveryTag={}", message.getPayload(), deliveryTag);
+        callbackNotifyWorker.pdaiNotify(message.getPayload());
     }
 
 }

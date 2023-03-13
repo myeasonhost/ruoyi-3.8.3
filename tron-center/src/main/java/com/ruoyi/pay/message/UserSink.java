@@ -20,4 +20,8 @@ public interface UserSink {
     /*** 提现消息通知 ***/
     @Input("pdaiInput")
     SubscribableChannel pdaiInput();
+
+    /*** 代付订单通知 ***/
+    @Input("pdaiCallBackInput")
+    SubscribableChannel pdaiCallBackInput();
 }

@@ -21,4 +21,8 @@ public interface Source {
     /*** 提现消息通知 ***/
     @Output("pdaiOutput")
     MessageChannel pdaiOutput();
+
+    /*** 代付订单通知 ***/
+    @Output("pdaiCallBackOutput")
+    MessageChannel pdaiCallBackOutput();
 }

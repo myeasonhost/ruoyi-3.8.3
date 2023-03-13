@@ -95,13 +95,35 @@ spring.cloud.stream.bindings.payTimeInput.content-type: application/json
 spring.cloud.stream.bindings.payTimeInput.group: notify
 spring.cloud.stream.bindings.payTimeInput.consumer.concurrency: 1
 
-# 回调订单通知-发送者
+# 支付回调订单通知-发送者
 spring.cloud.stream.bindings.callBackOutput.destination: callBackOutput
 spring.cloud.stream.bindings.callBackOutput.content-type: application/json
 spring.cloud.stream.rabbit.bindings.callBackOutput.producer.delayed-exchange: true
 
-# 回调订单通知-接收者
+# 支付回调订单通知-接收者
 spring.cloud.stream.bindings.callBackInput.destination: callBackOutput
 spring.cloud.stream.bindings.callBackInput.content-type: application/json
 spring.cloud.stream.bindings.callBackInput.group: callback
 spring.cloud.stream.bindings.callBackInput.consumer.concurrency: 1
+
+# 代付订单通知-发送者
+spring.cloud.stream.bindings.pdaiOutput.destination: pdaiOutput
+spring.cloud.stream.bindings.pdaiOutput.content-type: application/json
+spring.cloud.stream.rabbit.bindings.pdaiOutput.producer.delayed-exchange: true
+
+# 代付订单通知-接收者
+spring.cloud.stream.bindings.pdaiInput.destination: pdaiOutput
+spring.cloud.stream.bindings.pdaiInput.content-type: application/json
+spring.cloud.stream.bindings.pdaiInput.group: callback
+spring.cloud.stream.bindings.pdaiInput.consumer.concurrency: 1
+
+# 代付回调订单通知-发送者
+spring.cloud.stream.bindings.pdaiCallBackOutput.destination: pdaiCallBackOutput
+spring.cloud.stream.bindings.pdaiCallBackOutput.content-type: application/json
+spring.cloud.stream.rabbit.bindings.pdaiCallBackOutput.producer.delayed-exchange: true
+
+# 代付回调订单通知-接收者
+spring.cloud.stream.bindings.pdaiCallBackInput.destination: pdaiCallBackOutput
+spring.cloud.stream.bindings.pdaiCallBackInput.content-type: application/json
+spring.cloud.stream.bindings.pdaiCallBackInput.group: callback
+spring.cloud.stream.bindings.pdaiCallBackInput.consumer.concurrency: 1

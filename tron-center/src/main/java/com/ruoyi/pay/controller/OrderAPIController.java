@@ -196,7 +196,6 @@ public class OrderAPIController extends BaseController {
             @ApiImplicitParam(name = "order_id", value = "商户订单号", dataType = "String", dataTypeClass = String.class),
             @ApiImplicitParam(name = "customer_id", value = "用户ID", dataType = "String", dataTypeClass = String.class),
             @ApiImplicitParam(name = "product_name", value = "产品名", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "locale", value = "语言", dataType = "String", dataTypeClass = String.class),
             @ApiImplicitParam(name = "address", value = "用户收款地址", dataType = "String", dataTypeClass = String.class),
             @ApiImplicitParam(name = "signature", value = "签名", dataType = "String", dataTypeClass = String.class)
     })
@@ -253,7 +252,7 @@ public class OrderAPIController extends BaseController {
         orgAccountOrder.setProductName(payEntity.getProduct_name());
         orgAccountOrder.setAmount(payEntity.getAmount()); //订单金额
         orgAccountOrder.setCurrency(payEntity.getCurrency());
-        orgAccountOrder.setCoinAmount(orgAccountOrder.getCoinAmount());//支付金额(默认订单金额，暂时不加汇率换算)
+        orgAccountOrder.setCoinAmount(orgAccountOrder.getAmount());//支付金额(默认订单金额，暂时不加汇率换算)
         orgAccountOrder.setCoinCode(payEntity.getCoin_code());
         orgAccountOrder.setOutAddress(orgAccountAddress.getAddress());
         orgAccountOrder.setCoinAddress(payEntity.getAddress());
@@ -263,7 +262,7 @@ public class OrderAPIController extends BaseController {
 
         this.iOrgAccountOrderDaipService.save(orgAccountOrder);
         //（4）发送提现消息通知
-        messageProducer.pdaiOutput(orgAccountOrder, 0); //进行转账操作
+        messageProducer.pdaiOutput(orgAccountOrder); //进行转账操作
 //        String jsonObject = JSONObject.toJSONString(orgAccountOrder);
 //        redisTemplate.convertAndSend("sendMsgPay", jsonObject);
 
