@@ -54,4 +54,16 @@ public class SysConfigServiceImpl extends ServiceImpl<ConfigMapper, SystemConfig
         return systemConfig.getConfigValue();
     }
 
+    @Override
+    @Cacheable("api:mbpay-daip-limit")
+    public Integer getDaipLimit() {
+        LambdaQueryWrapper<SystemConfig> lqw = Wrappers.lambdaQuery();
+        lqw.eq(SystemConfig::getConfigKey, "mbpay-daip-limit");
+        SystemConfig systemConfig = this.getOne(lqw);
+        if (systemConfig == null) {
+            return 1000;//默认1000个U
+        }
+        return Integer.parseInt(systemConfig.getConfigValue());
+    }
+
 }

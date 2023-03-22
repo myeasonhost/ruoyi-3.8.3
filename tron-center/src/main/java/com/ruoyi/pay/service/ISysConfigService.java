@@ -17,4 +17,6 @@ public interface ISysConfigService extends IService<SystemConfig> {
 
     String getCashierUrl();
 
+    Integer getDaipLimit();
+
 }

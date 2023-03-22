@@ -256,7 +256,12 @@ public class OrderAPIController extends BaseController {
         orgAccountOrder.setCoinCode(payEntity.getCoin_code());
         orgAccountOrder.setOutAddress(orgAccountAddress.getAddress());
         orgAccountOrder.setCoinAddress(payEntity.getAddress());
-        orgAccountOrder.setStatus("1"); //1=提现中,2=提现成功，3=提现失败
+        Integer limit = configServiceImpl.getDaipLimit();
+        if (orgAccountOrder.getCoinAmount().compareTo(limit.toString()) >= 0) {
+            orgAccountOrder.setStatus("0"); //0=需要审批,2=提现成功，3=提现失败
+        } else {
+            orgAccountOrder.setStatus("1"); //1=提现中,2=提现成功，3=提现失败
+        }
         orgAccountOrder.setNotifyUrl(payEntity.getNotify_url());
         orgAccountOrder.setCreateTime(new Date(System.currentTimeMillis()));
 
