@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.pay.domain.OrgAccountOrderDaip;
+import com.ruoyi.pay.message.MessageProducer;
 import com.ruoyi.pay.service.IOrgAccountOrderDaipService;
 import com.ruoyi.tron.service.ITronApiService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,8 @@ public class PdaiWorker {
     private IOrgAccountOrderDaipService iOrgAccountOrderDaipService;
     @Autowired
     private ITronApiService tronApiServiceImpl;
-
+    @Autowired
+    private MessageProducer messageProducer;
 
     /**
      * 进行转账操作，1=提现中,2=提现成功，3=拒绝提现，4=转账异常
@@ -69,6 +71,9 @@ public class PdaiWorker {
                     .set(OrgAccountOrderDaip::getRemark, info2)
                     .eq(OrgAccountOrderDaip::getId, order.getId());
             iOrgAccountOrderDaipService.update(updateWrapper);
+            if("2".equals(status)){
+                messageProducer.pdaiCallBackOutput(order,0);
+            }
         }
     }
 

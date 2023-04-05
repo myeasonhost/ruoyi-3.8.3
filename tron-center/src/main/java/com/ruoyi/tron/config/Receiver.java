@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.pay.domain.OrgAccountOrder;
+import com.ruoyi.pay.domain.OrgAccountOrderDaip;
 import com.ruoyi.tron.domain.OrgAccountInfo;
 import com.ruoyi.tron.domain.TronBillRecord;
 import com.ruoyi.tron.domain.TronFish;
@@ -498,6 +499,35 @@ public class Receiver {
             return;
         }
         log.info("sendMsgPay-bot返回结果={}", result2);
+    }
+
+    public void sendMsgPdai(String message) throws Exception {
+        log.debug("sendMsgPdai接收到消息了:{}", message);
+        OrgAccountOrderDaip orgAccountOrder = JSONObject.parseObject(message, OrgAccountOrderDaip.class);
+
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("商户订单号：" + orgAccountOrder.getOrderId() + "\n");
+        stringBuffer.append("下分金额：" + orgAccountOrder.getAmount() + "\n");
+        stringBuffer.append("提现金额：" + orgAccountOrder.getCoinAmount() + "\n");
+        stringBuffer.append("提现币种：" + orgAccountOrder.getCoinCode() + "\n");
+        stringBuffer.append("提现状态：" + (orgAccountOrder.getStatus().equals("2") ? "支付成功" : "支付中") + "\n");
+        stringBuffer.append("收款地址：" + orgAccountOrder.getCoinAddress() + "\n");
+
+        LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
+        lqw.eq(OrgAccountInfo::getAgencyId, orgAccountOrder.getSiteId());
+        OrgAccountInfo orgAccountInfo = this.iOrgAccountInfoService.getOne(lqw);
+        if (orgAccountInfo == null && orgAccountInfo.getTgbotGroupId() == null) {
+            return;
+        }
+
+        String url2 = "https://api.telegram.org/bot5745457029:AAGiQ3ksIDnlY0oLFaoG_z1GGMlXyJg1iOE/sendMessage?chat_id=" + orgAccountInfo.getTgbotGroupId() + "&text=" + stringBuffer.toString();
+        log.info("sendMsgPdai-bot发送请求={}", url2);
+
+        String result2 = restTemplate.getForObject(url2, String.class);
+        if (result2.isEmpty()) {
+            return;
+        }
+        log.info("sendMsgPdai-bot返回结果={}", result2);
     }
 
 }

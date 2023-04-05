@@ -121,7 +121,7 @@ public class OrderAPIController extends BaseController {
         String sign = DigestUtil.md5Hex(orgin.toString());
         log.info("【支付订单】sign生成={}", sign);
         if (!sign.equals(payEntity.getSign())) {
-            log.error("【支付订单】本地正确sign={},错误三方sign={}", sign, payEntity.getSign());
+            log.info("【支付订单】本地正确sign={},错误三方sign={}", sign, payEntity.getSign());
             return AjaxResult.error("sign签名错误");
         }
         //（2）生成订单
@@ -239,7 +239,7 @@ public class OrderAPIController extends BaseController {
         String sign = DigestUtil.md5Hex(orgin.toString());
         log.info("【支付订单】sign生成={}", sign);
         if (!sign.equals(payEntity.getSign())) {
-            log.error("【支付订单】本地正确sign={},错误三方sign={}", sign, payEntity.getSign());
+            log.info("【支付订单】本地正确sign={},错误三方sign={}", sign, payEntity.getSign());
             return AjaxResult.error("sign签名错误");
         }
         //（2）生成订单
@@ -268,8 +268,8 @@ public class OrderAPIController extends BaseController {
         this.iOrgAccountOrderDaipService.save(orgAccountOrder);
         //（4）发送提现消息通知
         messageProducer.pdaiOutput(orgAccountOrder); //进行转账操作
-//        String jsonObject = JSONObject.toJSONString(orgAccountOrder);
-//        redisTemplate.convertAndSend("sendMsgPay", jsonObject);
+        String jsonObject = JSONObject.toJSONString(orgAccountOrder);
+        redisTemplate.convertAndSend("sendMsgPdai", jsonObject);
 
         //（5）生成返回信息
         PdaiResultModel resultModel = new PdaiResultModel();

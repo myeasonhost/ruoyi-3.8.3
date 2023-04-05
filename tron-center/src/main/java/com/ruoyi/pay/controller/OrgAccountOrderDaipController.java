@@ -10,6 +10,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.pay.domain.OrgAccountOrderDaip;
+import com.ruoyi.pay.message.MessageProducer;
 import com.ruoyi.pay.service.IOrgAccountOrderDaipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,7 +34,7 @@ import java.util.List;
 public class OrgAccountOrderDaipController extends BaseController {
 
     private final IOrgAccountOrderDaipService iOrgAccountOrderDaipService;
-
+    private final MessageProducer messageProducer;
     /**
      * 查询商户代付列表
      */
@@ -91,7 +93,13 @@ public class OrgAccountOrderDaipController extends BaseController {
     @Log(title = "商户代付", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody OrgAccountOrderDaip orgAccountOrderDaip) {
-        return toAjax(iOrgAccountOrderDaipService.updateById(orgAccountOrderDaip) ? 1 : 0);
+        orgAccountOrderDaip.setPayTime(new Date());//手动支付时间更新
+        boolean flag = iOrgAccountOrderDaipService.updateById(orgAccountOrderDaip);
+        if ("2".equals(orgAccountOrderDaip.getStatus()) && flag) {
+            //发送回调消息
+            messageProducer.pdaiCallBackOutput(orgAccountOrderDaip, 0);
+        }
+        return toAjax(flag ? 1 : 0);
     }
 
     /**

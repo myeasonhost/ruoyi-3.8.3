@@ -196,7 +196,7 @@ public class CallbackNotifyWorker {
                 throw new Exception(responseString);
             }
             String jsonObject1 = JSONObject.toJSONString(order);
-            redisTemplate.convertAndSend("sendMsgPay", jsonObject1);
+            redisTemplate.convertAndSend("sendMsgPdai", jsonObject1);
         } catch (Exception e) {
             log.error("【待付回调】商户订单号:{}，回调通知操作：URL={}，回调出错={}", order.getOrderId(), order.getNotifyUrl(), e.getMessage());
             if (order.getNotifyTimes() < 3) {
@@ -222,16 +222,16 @@ public class CallbackNotifyWorker {
             }
             return true;
         }
-        LambdaUpdateWrapper<OrgAccountOrder> updateWrapper = new LambdaUpdateWrapper();
+        LambdaUpdateWrapper<OrgAccountOrderDaip> updateWrapper = new LambdaUpdateWrapper();
 
         if ("SUCCESS".equalsIgnoreCase(responseString)) {  //返回结果SUCCESS
-            updateWrapper.set(OrgAccountOrder::getNotifySucceed, "1");
+            updateWrapper.set(OrgAccountOrderDaip::getNotifySucceed, "1");
         } else {
-            updateWrapper.set(OrgAccountOrder::getNotifySucceed, "2");
+            updateWrapper.set(OrgAccountOrderDaip::getNotifySucceed, "2");
         }
-        updateWrapper.set(OrgAccountOrder::getLastNotifyTime, new Date(System.currentTimeMillis()));
-        updateWrapper.eq(OrgAccountOrder::getId, order.getId());
-        orgAccountOrderService.update(updateWrapper);
+        updateWrapper.set(OrgAccountOrderDaip::getLastNotifyTime, new Date(System.currentTimeMillis()));
+        updateWrapper.eq(OrgAccountOrderDaip::getId, order.getId());
+        orgAccountOrderDaipService.update(updateWrapper);
         return true;
     }
 

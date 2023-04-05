@@ -51,7 +51,7 @@ public class TronTask {
      * @param params
      */
     public void queryTRC20(String params) {
-        log.info("【订单扫块】扫块任务开始执行，参数=" + params);
+//        log.info("【订单扫块】扫块任务开始执行，参数=" + params);
         //（1）查找支付订单中，未过期的订单，最早的时间
         LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper = new LambdaQueryWrapper();
         lambdaQueryWrapper.eq(OrgAccountOrder::getStatus, "1"); //1=支付中,2=支付成功，3=支付超时

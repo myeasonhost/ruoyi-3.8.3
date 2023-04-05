@@ -22,7 +22,7 @@
       <el-form-item label="提现状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
           <el-option
-            v-for="dict in dict.type.three_status"
+            v-for="dict in dict.type.mbpay_withdraw_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -69,7 +69,7 @@
       </el-table-column>
       <el-table-column label="提现状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.three_status" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.mbpay_withdraw_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
       <el-table-column label="通知状态" align="center" prop="notifySucceed">
@@ -94,6 +94,15 @@
             v-hasPermi="['pay:daip:edit']"
             v-if="scope.row.status==0"
           >审批转账
+          </el-button>
+          <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-phone-outline"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['pay:daip:edit']"
+              v-if="scope.row.notifySucceed==0"
+            >手动回调
           </el-button>
           <el-button
             size="mini"
@@ -122,8 +131,8 @@
           <i class="el-icon-warning"></i>
           <span>&nbsp;&nbsp;&nbsp;温馨提示：请仔细核对商户余额是否充足，确保用户提现交易成功</span>
         </div>
-        <div style="color: #f4516c;font-size: 8px;">&nbsp;&nbsp;&nbsp;（1）如果信息匹配，点击按钮【评审通过】，系统自动进行转账；</div>
-        <div style="color: #f4516c;font-size: 8px;">&nbsp;&nbsp;&nbsp;（2）如果信息不匹配，点击按钮【评审失败】，代表拒绝用户提现；</div>
+        <div style="color: #f4516c;font-size: 8px;">&nbsp;&nbsp;&nbsp;（1）如果信息匹配，金额无法转账成功，线下进行转账，进行手动通知；</div>
+        <div style="color: #f4516c;font-size: 8px;">&nbsp;&nbsp;&nbsp;（2）如果信息不匹配，请勿进行手动通知操作；</div>
       </div>
       <div/>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -159,17 +168,16 @@
           </el-col>
           <el-col :span="13">
             <el-form-item label="提现时间" prop="currency">
-              <el-input v-model="form.withdrawTime" :disabled="true"/>
+              <el-input v-model="form.payTime" :disabled="true"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="评审意见" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入评审意见" />
+          <el-input v-model="form.remark" placeholder="请输入评审意见" disabled/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" @click="submitForm(3)" v-if="form.status==0">审批通过</el-button>
-        <el-button type="danger" @click="submitForm(2)" v-if="form.status==0">拒绝提现</el-button>
+        <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -177,11 +185,11 @@
 </template>
 
 <script>
-import { addDaip, delDaip, exportDaip, getDaip, listDaip, updateDaip } from '@/api/pay/daip'
+import {delDaip, exportDaip, getDaip, listDaip, updateDaip } from '@/api/pay/daip'
 
 export default {
   name: 'Daip',
-  dicts: ['three_status', 'tron_notify_state'],
+  dicts: ['mbpay_withdraw_status', 'tron_notify_state'],
   components: {},
   data() {
     return {
@@ -300,17 +308,16 @@ export default {
       getDaip(id).then(response => {
         this.form = response.data
         this.open = true
-        this.title = '审批转账'
+        this.title = '修改提现订单'
       })
     },
     /** 提交按钮 */
-    submitForm(status) {
+    submitForm() {
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            this.form.status = status;
             updateDaip(this.form).then(response => {
-              this.msgSuccess('操作成功')
+              this.msgSuccess('修改成功')
               this.open = false
               this.getList()
             })
