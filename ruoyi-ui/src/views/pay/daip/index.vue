@@ -50,7 +50,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="daipList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="daipList" @selection-change="handleSelectionChange" size="small">
       <el-table-column label="支付订单号" align="center" prop="id" v-if="false"/>
       <el-table-column label="商户ID" align="center" prop="siteId"/>
       <el-table-column label="商户订单号" align="center" prop="orderId"/>
@@ -80,7 +80,7 @@
       <el-table-column label="收款地址" align="center" prop="coinAddress" width="150"/>
       <el-table-column label="转账时间" align="center" prop="payTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.payTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.payTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark"/>

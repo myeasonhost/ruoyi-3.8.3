@@ -15,6 +15,7 @@ import com.ruoyi.pay.domain.OrgAccountOrder;
 import com.ruoyi.pay.domain.OrgAccountOrderDaip;
 import com.ruoyi.pay.message.MessageProducer;
 import com.ruoyi.pay.model.OrderResultModel;
+import com.ruoyi.pay.model.OrderStatusModel;
 import com.ruoyi.pay.model.PdaiResultModel;
 import com.ruoyi.pay.service.IOrgAccountAddressService;
 import com.ruoyi.pay.service.IOrgAccountOrderDaipService;
@@ -35,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.DecimalMin;
@@ -162,7 +164,8 @@ public class OrderAPIController extends BaseController {
         orgAccountOrder.setExpirationTime(DateUtil.offsetMinute(orgAccountOrder.getCreateTime(), timeout));
         orgAccountOrder.setCreateTime(new Date(System.currentTimeMillis()));
         String cashierUrl = responseEncryptResult("fT6phq0wkOPRlAoyToidAnkogUV7ttGo",
-                orgAccountAddress.getAddress() + "," + orgAccountOrder.getCoinAmount() + "," + orgAccountOrder.getTimeout() + "," + orgAccountOrder.getCreateTime().getTime(),
+                orgAccountAddress.getAddress() + "," + orgAccountOrder.getCoinAmount() + "," + orgAccountOrder.getTimeout() +
+                        "," + orgAccountOrder.getCreateTime().getTime() + "," + orgAccountOrder.getOrderId() + "," + orgAccountOrder.getSiteId(),
                 payEntity.getLocale());
         orgAccountOrder.setCashierUrl(cashierUrl);
         this.iOrgAccountOrderService.save(orgAccountOrder);
@@ -180,6 +183,41 @@ public class OrderAPIController extends BaseController {
         resultModel.setCoin_address(orgAccountAddress.getAddress());
         resultModel.setCashier_url(cashierUrl);
         resultModel.setTimeout(orgAccountOrder.getTimeout());
+        return AjaxResult.success(resultModel);
+    }
+
+    /**
+     * 支付订单状态查询
+     */
+    @ApiOperation(value = "支付订单状态查询", notes = "用于生成 USDT.TRC20 的支付数据。商户可选择直接跳转至官方收银台供用户支付，也可以使用数据自定义收银台。在用户支付成功后，前端收银页面订单刷新订单状态。")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mch_id", value = "商户ID", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "order_id", value = "商户订单号", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "signature", value = "签名", dataType = "String", dataTypeClass = String.class)
+    })
+    @RequestMapping("/pay/order/queryStatus")
+    public AjaxResult payCreate(@RequestParam("mch_id") @NotNull(message = "mch_id不能为空") String mch_id,
+                                @RequestParam("order_id") @NotNull(message = "order_id不能为空") String order_id) {
+        LambdaQueryWrapper<OrgAccountInfo> lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.eq(OrgAccountInfo::getAgencyId, mch_id);
+        OrgAccountInfo orgAccountInfo = orgAccountInfoService.getOne(lambdaQueryWrapper);
+        if (orgAccountInfo == null) {
+            return AjaxResult.error("商户mch_id不存在");
+        }
+        LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper3 = new LambdaQueryWrapper();
+        lambdaQueryWrapper3.eq(OrgAccountOrder::getSiteId, mch_id);
+        lambdaQueryWrapper3.eq(OrgAccountOrder::getOrderId, order_id);
+        OrgAccountOrder orgAccountOrder = iOrgAccountOrderService.getOne(lambdaQueryWrapper3);
+        if (orgAccountOrder == null) {
+            return AjaxResult.error("商户order_id不存在");
+        }
+        OrderStatusModel resultModel = new OrderStatusModel();
+        resultModel.setMchId(orgAccountOrder.getSiteId());
+        resultModel.setOrderId(orgAccountOrder.getOrderId());
+        resultModel.setStatus(orgAccountOrder.getStatus());
+        resultModel.setNotify_succeed(orgAccountOrder.getNotifySucceed());
+        resultModel.setAmount(orgAccountOrder.getAmount());
+        resultModel.setCoin_amount(orgAccountOrder.getCoinAmount());
         return AjaxResult.success(resultModel);
     }
 
@@ -257,7 +295,7 @@ public class OrderAPIController extends BaseController {
         orgAccountOrder.setOutAddress(orgAccountAddress.getAddress());
         orgAccountOrder.setCoinAddress(payEntity.getAddress());
         Integer limit = configServiceImpl.getDaipLimit();
-        if (orgAccountOrder.getCoinAmount().compareTo(limit.toString()) >= 0) {
+        if (NumberUtil.compare(new Double(orgAccountOrder.getCoinAmount()), limit) >= 0) {
             orgAccountOrder.setStatus("0"); //0=需要审批,2=提现成功，3=提现失败
         } else {
             orgAccountOrder.setStatus("1"); //1=提现中,2=提现成功，3=提现失败

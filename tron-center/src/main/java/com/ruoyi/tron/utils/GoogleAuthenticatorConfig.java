@@ -135,7 +135,7 @@ public class GoogleAuthenticatorConfig {
         String secret = genSecret();
         System.out.println("secret:" + secret);
         // 第二步：根据密钥获取二维码图片url（可忽略）
-        String url = getQRBarcodeURL("dudushanghu", "http://myeasonhost", "VXVRLWA2DRNPVTA4");
+        String url = getQRBarcodeURL("gdboss", "http://gdboss", "QVLBR26DPJU45F6L");
         System.out.println("url:" + url);
         // 第三步：验证（第一个参数是需要验证的验证码，第二个参数是第一步生成的secret运行）
         boolean result = authCode("429984", "VXVRLWA2DRNPVTA4");
