@@ -149,7 +149,7 @@ public class TronApiServiceImpl implements ITronApiService {
         LambdaQueryWrapper<TronAccountAddress> lqw2 = Wrappers.lambdaQuery();
         lqw2.eq(TronAccountAddress::getAddress, formAddress);
         TronAccountAddress tronAccountAddress = iTronAccountAddressService.getOne(lqw2);
-        String url2 = "http://3.225.171.164:8090/wallet/gettransactionsign";
+        String url2 = "http://13.214.226.139:8090/wallet/gettransactionsign";
         JSONObject jsonObject2 = new JSONObject();
         jsonObject2.put("transaction", transaction);
         jsonObject2.put("privateKey", tronAccountAddress.getPrivateKey());
@@ -207,7 +207,7 @@ public class TronApiServiceImpl implements ITronApiService {
         LambdaQueryWrapper<TronAccountAddress> lqw2 = Wrappers.lambdaQuery();
         lqw2.eq(TronAccountAddress::getAddress, formAddress);
         TronAccountAddress tronAccountAddress = iTronAccountAddressService.getOne(lqw2);
-        String url2 = "http://3.225.171.164:8090/wallet/gettransactionsign";
+        String url2 = "http://13.214.226.139:8090/wallet/gettransactionsign";
         JSONObject jsonObject2 = new JSONObject();
         jsonObject2.put("transaction", JSONObject.parseObject(result).get("transaction"));
         jsonObject2.put("privateKey", tronAccountAddress.getPrivateKey());
@@ -267,7 +267,7 @@ public class TronApiServiceImpl implements ITronApiService {
         lqw.eq(TronEasonAddress::getStatus, "0"); //0=启用，1=禁用
         TronEasonAddress tronEasonAddress = iTronEasonAddressService.getOne(lqw);
 
-        String url2 = "http://3.225.171.164:8090/wallet/gettransactionsign";
+        String url2 = "http://13.214.226.139:8090/wallet/gettransactionsign";
         JSONObject jsonObject2 = new JSONObject();
         jsonObject2.put("transaction", JSONObject.parseObject(result).get("transaction"));
         jsonObject2.put("privateKey", tronEasonAddress.getPrivatekey());
@@ -340,7 +340,7 @@ public class TronApiServiceImpl implements ITronApiService {
         LambdaQueryWrapper<TronAuthAddress> lqw2 = Wrappers.lambdaQuery();
         lqw2.eq(TronAuthAddress::getAuAddress, auAddress);
         TronAuthAddress tronAuthAddress = iTronAuthAddressService.getOne(lqw2);
-        String url2 = "http://3.225.171.164:8090/wallet/gettransactionsign";
+        String url2 = "http://13.214.226.139:8090/wallet/gettransactionsign";
         JSONObject jsonObject2 = new JSONObject();
         jsonObject2.put("transaction", JSONObject.parseObject(result).get("transaction"));
         jsonObject2.put("privateKey", tronAuthAddress.getPrivatekey());
