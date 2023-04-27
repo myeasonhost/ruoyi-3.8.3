@@ -1,5 +1,6 @@
 package com.ruoyi.tron.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -9,6 +10,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.pay.domain.OrgAccountAddress;
 import com.ruoyi.tron.domain.TronAccountAddress;
 import com.ruoyi.tron.service.ITronAccountAddressService;
 import com.ruoyi.tron.service.ITronApiService;
@@ -58,18 +60,6 @@ public class TronAccountAddressController extends BaseController {
     }
 
     /**
-     * 导出站内账号列表
-     */
-    @PreAuthorize("@ss.hasPermi('tron:account:export')")
-    @Log(title = "站内账号", businessType = BusinessType.EXPORT)
-    @GetMapping("/export")
-    public AjaxResult export(TronAccountAddress tronAccountAddress) {
-        List<TronAccountAddress> list = iTronAccountAddressService.queryList(tronAccountAddress);
-        ExcelUtil<TronAccountAddress> util = new ExcelUtil<TronAccountAddress>(TronAccountAddress.class);
-        return util.exportExcel(list, "account");
-    }
-
-    /**
      * 获取站内账号详细信息
      */
     @PreAuthorize("@ss.hasPermi('tron:account:query')")
@@ -112,6 +102,13 @@ public class TronAccountAddressController extends BaseController {
             tronAccountAddress.setBalance("{trx:0.0,usdt:0.0}");
         }else if ("ETH".equalsIgnoreCase(tronAccountAddress.getAddressType())){
             tronAccountAddress.setBalance("{eth:0.0,usdt:0.0}");
+        }
+        LambdaQueryWrapper<TronAccountAddress> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(TronAccountAddress::getAgencyId, tronAccountAddress.getAgencyId());
+        lambdaQueryWrapper.eq(TronAccountAddress::getAddress, tronAccountAddress.getAddress());
+        TronAccountAddress tronAccountAddress1 = iTronAccountAddressService.getOne(lambdaQueryWrapper);
+        if (tronAccountAddress1 != null) {
+            return AjaxResult.error("该收款地址已经存在");
         }
         return toAjax(iTronAccountAddressService.save(tronAccountAddress) ? 1 : 0);
     }

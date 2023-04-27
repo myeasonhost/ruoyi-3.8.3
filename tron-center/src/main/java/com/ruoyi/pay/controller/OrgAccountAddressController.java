@@ -10,7 +10,6 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.pay.domain.OrgAccountAddress;
 import com.ruoyi.pay.service.IOrgAccountAddressService;
 import com.ruoyi.tron.service.ITronApiService;
@@ -59,17 +58,6 @@ public class OrgAccountAddressController extends BaseController {
         return getDataTable(list);
     }
 
-    /**
-     * 导出收款地址列表
-     */
-    @PreAuthorize("@ss.hasPermi('pay:address:export')")
-    @Log(title = "收款地址", businessType = BusinessType.EXPORT)
-    @GetMapping("/export")
-    public AjaxResult export(OrgAccountAddress orgAccountAddress) {
-        List<OrgAccountAddress> list = iOrgAccountAddressService.queryList(orgAccountAddress);
-        ExcelUtil<OrgAccountAddress> util = new ExcelUtil<OrgAccountAddress>(OrgAccountAddress.class);
-        return util.exportExcel(list, "address");
-    }
 
     /**
      * 获取收款地址详细信息
@@ -126,6 +114,7 @@ public class OrgAccountAddressController extends BaseController {
             return AjaxResult.error("收款地址不合法");
         }
         LambdaQueryWrapper<OrgAccountAddress> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(OrgAccountAddress::getAgencyId, orgAccountAddress.getAgencyId());
         lambdaQueryWrapper.eq(OrgAccountAddress::getAddress, address);
         OrgAccountAddress orgAccountAddress1 = iOrgAccountAddressService.getOne(lambdaQueryWrapper);
         if (orgAccountAddress1 != null) {

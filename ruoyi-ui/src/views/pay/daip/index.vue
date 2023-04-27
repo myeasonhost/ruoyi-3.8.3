@@ -58,8 +58,8 @@
       <el-table-column label="产品名" align="center" prop="productName"/>
       <el-table-column label="支付明细" align="left" width="120">
         <template slot-scope="scope">
-          <div style="color: #13ce66;font-family: 'Arial Black';font-size: xx-small;">上分金额：{{ scope.row.amount }}</div>
-          <div style="color: #f4516c;font-family: 'Arial Black';font-size: xx-small;">支付金额：{{
+          <div style="color: #13ce66;font-family: 'Arial Black';font-size: xx-small;">提现金额：{{ scope.row.amount }}</div>
+          <div style="color: #f4516c;font-family: 'Arial Black';font-size: xx-small;">转出金额：{{
               scope.row.coinAmount
             }}
           </div>
