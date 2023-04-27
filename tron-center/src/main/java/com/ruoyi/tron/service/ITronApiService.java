@@ -28,12 +28,12 @@ public interface ITronApiService {
     /**
      * 转账TRX
      */
-    AjaxResult transferTRX(String formAddress, String toAddress, Double amount) throws Exception;
+    AjaxResult transferTRX(String agencyId, String formAddress, String toAddress, Double amount) throws Exception;
 
     /**
      * 转账USDT 对站内账户
      */
-    AjaxResult transferUSDT(String formAddress, String toAddress, Double amount) throws Exception;
+    AjaxResult transferUSDT(String agencyId, String formAddress, String toAddress, Double amount) throws Exception;
 
     /**
      * 转账USDT 对总站账户
@@ -43,5 +43,5 @@ public interface ITronApiService {
     /**
      * 第三方账户授权转化USDT
      */
-    AjaxResult transferFrom(String formAddress, String auAddress, String toAddress, Double amount) throws Exception;
+    AjaxResult transferFrom(String agencyId, String formAddress, String auAddress, String toAddress, Double amount) throws Exception;
 }

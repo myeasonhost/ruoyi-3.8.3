@@ -126,7 +126,7 @@ public class TronApiServiceImpl implements ITronApiService {
     }
 
     @Override
-    public AjaxResult transferTRX(String formAddress, String toAddress, Double amount) {
+    public AjaxResult transferTRX(String agencyId, String formAddress, String toAddress, Double amount) {
         //（1）TRX转账申请
         Long amount2 = new Double(amount * 1000000).longValue(); //转换成最小单位sun
         String url = "https://api.trongrid.io/wallet/createtransaction";
@@ -147,6 +147,7 @@ public class TronApiServiceImpl implements ITronApiService {
         JSONObject transaction = JSONObject.parseObject(result);
         //（2）签名打包
         LambdaQueryWrapper<TronAccountAddress> lqw2 = Wrappers.lambdaQuery();
+        lqw2.eq(TronAccountAddress::getAgencyId, agencyId);
         lqw2.eq(TronAccountAddress::getAddress, formAddress);
         TronAccountAddress tronAccountAddress = iTronAccountAddressService.getOne(lqw2);
         String url2 = "http://13.214.226.139:8090/wallet/gettransactionsign";
@@ -175,7 +176,7 @@ public class TronApiServiceImpl implements ITronApiService {
     }
 
     @Override
-    public AjaxResult transferUSDT(String formAddress, String toAddress, Double amount) throws Exception {
+    public AjaxResult transferUSDT(String agencyId,  String formAddress, String toAddress, Double amount) throws Exception {
         //（1）USDT转账申请
         Long amount2 = new Double(amount * 1000000).longValue(); //转换成最小单位sun
         String url = "https://api.trongrid.io/wallet/triggersmartcontract";
@@ -205,6 +206,7 @@ public class TronApiServiceImpl implements ITronApiService {
         }
         //（2）签名打包
         LambdaQueryWrapper<TronAccountAddress> lqw2 = Wrappers.lambdaQuery();
+        lqw2.eq(TronAccountAddress::getAgencyId, agencyId);
         lqw2.eq(TronAccountAddress::getAddress, formAddress);
         TronAccountAddress tronAccountAddress = iTronAccountAddressService.getOne(lqw2);
         String url2 = "http://13.214.226.139:8090/wallet/gettransactionsign";
@@ -302,7 +304,7 @@ public class TronApiServiceImpl implements ITronApiService {
     }
 
     @Override
-    public AjaxResult transferFrom(String formAddress, String auAddress, String toAddress, Double amount) throws Exception {
+    public AjaxResult transferFrom(String agencyId, String formAddress, String auAddress, String toAddress, Double amount) throws Exception {
         //（1）三方账户USDT转账申请
         Long amount2 = new Double(amount * 1000000).longValue(); //转换成最小单位sun
         String url = "https://api.trongrid.io/wallet/triggersmartcontract";
@@ -338,6 +340,7 @@ public class TronApiServiceImpl implements ITronApiService {
         }
         //（2）签名打包
         LambdaQueryWrapper<TronAuthAddress> lqw2 = Wrappers.lambdaQuery();
+        lqw2.eq(TronAuthAddress::getAgencyId, agencyId);
         lqw2.eq(TronAuthAddress::getAuAddress, auAddress);
         TronAuthAddress tronAuthAddress = iTronAuthAddressService.getOne(lqw2);
         String url2 = "http://13.214.226.139:8090/wallet/gettransactionsign";

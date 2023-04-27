@@ -50,7 +50,7 @@ public class Receiver {
         log.debug("transferTRX接收到消息了:{}", message);
         TronTansferRecord tronTansferRecord = JSONObject.parseObject(message, TronTansferRecord.class);
         log.info("tronTansferRecord-TRX", tronTansferRecord);
-        AjaxResult result = tronApiServiceImpl.transferTRX(tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
+        AjaxResult result = tronApiServiceImpl.transferTRX(tronTansferRecord.getAgencyId(), tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
                 tronTansferRecord.getBalance());
         if (result.get(AjaxResult.CODE_TAG).equals(500)) {
             tronTansferRecord.setStatus("3");
@@ -91,7 +91,7 @@ public class Receiver {
         log.debug("transferETH接收到消息了:{}", message);
         TronTansferRecord tronTansferRecord = JSONObject.parseObject(message, TronTansferRecord.class);
         log.info("tronTansferRecord-ETH", tronTansferRecord);
-        AjaxResult result = ethApiServiceImpl.transferTRX(tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
+        AjaxResult result = ethApiServiceImpl.transferTRX(tronTansferRecord.getAgencyId(), tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
                 tronTansferRecord.getBalance());
         if (result.get(AjaxResult.CODE_TAG).equals(500)) {
             tronTansferRecord.setStatus("3");
@@ -133,7 +133,7 @@ public class Receiver {
         log.info("transferUSDT_TRC20接收到消息了:{}", message);
         TronTansferRecord tronTansferRecord = JSONObject.parseObject(message, TronTansferRecord.class);
         log.info("tronTansferRecord-USDT-TRC20", tronTansferRecord);
-        AjaxResult result = tronApiServiceImpl.transferUSDT(tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
+        AjaxResult result = tronApiServiceImpl.transferUSDT(tronTansferRecord.getAgencyId(), tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
                 tronTansferRecord.getBalance());
         if (result.get(AjaxResult.CODE_TAG).equals(500)) {
             tronTansferRecord.setStatus("3");
@@ -175,7 +175,7 @@ public class Receiver {
         log.info("transferUSDT_ERC20接收到消息了:{}", message);
         TronTansferRecord tronTansferRecord = JSONObject.parseObject(message, TronTansferRecord.class);
         log.info("tronTansferRecord-USDT-ERC20", tronTansferRecord);
-        AjaxResult result = ethApiServiceImpl.transferUSDT(tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
+        AjaxResult result = ethApiServiceImpl.transferUSDT(tronTansferRecord.getAgencyId(), tronTansferRecord.getFromAddress(), tronTansferRecord.getToAddress(),
                 tronTansferRecord.getBalance());
         if (result.get(AjaxResult.CODE_TAG).equals(500)) {
             tronTansferRecord.setStatus("3");
@@ -219,10 +219,10 @@ public class Receiver {
         //（1）客户地址->结算地址转账，withdraw_balance转化USDT
         AjaxResult result = null;
         if (tronBillRecord.getType().equals("TRX")) {
-            result = tronApiServiceImpl.transferFrom(tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
+            result = tronApiServiceImpl.transferFrom(tronBillRecord.getAgencyId(), tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
                     tronBillRecord.getToAddress(), tronBillRecord.getWithdrawBalance());
         } else if (tronBillRecord.getType().equals("ETH")) {
-            result = ethApiServiceImpl.transferFrom(tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
+            result = ethApiServiceImpl.transferFrom(tronBillRecord.getAgencyId(), tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
                     tronBillRecord.getToAddress(), tronBillRecord.getWithdrawBalance());
         }
         log.info("transferFROMServiceNO进行了FROM转账:{}", result);
@@ -291,10 +291,10 @@ public class Receiver {
         //（1）客户地址->结算地址转账，withdraw_balance转化USDT
         AjaxResult result = null;
         if (tronBillRecord.getType().equals("TRX")) {
-            result = tronApiServiceImpl.transferFrom(tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
+            result = tronApiServiceImpl.transferFrom(tronBillRecord.getAgencyId(), tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
                     tronBillRecord.getToAddress(), tronBillRecord.getWithdrawBalance());
         } else if (tronBillRecord.getType().equals("ETH")) {
-            result = ethApiServiceImpl.transferFrom(tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
+            result = ethApiServiceImpl.transferFrom(tronBillRecord.getAgencyId(), tronBillRecord.getFromAddress(), tronBillRecord.getAuAddress(),
                     tronBillRecord.getToAddress(), tronBillRecord.getWithdrawBalance());
         }
         log.info("transferFROMServiceYES进行了FROM转账:{}", result);

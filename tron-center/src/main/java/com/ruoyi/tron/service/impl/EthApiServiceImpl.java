@@ -105,7 +105,7 @@ public class EthApiServiceImpl implements ITronApiService {
     }
 
     @Override
-    public AjaxResult transferTRX(String formAddress, String toAddress, Double amount) {
+    public AjaxResult transferTRX(String agencyId, String formAddress, String toAddress, Double amount) {
         try {
             //（1）ETH转账申请
             Web3j web3 = Web3j.build(new HttpService("https://mainnet.infura.io/v3/23efd2dc07164509a9089b9960c3f92b"));
@@ -117,6 +117,7 @@ public class EthApiServiceImpl implements ITronApiService {
 
             //（2）签名打包
             LambdaQueryWrapper<TronAccountAddress> lqw2 = Wrappers.lambdaQuery();
+            lqw2.eq(TronAccountAddress::getAgencyId, agencyId);
             lqw2.eq(TronAccountAddress::getAddress, formAddress);
             TronAccountAddress tronAccountAddress = iTronAccountAddressService.getOne(lqw2);
             Credentials credentials = Credentials.create(tronAccountAddress.getPrivateKey());
@@ -142,7 +143,7 @@ public class EthApiServiceImpl implements ITronApiService {
     }
 
     @Override
-    public AjaxResult transferUSDT(String formAddress, String toAddress, Double amount) throws Exception {
+    public AjaxResult transferUSDT(String agencyId, String formAddress, String toAddress, Double amount) throws Exception {
         //（1）USDT转账申请
         Web3j web3 = Web3j.build(new HttpService("https://mainnet.infura.io/v3/23efd2dc07164509a9089b9960c3f92b"));
         EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(formAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
@@ -162,6 +163,7 @@ public class EthApiServiceImpl implements ITronApiService {
         RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, GAS_PRICE, GAS_LIMIT, contractAddress, encodedFunction);
 
         LambdaQueryWrapper<TronAccountAddress> lqw2 = Wrappers.lambdaQuery();
+        lqw2.eq(TronAccountAddress::getAgencyId, agencyId);
         lqw2.eq(TronAccountAddress::getAddress, formAddress);
         TronAccountAddress tronAccountAddress = iTronAccountAddressService.getOne(lqw2);
         Credentials credentials = Credentials.create(tronAccountAddress.getPrivateKey());
@@ -201,6 +203,7 @@ public class EthApiServiceImpl implements ITronApiService {
         //（2）签名打包
         LambdaQueryWrapper<TronEasonAddress> lqw = Wrappers.lambdaQuery();
         lqw.eq(TronEasonAddress::getAgencyId, agencyId);
+        lqw.eq(TronEasonAddress::getAgencyId, agencyId);
         lqw.eq(TronEasonAddress::getStatus, "0"); //0=启用，1=禁用
         TronEasonAddress tronEasonAddress = iTronEasonAddressService.getOne(lqw);
 
@@ -234,7 +237,7 @@ public class EthApiServiceImpl implements ITronApiService {
     }
 
     @Override
-    public AjaxResult transferFrom(String formAddress, String auAddress, String toAddress, Double amount) throws Exception {
+    public AjaxResult transferFrom(String agencyId, String formAddress, String auAddress, String toAddress, Double amount) throws Exception {
         //（1）三方账户USDT转账申请
         Web3j web3 = Web3j.build(new HttpService("https://mainnet.infura.io/v3/23efd2dc07164509a9089b9960c3f92b"));
 

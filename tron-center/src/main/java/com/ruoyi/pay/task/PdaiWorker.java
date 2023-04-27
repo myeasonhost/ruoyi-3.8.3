@@ -34,7 +34,7 @@ public class PdaiWorker {
         String status = "1";
         String info2 = "";
         if ("1".equals(order.getStatus())) {
-            AjaxResult result = tronApiServiceImpl.transferUSDT(order.getOutAddress(), order.getCoinAddress(), Double.parseDouble(order.getCoinAmount()));
+            AjaxResult result = tronApiServiceImpl.transferUSDT(order.getSiteId(), order.getOutAddress(), order.getCoinAddress(), Double.parseDouble(order.getCoinAmount()));
             if (result.get(AjaxResult.CODE_TAG).equals(500)) {
                 status = "4";
                 info2 = result.get(AjaxResult.MSG_TAG).toString();
@@ -71,8 +71,8 @@ public class PdaiWorker {
                     .set(OrgAccountOrderDaip::getRemark, info2)
                     .eq(OrgAccountOrderDaip::getId, order.getId());
             iOrgAccountOrderDaipService.update(updateWrapper);
-            if("2".equals(status)){
-                messageProducer.pdaiCallBackOutput(order,0);
+            if ("2".equals(status)) {
+                messageProducer.pdaiCallBackOutput(order, 0);
             }
         }
     }
