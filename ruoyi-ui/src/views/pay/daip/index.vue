@@ -52,11 +52,15 @@
 
     <el-table v-loading="loading" :data="daipList" @selection-change="handleSelectionChange" size="small">
       <el-table-column label="支付订单号" align="center" prop="id" v-if="false"/>
-      <el-table-column label="商户ID" align="center" prop="siteId"/>
-      <el-table-column label="商户订单号" align="center" prop="orderId"/>
-      <el-table-column label="用户名" align="center" prop="userId"/>
-      <el-table-column label="产品名" align="center" prop="productName"/>
-      <el-table-column label="支付明细" align="left" width="120">
+      <el-table-column label="商户ID" align="center" prop="siteId" width="100"/>
+      <el-table-column label="商户订单号" align="center" prop="orderId" width="150"/>
+      <el-table-column label="商户信息" align="left" prop="siteId" width="150">
+        <template slot-scope="scope">
+          <div style="color: #666666;font-size: xx-small;">用户ID：{{ scope.row.userId }}</div>
+          <div style="color: #666666;font-size: xx-small;">商品名：{{ scope.row.productName }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="支付明细" align="left" width="170">
         <template slot-scope="scope">
           <div style="color: #13ce66;font-family: 'Arial Black';font-size: xx-small;">提现金额：{{ scope.row.amount }}</div>
           <div style="color: #f4516c;font-family: 'Arial Black';font-size: xx-small;">转出金额：{{
@@ -67,18 +71,14 @@
           <div style="color: #666666;font-size: xx-small;">订单币种：{{ scope.row.currency }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="提现状态" align="center" prop="status">
+      <el-table-column label="提现/通知状态" align="center" prop="status" width="120">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.mbpay_withdraw_status" :value="scope.row.status"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="通知状态" align="center" prop="notifySucceed">
-        <template slot-scope="scope">
           <dict-tag :options="dict.type.tron_notify_state" :value="scope.row.notifySucceed"/>
         </template>
       </el-table-column>
       <el-table-column label="收款地址" align="center" prop="coinAddress" width="150"/>
-      <el-table-column label="转账时间" align="center" prop="payTime" width="180">
+      <el-table-column label="转账时间" align="center" prop="payTime" width="90">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.payTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
@@ -96,13 +96,13 @@
           >审批转账
           </el-button>
           <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-phone-outline"
-              @click="handleUpdate(scope.row)"
-              v-hasPermi="['pay:daip:edit']"
-              v-if="scope.row.notifySucceed==0"
-            >手动回调
+            size="mini"
+            type="text"
+            icon="el-icon-phone-outline"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['pay:daip:edit']"
+            v-if="scope.row.notifySucceed!=1"
+          >手动回调
           </el-button>
           <el-button
             size="mini"
@@ -110,6 +110,7 @@
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['pay:daip:remove']"
+            v-if="scope.row.notifySucceed!=1"
           >删除
           </el-button>
         </template>
@@ -137,16 +138,16 @@
       <div/>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
-        <el-col :span="11">
-          <el-form-item label="商家账号" prop="siteId">
-            <el-input v-model="form.siteId" :disabled="true"/>
-          </el-form-item>
-        </el-col>
-        <el-col :span="13">
-          <el-form-item label="玩家ID" prop="userId">
-            <el-input v-model="form.userId" :disabled="true"/>
-          </el-form-item>
-        </el-col>
+          <el-col :span="11">
+            <el-form-item label="商家账号" prop="siteId">
+              <el-input v-model="form.siteId" :disabled="true"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="13">
+            <el-form-item label="玩家ID" prop="userId">
+              <el-input v-model="form.userId" :disabled="true"/>
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row>
           <el-col :span="11">
@@ -185,7 +186,7 @@
 </template>
 
 <script>
-import {delDaip, exportDaip, getDaip, listDaip, updateDaip } from '@/api/pay/daip'
+import { delDaip, getDaip, listDaip, updateDaip } from '@/api/pay/daip'
 
 export default {
   name: 'Daip',
@@ -341,15 +342,12 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      const queryParams = this.queryParams
-      this.$confirm('是否确认导出所有商户代付数据项?', '警告', {
+      this.$confirm('是否确认导出本页商户代付数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(function() {
-        return exportDaip(queryParams)
       }).then(response => {
-        this.download(response.msg)
+        this.download('/pay/daip/export', { ...this.queryParams }, `withdraw-export_${new Date().getTime()}.xlsx`)
       })
     }
   }

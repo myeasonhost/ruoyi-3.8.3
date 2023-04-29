@@ -158,7 +158,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -308,7 +308,7 @@
 </template>
 
 <script>
-import { list${BusinessName}, get${BusinessName}, del${BusinessName}, add${BusinessName}, update${BusinessName}, export${BusinessName} } from "@/api/${moduleName}/${businessName}";
+import { list${BusinessName}, get${BusinessName}, del${BusinessName}, add${BusinessName}, update${BusinessName} } from "@/api/${moduleName}/${businessName}";
 #foreach($column in $columns)
 #if($column.insert && !$column.superColumn && !$column.pk && $column.htmlType == "imageUpload")
 import ImageUpload from '@/components/ImageUpload';
@@ -625,15 +625,14 @@ export default {
 #end
     /** 导出按钮操作 */
     handleExport() {
-      const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有${functionName}数据项?', "警告", {
+      this.$confirm('是否确认导出当前页${functionName}数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return export${BusinessName}(queryParams);
-        }).then(response => {
-          this.download(response.msg);
+            this.download('${moduleName}/${businessName}/export', {
+              ...this.queryParams
+            }, `${businessName}_#[[${new Date().getTime()}]]#.xlsx`)
         })
     }
   }

@@ -41,7 +41,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="easonList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="easonList" @selection-change="handleSelectionChange" size="small">
       <el-table-column type="selection" width="10" align="center" />
       <el-table-column label="ID" align="center" prop="id"/>
       <el-table-column label="代理ID" align="center" prop="agencyId" />
@@ -198,7 +198,7 @@
 </template>
 
 <script>
-import { listEason, getEason, delEason, addEason, updateEason, exportEason } from "@/api/tron/eason";
+import { listEason, getEason, delEason, addEason, updateEason } from "@/api/tron/eason";
 import store from "@/store";
 import {addTransfer} from "@/api/tron/transfer";
 
@@ -470,19 +470,6 @@ export default {
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有总站账户数据项?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          return exportEason(queryParams);
-        }).then(response => {
-          this.download(response.msg);
         })
     }
   }

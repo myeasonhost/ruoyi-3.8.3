@@ -42,12 +42,3 @@ export function delInfo(id) {
     method: 'delete'
   })
 }
-
-// 导出商户信息
-export function exportInfo(query) {
-  return request({
-    url: '/org/info/export',
-    method: 'get',
-    params: query
-  })
-}

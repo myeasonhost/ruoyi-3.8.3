@@ -69,7 +69,7 @@ public class OrgAccountOrder implements Serializable {
     /**
      * 订单币种单位。支持USD
      */
-    @Excel(name = "订单币种单位。支持USD")
+    @Excel(name = "币种单位")
     private String currency;
 
     /**
@@ -111,14 +111,12 @@ public class OrgAccountOrder implements Serializable {
     /**
      * 最后通知时间
      */
-    @Excel(name = "最后通知时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastNotifyTime;
 
     /**
      * 下一次通知时间
      */
-    @Excel(name = "下一次通知时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date nextNotifyTime;
 
@@ -138,25 +136,21 @@ public class OrgAccountOrder implements Serializable {
     /**
      * 回调通知地址
      */
-    @Excel(name = "回调通知地址")
     private String notifyUrl;
 
     /**
      * 同步跳转地址
      */
-    @Excel(name = "同步跳转地址")
     private String redirectUrl;
 
     /**
      * 官方收银台地址
      */
-    @Excel(name = "官方收银台地址")
     private String cashierUrl;
 
     /**
      * 收款码地址
      */
-    @Excel(name = "收款码地址")
     private String qrcodeUrl;
 
     /**

@@ -75,7 +75,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="transferList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="transferList" @selection-change="handleSelectionChange" size="small">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" width="80"/>
       <el-table-column label="日期" align="center" prop="createTime" width="150">

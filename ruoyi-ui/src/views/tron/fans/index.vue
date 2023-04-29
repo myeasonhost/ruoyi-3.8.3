@@ -108,7 +108,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="fansList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="fansList" @selection-change="handleSelectionChange" size="small">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="上级/业务员" align="center" prop="salemanId" width="120">
         <template slot-scope="scope">

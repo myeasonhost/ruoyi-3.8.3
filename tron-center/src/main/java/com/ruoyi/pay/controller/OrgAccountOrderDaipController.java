@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class OrgAccountOrderDaipController extends BaseController {
 
     private final IOrgAccountOrderDaipService iOrgAccountOrderDaipService;
     private final MessageProducer messageProducer;
+
     /**
      * 查询商户代付列表
      */
@@ -60,11 +62,21 @@ public class OrgAccountOrderDaipController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('pay:daip:export')")
     @Log(title = "商户代付", businessType = BusinessType.EXPORT)
-    @GetMapping("/export")
-    public AjaxResult export(OrgAccountOrderDaip orgAccountOrderDaip) {
-        List<OrgAccountOrderDaip> list = iOrgAccountOrderDaipService.queryList(orgAccountOrderDaip);
-        ExcelUtil<OrgAccountOrderDaip> util = new ExcelUtil<OrgAccountOrderDaip>(OrgAccountOrderDaip.class);
-        return util.exportExcel(list, "daip");
+    @RequestMapping("/export")
+    public void export(HttpServletResponse response, OrgAccountOrderDaip orgAccountOrderDaip) {
+        startPage();
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        List<OrgAccountOrderDaip> list = new ArrayList<>();
+        if (SecurityUtils.isAdmin(loginUser.getUser().getUserId())) {
+            list = iOrgAccountOrderDaipService.queryList(orgAccountOrderDaip);
+        }
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
+            orgAccountOrderDaip.setSiteId(sysUser.getUserName());
+            list = iOrgAccountOrderDaipService.queryList(orgAccountOrderDaip);
+        }
+        ExcelUtil<OrgAccountOrderDaip> util = new ExcelUtil<>(OrgAccountOrderDaip.class);
+        util.exportExcel(response, list, "daip");
     }
 
     /**

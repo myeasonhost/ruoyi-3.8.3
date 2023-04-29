@@ -62,7 +62,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="configList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="configList" @selection-change="handleSelectionChange" size="small">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" v-if="false"/>
       <el-table-column label="日期" align="center" width="150">

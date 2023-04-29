@@ -42,12 +42,3 @@ export function delOrder(id) {
     method: 'delete'
   })
 }
-
-// 导出支付订单
-export function exportOrder(query) {
-  return request({
-    url: '/pay/order/export',
-    method: 'get',
-    params: query
-  })
-}

@@ -50,12 +50,3 @@ export function delAddress(id) {
     method: 'delete'
   })
 }
-
-// 导出收款地址
-export function exportAddress(query) {
-  return request({
-    url: '/pay/address/export',
-    method: 'get',
-    params: query
-  })
-}

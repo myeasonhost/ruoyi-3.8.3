@@ -53,11 +53,15 @@
 
     <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange" size="small">
       <el-table-column label="支付订单号" align="center" prop="id" v-if="false"/>
-      <el-table-column label="商户ID" align="center" prop="siteId" width="70"/>
-      <el-table-column label="商户订单号" align="center" prop="orderId" width="170"/>
-      <el-table-column label="用户ID" align="center" prop="userId" width="70"/>
-      <el-table-column label="产品名" align="center" prop="productName" width="100"/>
-      <el-table-column label="支付明细" align="left" width="120">
+      <el-table-column label="商户ID" align="center" prop="siteId" width="100"/>
+      <el-table-column label="商户订单号" align="center" prop="orderId" width="150"/>
+      <el-table-column label="商户信息" align="left" prop="siteId" width="150">
+        <template slot-scope="scope">
+          <div style="color: #666666;font-size: xx-small;">用户ID：{{ scope.row.userId }}</div>
+          <div style="color: #666666;font-size: xx-small;">商品名：{{ scope.row.productName }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="支付明细" align="left" width="150">
         <template slot-scope="scope">
           <div style="color: #13ce66;font-family: 'Arial Black';font-size: xx-small;">上分金额：{{ scope.row.amount }}</div>
           <div style="color: #f4516c;font-family: 'Arial Black';font-size: xx-small;">支付金额：{{
@@ -68,13 +72,9 @@
           <div style="color: #666666;font-size: xx-small;">订单币种：{{ scope.row.currency }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="支付状态" align="center" prop="status">
+      <el-table-column label="支付/通知状态" align="center" prop="status" width="120">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.three_status" :value="scope.row.status"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="通知状态" align="center" prop="notifySucceed">
-        <template slot-scope="scope">
           <dict-tag :options="dict.type.tron_notify_state" :value="scope.row.notifySucceed"/>
         </template>
       </el-table-column>
@@ -98,7 +98,7 @@
             icon="el-icon-phone-outline"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['pay:order:edit']"
-            v-if="scope.row.status!=2"
+            v-if="scope.row.notifySucceed!=1"
           >手动补单
           </el-button>
           <el-button
@@ -107,7 +107,7 @@
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['pay:order:remove']"
-            v-if="scope.row.status!=2"
+            v-if="scope.row.notifySucceed!=1"
           >删除
           </el-button>
           <el-button
@@ -184,7 +184,7 @@
 </template>
 
 <script>
-import { addOrder, delOrder, exportOrder, getOrder, listOrder, updateOrder } from '@/api/pay/order'
+import { addOrder, delOrder, getOrder, listOrder, updateOrder } from '@/api/pay/order'
 
 export default {
   name: 'Order',
@@ -361,15 +361,12 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      const queryParams = this.queryParams
-      this.$confirm('是否确认导出所有支付订单数据项?', '警告', {
+      this.$confirm('是否确认导出本页支付订单数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(function() {
-        return exportOrder(queryParams)
       }).then(response => {
-        this.download(response.msg)
+        this.download('/pay/order/export', { ...this.queryParams }, `order-export_${new Date().getTime()}.xlsx`)
       })
     }
   }

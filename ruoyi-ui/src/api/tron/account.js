@@ -10,9 +10,9 @@ export function listAccount(query) {
 }
 
 // 查询站内账号详细
-export function getAccount(id,method) {
+export function getAccount(id, method) {
   return request({
-    url: '/tron/account/' + id +'/'+method,
+    url: '/tron/account/' + id + '/' + method,
     method: 'get'
   })
 }
@@ -40,14 +40,5 @@ export function delAccount(id) {
   return request({
     url: '/tron/account/' + id,
     method: 'delete'
-  })
-}
-
-// 导出站内账号
-export function exportAccount(query) {
-  return request({
-    url: '/tron/account/export',
-    method: 'get',
-    params: query
   })
 }

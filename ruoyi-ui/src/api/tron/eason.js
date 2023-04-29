@@ -42,12 +42,3 @@ export function delEason(id) {
     method: 'delete'
   })
 }
-
-// 导出总站账户
-export function exportEason(query) {
-  return request({
-    url: '/tron/eason/export',
-    method: 'get',
-    params: query
-  })
-}

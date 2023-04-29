@@ -47,10 +47,10 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="accountList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="accountList" @selection-change="handleSelectionChange" size="small">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" width="80"/>
-      <el-table-column label="代理ID" align="center" prop="agencyId"width="80" />
+      <el-table-column label="代理ID" align="center" prop="agencyId"width="100" />
       <el-table-column label="地址类型" align="center" prop="addressType" width="80"/>
       <el-table-column label="地址" align="center" prop="address" width="400"/>
       <el-table-column label="余额" align="left"  prop="balance" width="150">
@@ -59,7 +59,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" width="300"/>
+      <el-table-column label="备注" align="center" prop="remark" width="200"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="150">
         <template slot-scope="scope">
           <el-button
@@ -162,7 +162,7 @@
 </template>
 
 <script>
-import { listAccount, getAccount, delAccount, addAccount, updateAccount, exportAccount } from "@/api/tron/account";
+import { listAccount, getAccount, delAccount, addAccount, updateAccount } from "@/api/tron/account";
 import { addTransfer} from "@/api/tron/transfer";
 
 export default {
@@ -414,19 +414,6 @@ export default {
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        })
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有站内账号数据项?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          return exportAccount(queryParams);
-        }).then(response => {
-          this.download(response.msg);
         })
     }
   }

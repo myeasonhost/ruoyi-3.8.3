@@ -41,7 +41,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="addressList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="addressList" @selection-change="handleSelectionChange" size="small">
       <el-table-column label="编号" align="center" prop="id" v-if="false"/>
       <el-table-column label="代理ID" align="center" prop="agencyId"/>
       <el-table-column label="地址类型" align="center" prop="addressType" width="80"/>

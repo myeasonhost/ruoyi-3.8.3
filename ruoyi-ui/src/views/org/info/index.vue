@@ -34,7 +34,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['org:info:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -45,7 +46,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['org:info:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -56,7 +58,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['org:info:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -66,17 +69,18 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['org:info:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+    <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange" size="small">
+      <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" align="center" prop="id" v-if="false"/>
       <el-table-column label="用户ID" align="center" prop="userId" width="100"/>
       <el-table-column label="商户名" align="center" prop="agencyId" width="100"/>
-      <el-table-column label="白名单" align="center" prop="whiteIp" />
+      <el-table-column label="白名单" align="center" prop="whiteIp"/>
       <el-table-column label="谷歌秘钥" align="center" prop="googleSecretCode" width="200"/>
       <el-table-column label="谷歌秘钥二维码" align="center" prop="googleSecretQrurl">
         <template slot-scope="scope">
@@ -85,12 +89,18 @@
       </el-table-column>
       <el-table-column label="费率明细" align="left" width="130">
         <template slot-scope="scope">
-          <div style="color: #1890ff;font-family: 'Arial Black';">占比：{{scope.row.point==null?"0.00":scope.row.point}}</div>
-          <div style="color: green;font-style: italic;">服务费：{{scope.row.serviceCharge==null?"0.00":scope.row.serviceCharge}}U</div>
-          <div style="color: red;font-style: italic;">限额：{{scope.row.finish_withdraw==null?"0.00":scope.row.min}}</div>
+          <div style="color: #1890ff;font-family: 'Arial Black';">
+            占比：{{ scope.row.point == null ? '0.00' : scope.row.point }}
+          </div>
+          <div style="color: green;font-style: italic;">
+            服务费：{{ scope.row.serviceCharge == null ? '0.00' : scope.row.serviceCharge }}U
+          </div>
+          <div style="color: red;font-style: italic;">
+            限额：{{ scope.row.finish_withdraw == null ? '0.00' : scope.row.min }}
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -99,14 +109,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['org:info:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['org:info:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -130,42 +142,42 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="占比" prop="point">
-              <el-input v-model="form.point" placeholder="请输入占比" />
+              <el-input v-model="form.point" placeholder="请输入占比"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="最低消费额" prop="min">
-              <el-input v-model="form.min" placeholder="请输入最低消费额" />
+              <el-input v-model="form.min" placeholder="请输入最低消费额"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="服务费" prop="serviceCharge">
-              <el-input v-model="form.serviceCharge" placeholder="请输入服务费" />
+              <el-input v-model="form.serviceCharge" placeholder="请输入服务费"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="谷歌秘钥" prop="googleSecretCode">
-          <el-input v-model="form.googleSecretCode" placeholder="请输入谷歌秘钥" />
+          <el-input v-model="form.googleSecretCode" placeholder="请输入谷歌秘钥"/>
         </el-form-item>
         <el-form-item label="谷歌二维码" prop="googleSecretQrurl">
-          <el-input v-model="form.googleSecretQrurl" placeholder="请输入谷歌秘钥二维码" />
+          <el-input v-model="form.googleSecretQrurl" placeholder="请输入谷歌秘钥二维码"/>
         </el-form-item>
         <el-form-item label="白名单" prop="whiteIp">
-          <el-input v-model="form.whiteIp" placeholder="请输入白名单" />
+          <el-input v-model="form.whiteIp" placeholder="请输入白名单"/>
         </el-form-item>
         <el-form-item label="回调地址" prop="notifyUrl">
-          <el-input v-model="form.notifyUrl" placeholder="请输入回调通知地址" />
+          <el-input v-model="form.notifyUrl" placeholder="请输入回调通知地址"/>
         </el-form-item>
         <el-form-item label="飞机群ID" prop="tgbotGroupId">
-          <el-input v-model="form.tgbotGroupId" placeholder="请输入飞机群ID" />
+          <el-input v-model="form.tgbotGroupId" placeholder="请输入飞机群ID"/>
         </el-form-item>
         <el-form-item label="私钥" prop="privateKey">
-          <el-input v-model="form.privateKey" placeholder="请输入私钥" />
+          <el-input v-model="form.privateKey" placeholder="请输入私钥"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+          <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -177,12 +189,11 @@
 </template>
 
 <script>
-import { listInfo, getInfo, delInfo, addInfo, updateInfo, exportInfo } from "@/api/org/info";
+import { addInfo, delInfo, getInfo, listInfo, updateInfo } from '@/api/org/info'
 
 export default {
-  name: "Info",
-  components: {
-  },
+  name: 'Info',
+  components: {},
   data() {
     return {
       // 遮罩层
@@ -200,7 +211,7 @@ export default {
       // 商户信息表格数据
       infoList: [],
       // 弹出层标题
-      title: "",
+      title: '',
       // 是否显示弹出层
       open: false,
       // 查询参数
@@ -217,56 +228,56 @@ export default {
         googleSecretQrurl: undefined,
         notifyUrl: undefined,
         tgbotGroupId: undefined,
-        privateKey: undefined,
+        privateKey: undefined
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         userId: [
-          { required: true, message: "用户ID不能为空", trigger: "blur" }
+          { required: true, message: '用户ID不能为空', trigger: 'blur' }
         ],
         agencyId: [
-          { required: true, message: "商户名不能为空", trigger: "blur" }
+          { required: true, message: '商户名不能为空', trigger: 'blur' }
         ],
         point: [
-          { required: true, message: "占比不能为空", trigger: "blur" }
+          { required: true, message: '占比不能为空', trigger: 'blur' }
         ],
         serviceCharge: [
-          { required: true, message: "服务费不能为空", trigger: "blur" }
+          { required: true, message: '服务费不能为空', trigger: 'blur' }
         ],
         googleSecretCode: [
-          { required: true, message: "谷歌秘钥不能为空", trigger: "blur" }
+          { required: true, message: '谷歌秘钥不能为空', trigger: 'blur' }
         ],
         googleSecretQrurl: [
-          { required: true, message: "谷歌秘钥二维码不能为空", trigger: "blur" }
+          { required: true, message: '谷歌秘钥二维码不能为空', trigger: 'blur' }
         ],
         tgbotGroupId: [
-          { required: true, message: "公钥不能为空", trigger: "blur" }
+          { required: true, message: '公钥不能为空', trigger: 'blur' }
         ],
         privateKey: [
-          { required: true, message: "私钥不能为空", trigger: "blur" }
-        ],
+          { required: true, message: '私钥不能为空', trigger: 'blur' }
+        ]
       }
-    };
+    }
   },
   created() {
-    this.getList();
+    this.getList()
   },
   methods: {
     /** 查询商户信息列表 */
     getList() {
-      this.loading = true;
+      this.loading = true
       listInfo(this.queryParams).then(response => {
-        this.infoList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
+        this.infoList = response.rows
+        this.total = response.total
+        this.loading = false
+      })
     },
     // 取消按钮
     cancel() {
-      this.open = false;
-      this.reset();
+      this.open = false
+      this.reset()
     },
     // 表单重置
     reset() {
@@ -286,88 +297,75 @@ export default {
         remark: undefined,
         createTime: undefined,
         updateTime: undefined
-      };
-      this.resetForm("form");
+      }
+      this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
+      this.queryParams.pageNum = 1
+      this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
+      this.resetForm('queryForm')
+      this.handleQuery()
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加商户信息";
+      this.reset()
+      this.open = true
+      this.title = '添加商户信息'
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
+      this.reset()
       const id = row.id || this.ids
       getInfo(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改商户信息";
-      });
+        this.form = response.data
+        this.open = true
+        this.title = '修改商户信息'
+      })
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
             updateInfo(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
+              this.$modal.msgSuccess('修改成功')
+              this.open = false
+              this.getList()
+            })
           } else {
             addInfo(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
+              this.$modal.msgSuccess('新增成功')
+              this.open = false
+              this.getList()
+            })
           }
         }
-      });
+      })
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$confirm('是否确认删除商户信息编号为"' + ids + '"的数据项?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          return delInfo(ids);
-        }).then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有商户信息数据项?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          return exportInfo(queryParams);
-        }).then(response => {
-          this.download(response.msg);
-        })
+      const ids = row.id || this.ids
+      this.$confirm('是否确认删除商户信息编号为"' + ids + '"的数据项?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(function() {
+        return delInfo(ids)
+      }).then(() => {
+        this.getList()
+        this.$modal.msgSuccess('删除成功')
+      })
     }
   }
-};
+}
 </script>

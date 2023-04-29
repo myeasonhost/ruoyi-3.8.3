@@ -208,7 +208,7 @@
       @pagination="getList"
     />
     <!-- 资金转化对话框 -->
-    <el-dialog :title="title" :visible.sync="openBillDialog" width="650px" append-to-body size="mini">
+    <el-dialog :title="title" :visible.sync="openBillDialog" width="650px" append-to-body size="small">
       <div style="color: green;font-weight: bold;font-size: 10px;">
         <i class="el-icon-warning"></i>
         <span>&nbsp;&nbsp;&nbsp;温馨提示：请查看资金转化明细的状态为广播成功，确保资金转化交易成功</span>  <br></br>

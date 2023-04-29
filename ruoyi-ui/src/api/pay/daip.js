@@ -42,12 +42,3 @@ export function delDaip(id) {
     method: 'delete'
   })
 }
-
-// 导出商户代付
-export function exportDaip(query) {
-  return request({
-    url: '/pay/daip/export',
-    method: 'get',
-    params: query
-  })
-}

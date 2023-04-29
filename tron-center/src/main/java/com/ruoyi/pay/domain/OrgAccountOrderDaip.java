@@ -51,7 +51,7 @@ public class OrgAccountOrderDaip implements Serializable {
     /**
      * 用户名（用户ID）
      */
-    @Excel(name = "用户名", readConverterExp = "用户ID")
+    @Excel(name = "用户ID")
     private String userId;
 
     /**
@@ -69,19 +69,19 @@ public class OrgAccountOrderDaip implements Serializable {
     /**
      * 订单币种（CNY/USD）
      */
-    @Excel(name = "订单币种", readConverterExp = "CNY/USD")
+    @Excel(name = "订单币种")
     private String currency;
 
     /**
      * 支付金额（订单金额 + 订单币种汇率）
      */
-    @Excel(name = "支付金额", readConverterExp = "订单金额币种汇率")
+    @Excel(name = "支付金额")
     private String coinAmount;
 
     /**
      * 支付币种（USDT/RMB）
      */
-    @Excel(name = "支付币种", readConverterExp = "USDT/RMB")
+    @Excel(name = "支付币种")
     private String coinCode;
 
     /**
@@ -111,7 +111,6 @@ public class OrgAccountOrderDaip implements Serializable {
     /**
      * 通知次数
      */
-    @Excel(name = "通知次数")
     private int notifyTimes;
 
     /**

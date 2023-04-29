@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -61,11 +62,21 @@ public class OrgAccountOrderController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('pay:order:export')")
     @Log(title = "支付订单", businessType = BusinessType.EXPORT)
-    @GetMapping("/export")
-    public AjaxResult export(OrgAccountOrder orgAccountOrder) {
-        List<OrgAccountOrder> list = iOrgAccountOrderService.queryList(orgAccountOrder);
-        ExcelUtil<OrgAccountOrder> util = new ExcelUtil<OrgAccountOrder>(OrgAccountOrder.class);
-        return util.exportExcel(list, "order");
+    @RequestMapping("/export")
+    public void export(HttpServletResponse response, OrgAccountOrder orgAccountOrder) {
+        startPage();
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        List<OrgAccountOrder> list = new ArrayList<>();
+        if (SecurityUtils.isAdmin(loginUser.getUser().getUserId())) {
+            list = iOrgAccountOrderService.queryList(orgAccountOrder);
+        }
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
+            orgAccountOrder.setSiteId(sysUser.getUserName());
+            list = iOrgAccountOrderService.queryList(orgAccountOrder);
+        }
+        ExcelUtil<OrgAccountOrder> util = new ExcelUtil<>(OrgAccountOrder.class);
+        util.exportExcel(response, list, "order");
     }
 
     /**

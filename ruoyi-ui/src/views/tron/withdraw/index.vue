@@ -52,7 +52,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="withdrawList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="withdrawList" @selection-change="handleSelectionChange" size="small">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="日期" align="center" width="150">
         <template slot-scope="scope">
