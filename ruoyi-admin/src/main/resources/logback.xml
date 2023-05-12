@@ -29,9 +29,9 @@
             <!-- 过滤的级别 -->
             <level>INFO</level>
             <!-- 匹配时的操作：接收（记录） -->
-            <onMatch>ACCEPT</onMatch>
+<!--            <onMatch>ACCEPT</onMatch>-->
             <!-- 不匹配时的操作：拒绝（不记录） -->
-            <onMismatch>DENY</onMismatch>
+<!--            <onMismatch>DENY</onMismatch>-->
         </filter>
 	</appender>
 
@@ -78,11 +78,11 @@
 
 	<root level="info">
 		<appender-ref ref="console" />
+        <appender-ref ref="file_info" />
 	</root>
 
 	<!--系统操作日志-->
-    <root level="info">
-        <appender-ref ref="file_info" />
+    <root level="error">
         <appender-ref ref="file_error" />
     </root>
 

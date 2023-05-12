@@ -510,7 +510,7 @@ public class Receiver {
         stringBuffer.append("下分金额：" + orgAccountOrder.getAmount() + "\n");
         stringBuffer.append("提现金额：" + orgAccountOrder.getCoinAmount() + "\n");
         stringBuffer.append("提现币种：" + orgAccountOrder.getCoinCode() + "\n");
-        stringBuffer.append("提现状态：" + (orgAccountOrder.getStatus().equals("2") ? "支付成功" : "支付中") + "\n");
+        stringBuffer.append("提现状态：" + (orgAccountOrder.getStatus().equals("2") ? "提现成功" : "提现中") + "\n");
         stringBuffer.append("收款地址：" + orgAccountOrder.getCoinAddress() + "\n");
 
         LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();

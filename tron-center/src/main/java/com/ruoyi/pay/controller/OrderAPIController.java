@@ -92,6 +92,13 @@ public class OrderAPIController extends BaseController {
         if (orgAccountInfo == null) {
             return AjaxResult.error("商户mch_id不存在");
         }
+        LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper1 = new LambdaQueryWrapper();
+        lambdaQueryWrapper1.eq(OrgAccountOrder::getSiteId, payEntity.getMch_id());
+        lambdaQueryWrapper1.eq(OrgAccountOrder::getOrderId, payEntity.getOrder_id());
+        OrgAccountOrder orgAccountOrder1 = iOrgAccountOrderService.getOne(lambdaQueryWrapper1);
+        if (orgAccountOrder1 != null) {
+            return AjaxResult.error("商户order_id已经存在");
+        }
         LambdaQueryWrapper<OrgAccountAddress> lambdaQueryWrapper2 = new LambdaQueryWrapper();
         lambdaQueryWrapper2.eq(OrgAccountAddress::getAgencyId, payEntity.getMch_id());
         lambdaQueryWrapper2.eq(OrgAccountAddress::getStatus, "0"); //帐号状态（0正常 1停用）
@@ -99,15 +106,24 @@ public class OrderAPIController extends BaseController {
         if (listAddress.isEmpty()) {
             return AjaxResult.error("商户收款地址没有配置");
         }
-        LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper3 = new LambdaQueryWrapper();
-        lambdaQueryWrapper3.eq(OrgAccountOrder::getSiteId, payEntity.getMch_id());
-        lambdaQueryWrapper3.eq(OrgAccountOrder::getOrderId, payEntity.getOrder_id());
-        OrgAccountOrder orgAccountOrder1 = iOrgAccountOrderService.getOne(lambdaQueryWrapper3);
-        if (orgAccountOrder1 != null) {
-            return AjaxResult.error("商户order_id已经存在");
-        }
         Collections.shuffle(listAddress); //打乱顺序
         OrgAccountAddress orgAccountAddress = listAddress.get(0);
+
+        LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper3 = new LambdaQueryWrapper();
+        lambdaQueryWrapper3.eq(OrgAccountOrder::getSiteId, payEntity.getMch_id());
+        lambdaQueryWrapper3.eq(OrgAccountOrder::getUserId, payEntity.getCustomer_id());
+        lambdaQueryWrapper3.eq(OrgAccountOrder::getStatus, "1"); //1=支付中,2=支付成功，3=支付超时
+        lambdaQueryWrapper3.eq(OrgAccountOrder::getCoinAddress, orgAccountAddress.getAddress());
+        lambdaQueryWrapper3.eq(OrgAccountOrder::getCoinAmount, NumberUtil.roundStr(payEntity.getAmount(), 2));
+        lambdaQueryWrapper3.gt(OrgAccountOrder::getExpirationTime, new Date()); //当前时间未过期
+        OrgAccountOrder orgAccountOrder2 = iOrgAccountOrderService.getOne(lambdaQueryWrapper3);
+
+        if (orgAccountOrder2 != null) {
+            orgAccountOrder2.setStatus("3");
+            orgAccountOrder2.setRemark("当前会员金额重复充值，订单失效");
+            iOrgAccountOrderService.update(orgAccountOrder2, lambdaQueryWrapper3);
+        }
+
         //（1）sign签名验证与校验
         Map<String, Object> treeMap = new TreeMap<>(BeanUtil.beanToMap(payEntity));
         treeMap.remove("sign");
@@ -137,20 +153,27 @@ public class OrderAPIController extends BaseController {
         orgAccountOrder.setAmount(payEntity.getAmount()); //订单金额
         orgAccountOrder.setCurrency(payEntity.getCurrency());
         //（3）生成支付金额
-        String coinAmountStr;
+        String coinAmountStr = null;
+        Double rate = configServiceImpl.getPayRate(); //生成金额的汇率小数
+
         while (true) {
-            Double rate = configServiceImpl.getPayRate();
-            Double coinAmount = NumberUtil.add(Double.parseDouble(payEntity.getAmount()), RandomUtil.randomDouble(0.01, rate));
-            coinAmountStr = NumberUtil.roundStr(coinAmount, 2);
+            if (coinAmountStr == null) {
+                coinAmountStr = NumberUtil.roundStr(payEntity.getAmount(), 2);
+            }
             LambdaQueryWrapper<OrgAccountOrder> lambdaQueryWrapper4 = new LambdaQueryWrapper();
             lambdaQueryWrapper4.eq(OrgAccountOrder::getSiteId, payEntity.getMch_id());
             lambdaQueryWrapper4.eq(OrgAccountOrder::getStatus, "1"); //1=支付中,2=支付成功，3=支付超时
+            lambdaQueryWrapper4.eq(OrgAccountOrder::getCoinAddress, orgAccountAddress.getAddress());
             lambdaQueryWrapper4.eq(OrgAccountOrder::getCoinAmount, coinAmountStr);
             lambdaQueryWrapper4.gt(OrgAccountOrder::getExpirationTime, new Date()); //当前时间未过期
             List<OrgAccountOrder> list = this.iOrgAccountOrderService.list(lambdaQueryWrapper4);
             if (list.isEmpty()) {
                 break;
             }
+            Double coinAmount = NumberUtil.sub(Double.parseDouble(payEntity.getAmount()), RandomUtil.randomDouble(0.01, rate));
+            coinAmountStr = NumberUtil.roundStr(coinAmount, 2);
+            orgAccountOrder.setRemark("与其他会员金额重复，费率减少");
+
         }
 
         orgAccountOrder.setCoinAmount(coinAmountStr);//支付金额,舍弃方式采用四舍五入
