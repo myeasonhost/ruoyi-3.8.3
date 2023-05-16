@@ -2,6 +2,7 @@
   <div class="dashboard-editor-container">
 
 <!--    <panel-group @handleSetLineChartData="handleSetLineChartData" />-->
+    <mbpay-group @handleSetLineChartData="handleSetLineChartData" />
 
 <!--    <el-row :gutter="32">-->
 <!--      <el-col :xs="24" :sm="24" :lg="8">-->
@@ -31,6 +32,7 @@
 
 <script>
 import PanelGroup from './dashboard/PanelGroup'
+import MbpayGroup from './dashboard/MbPayGroup'
 import LineChart from './dashboard/LineChart'
 import RaddarChart from './dashboard/RaddarChart'
 import PieChart from './dashboard/PieChart'
@@ -59,6 +61,7 @@ export default {
   name: 'Index',
   components: {
     PanelGroup,
+    MbpayGroup,
     LineChart,
     RaddarChart,
     PieChart,

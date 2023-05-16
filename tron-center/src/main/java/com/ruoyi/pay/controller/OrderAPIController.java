@@ -26,6 +26,7 @@ import com.ruoyi.tron.domain.OrgAccountInfo;
 import com.ruoyi.tron.domain.TronAccountAddress;
 import com.ruoyi.tron.service.IOrgAccountInfoService;
 import com.ruoyi.tron.service.ITronAccountAddressService;
+import com.ruoyi.tron.service.ITronApiService;
 import io.swagger.annotations.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,7 @@ public class OrderAPIController extends BaseController {
     private final ISysConfigService configServiceImpl;
     private final IOrgAccountAddressService iOrgAccountAddressService;
     private final ITronAccountAddressService iTronAccountAddressService;
+    private final ITronApiService tronApiServiceImpl;
     private final MessageProducer messageProducer;
     private final RedisTemplate redisTemplate;
 
@@ -269,6 +271,11 @@ public class OrderAPIController extends BaseController {
         if (orgAccountInfo == null) {
             return AjaxResult.error("商户mch_id不存在");
         }
+        String address = payEntity.getAddress();
+        if (!this.tronApiServiceImpl.validateAddress(address)) {
+            return AjaxResult.error("收款地址不合法");
+        }
+
         LambdaQueryWrapper<TronAccountAddress> lambdaQueryWrapper2 = new LambdaQueryWrapper();
         lambdaQueryWrapper2.eq(TronAccountAddress::getAgencyId, payEntity.getMch_id());
         lambdaQueryWrapper2.eq(TronAccountAddress::getStatus, "0"); //帐号状态（0正常 1停用）

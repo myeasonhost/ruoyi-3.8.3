@@ -37,7 +37,7 @@ public class TronApiServiceImpl implements ITronApiService {
     private ITronEasonAddressService iTronEasonAddressService;
 
     @Override
-    public Boolean validateAddress(String address) throws Exception {
+    public Boolean validateAddress(String address) {
         Boolean flag = false;
         String url = "https://api.trongrid.io/wallet/validateaddress";
         String param = "{\"address\": \"" + address + "\"}";
@@ -176,7 +176,7 @@ public class TronApiServiceImpl implements ITronApiService {
     }
 
     @Override
-    public AjaxResult transferUSDT(String agencyId,  String formAddress, String toAddress, Double amount) throws Exception {
+    public AjaxResult transferUSDT(String agencyId, String formAddress, String toAddress, Double amount) throws Exception {
         //（1）USDT转账申请
         Long amount2 = new Double(amount * 1000000).longValue(); //转换成最小单位sun
         String url = "https://api.trongrid.io/wallet/triggersmartcontract";

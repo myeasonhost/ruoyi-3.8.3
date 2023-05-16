@@ -12,16 +12,16 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.pay.domain.OrgAccountOrder;
 import com.ruoyi.pay.message.MessageProducer;
 import com.ruoyi.pay.service.IOrgAccountOrderService;
+import com.ruoyi.tron.domain.TronFish;
+import com.ruoyi.tron.dto.StatFishDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * 支付订单Controller
@@ -122,5 +122,42 @@ public class OrgAccountOrderController extends BaseController {
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
         return toAjax(iOrgAccountOrderService.removeByIds(Arrays.asList(ids)) ? 1 : 0);
+    }
+
+
+    /**
+     * 鱼苗统计
+     */
+    @PreAuthorize("@ss.hasPermi('tron:fish:query')")
+    @PostMapping("/count/stat")
+    public AjaxResult count(TronFish tronFish) throws ParseException {
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("admin")) { //只能有一个角色
+            tronFish.setAgencyId(null); //查询所有的代理
+            tronFish.setSalemanId(null);
+        }
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
+            tronFish.setAgencyId(sysUser.getUserName()); //查询当前的代理
+            tronFish.setSalemanId(null);
+        }
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("common")) {
+            tronFish.setSalemanId(sysUser.getUserName());
+            String agencyId = iTronAuthAddressService.queryAgent(sysUser.getDeptId());
+            tronFish.setAgencyId(agencyId);
+        }
+        StatFishDto statFishDto = new StatFishDto();
+        //查询累计鱼苗总数
+        Integer totalFish = iTronFishService.queryCount(tronFish);
+        statFishDto.setTotalFish(totalFish);
+        //查询今日鱼苗总数
+        tronFish.setCreateTime(new Date(System.currentTimeMillis()));
+        Integer dayFish = iTronFishService.queryCount(tronFish);
+        statFishDto.setDayFish(dayFish);
+        //查询交易总额
+        Map<String, Object> usdtMap = iTronFishService.queryTotalUsdt(tronFish);
+        statFishDto.setBillUsdt((Double) usdtMap.get("billusdt"));
+        //查询鱼苗总价值
+        statFishDto.setTotalUsdt((Double) usdtMap.get("usdt"));
+        return AjaxResult.success(statFishDto);
     }
 }

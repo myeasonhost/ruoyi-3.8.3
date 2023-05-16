@@ -13,7 +13,7 @@ public interface ITronApiService {
     /**
      * 验证地址是否合法
      */
-    Boolean validateAddress(String address) throws Exception;
+    Boolean validateAddress(String address);
 
     /**
      * 查询余额

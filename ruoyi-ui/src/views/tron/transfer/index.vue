@@ -76,7 +76,6 @@
     </el-row>
 
     <el-table v-loading="loading" :data="transferList" @selection-change="handleSelectionChange" size="small">
-      <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" width="80"/>
       <el-table-column label="日期" align="center" prop="createTime" width="150">
         <template slot-scope="scope">
@@ -89,13 +88,13 @@
           <div style="">{{ scope.row.salemanId==null?"-": scope.row.salemanId}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="交易地址" align="center" width="400" >
+      <el-table-column label="交易地址" align="left" width="350" >
         <template slot-scope="scope">
           <div style="color: #00afff;">来源地址：{{ scope.row.fromAddress}}</div>
           <div style="color: #888888;font-style: italic;">接收地址：{{ scope.row.toAddress }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="交易类型" align="center" prop="type" width="120">
+      <el-table-column label="交易类型" align="left" prop="type" width="150">
         <template slot-scope="scope">
           <div>
             <span style="color: blue;font-weight: bold;">{{ scope.row.type=="1"?scope.row.addressType+" 赠送":"" }}</span>
@@ -114,7 +113,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" width="400"/>
+      <el-table-column label="备注" align="center" prop="remark" width="200"/>
     </el-table>
 
     <pagination

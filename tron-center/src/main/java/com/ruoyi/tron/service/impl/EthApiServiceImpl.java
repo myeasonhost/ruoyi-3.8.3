@@ -55,7 +55,7 @@ public class EthApiServiceImpl implements ITronApiService {
     private ITronEasonAddressService iTronEasonAddressService;
 
     @Override
-    public Boolean validateAddress(String address) throws Exception {
+    public Boolean validateAddress(String address) {
         return false;
     }
 
