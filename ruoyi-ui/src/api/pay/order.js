@@ -42,3 +42,11 @@ export function delOrder(id) {
     method: 'delete'
   })
 }
+
+// 查询入U统计
+export function countOrder() {
+  return request({
+    url: '/pay/order/count/stat',
+    method: 'post'
+  })
+}

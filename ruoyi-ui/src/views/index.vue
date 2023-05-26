@@ -1,8 +1,9 @@
 <template>
   <div class="dashboard-editor-container">
-
-<!--    <panel-group @handleSetLineChartData="handleSetLineChartData" />-->
-    <mbpay-group @handleSetLineChartData="handleSetLineChartData" />
+    <h3>【入U汇总】</h3>
+    <MbOrderGroup @handleSetLineChartData="handleSetLineChartData" />
+    <h3>【出U汇总】</h3>
+    <MbDaipGroup @handleSetLineChartData="handleSetLineChartData" />
 
 <!--    <el-row :gutter="32">-->
 <!--      <el-col :xs="24" :sm="24" :lg="8">-->
@@ -26,13 +27,13 @@
 <!--      <line-chart :chart-data="lineChartData" />-->
 <!--    </el-row>-->
 
-
   </div>
 </template>
 
 <script>
 import PanelGroup from './dashboard/PanelGroup'
-import MbpayGroup from './dashboard/MbPayGroup'
+import MbOrderGroup from './dashboard/MbOrderGroup'
+import MbDaipGroup from './dashboard/MbDaipGroup'
 import LineChart from './dashboard/LineChart'
 import RaddarChart from './dashboard/RaddarChart'
 import PieChart from './dashboard/PieChart'
@@ -61,7 +62,8 @@ export default {
   name: 'Index',
   components: {
     PanelGroup,
-    MbpayGroup,
+    MbOrderGroup,
+    MbDaipGroup,
     LineChart,
     RaddarChart,
     PieChart,

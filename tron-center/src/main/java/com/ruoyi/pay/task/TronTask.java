@@ -67,9 +67,9 @@ public class TronTask {
                     "&min_timestamp=%s" +
                     "&max_timestamp=%s" +
                     "&limit=%s", orgAccountOrder.getCoinAddress(), orgAccountOrder.getCreateTime().getTime(), orgAccountOrder.getExpirationTime().getTime(), 100);
-            log.info("【订单扫块】扫描订单接口={}", url);
+//            log.info("【订单扫块】扫描订单接口={}", url);
             String result = HttpUtil.get(url);
-            log.info("【订单扫块】扫描订单返回结果result={}", result);
+//            log.info("【订单扫块】扫描订单返回结果result={}", result);
             JSONObject jsonObject = JSONUtil.parseObj(result);
             JSONArray jsonData; //支付扫描记录数据
 
@@ -87,7 +87,7 @@ public class TronTask {
                         .findFirst();
                 if (optional.isPresent()) {
                     JSONObject jsonTarget = (JSONObject) optional.get();
-                    log.info("【订单扫块】匹配到支付金额coin_amount={},订单ID={},目标记录jsonTarget={}", orgAccountOrder.getCoinAmount(), orgAccountOrder.getOrderId(), jsonTarget);
+//                    log.info("【订单扫块】匹配到支付金额coin_amount={},订单ID={},目标记录jsonTarget={}", orgAccountOrder.getCoinAmount(), orgAccountOrder.getOrderId(), jsonTarget);
                     //（4）扫描到波场交易记录，记录transactionId，发送收款回调通知
                     LambdaUpdateWrapper<OrgAccountOrder> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
                     lambdaUpdateWrapper.eq(OrgAccountOrder::getId, orgAccountOrder.getId())
@@ -104,7 +104,7 @@ public class TronTask {
                 }
                 String url2 = jsonObject.getJSONObject("meta").getJSONObject("links").getStr("next");
                 String result2 = HttpUtil.get(url2);
-                log.info("【订单扫块】扫描订单返回结果result={}", result2);
+//                log.info("【订单扫块】扫描订单返回结果result={}", result2);
                 jsonObject = JSONUtil.parseObj(result2); //重新覆盖jsonObject
             }
 

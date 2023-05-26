@@ -42,3 +42,11 @@ export function delDaip(id) {
     method: 'delete'
   })
 }
+
+// 查询出U统计
+export function countDaip() {
+  return request({
+    url: '/pay/daip/count/stat',
+    method: 'post'
+  })
+}

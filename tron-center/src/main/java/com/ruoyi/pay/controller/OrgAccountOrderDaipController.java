@@ -10,6 +10,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.pay.domain.OrgAccountOrderDaip;
+import com.ruoyi.pay.dto.StatUsdtDto;
 import com.ruoyi.pay.message.MessageProducer;
 import com.ruoyi.pay.service.IOrgAccountOrderDaipService;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * 商户代付Controller
@@ -122,5 +121,37 @@ public class OrgAccountOrderDaipController extends BaseController {
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
         return toAjax(iOrgAccountOrderDaipService.removeByIds(Arrays.asList(ids)) ? 1 : 0);
+    }
+
+    /**
+     * 提现U统计
+     */
+    @PreAuthorize("@ss.hasPermi('pay:order:query')")
+    @PostMapping("/count/stat")
+    public AjaxResult count(StatUsdtDto statUsdtDto) throws ParseException {
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("admin")) { //只能有一个角色
+            statUsdtDto.setAgencyId(null); //查询所有的代理
+            statUsdtDto.setSalemanId(null);
+        }
+        if (sysUser.getRoles().get(0).getRoleKey().startsWith("agent")) { //只能有一个角色
+            statUsdtDto.setAgencyId(sysUser.getUserName()); //查询当前的代理
+            statUsdtDto.setSalemanId(null);
+        }
+        StatUsdtDto statUsdtDto1 = new StatUsdtDto();
+        //查询累计充值总数
+        Integer totalPayCount = iOrgAccountOrderDaipService.queryCount(statUsdtDto);
+        statUsdtDto1.setTotalPayCount(totalPayCount);
+        //查询累计入U总额
+        Map<String, Object> usdtMap = iOrgAccountOrderDaipService.queryTotalUsdt(statUsdtDto);
+        statUsdtDto1.setTotalPayUsdt((Double) usdtMap.get("usdt"));
+        //查询今日充值总数
+        statUsdtDto.setCreateTime(new Date(System.currentTimeMillis()));
+        Integer dayPayCount = iOrgAccountOrderDaipService.queryCount(statUsdtDto);
+        statUsdtDto1.setDayPayCount(dayPayCount);
+        //查询今日入U总数
+        Map<String, Object> usdtMap2 = iOrgAccountOrderDaipService.queryTotalUsdt(statUsdtDto);
+        statUsdtDto1.setDayPayUsdt((Double) usdtMap2.get("usdt"));
+        return AjaxResult.success(statUsdtDto1);
     }
 }

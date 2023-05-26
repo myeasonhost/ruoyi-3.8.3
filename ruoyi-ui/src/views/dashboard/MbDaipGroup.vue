@@ -7,35 +7,35 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            今日成交额
+            今日提现笔数
           </div>
-          <count-to :start-val="0" :end-val="dayFish" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="dayPayCount" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('messages')">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            今日成交数
-          </div>
-          <count-to :start-val="0" :end-val="totalFish" :duration="3000" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
         <div class="card-panel-icon-wrapper icon-money">
           <svg-icon icon-class="money" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            累计交易总额
+            今日出U总额
           </div>
-          <count-to :start-val="0" :end-val="billUsdt" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="dayPayUsdt" :duration="3000" class="card-panel-num" />
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('purchases')">
+        <div class="card-panel-icon-wrapper icon-message">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            累计提现笔数
+          </div>
+          <count-to :start-val="0" :end-val="totalPayCount" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -46,9 +46,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            累计总笔数
+            累计出U总额
           </div>
-          <count-to :start-val="0" :end-val="totalUsdt" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="totalPayUsdt" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -57,23 +57,23 @@
 
 <script>
 import CountTo from 'vue-count-to'
-import {countFish} from "@/api/tron/fish";
+import { countDaip } from '@/api/pay/daip'
 
 export default {
   data() {
     return {
-      dayFish: undefined,
-      totalFish: undefined,
-      billUsdt: undefined,
-      totalUsdt: undefined
+      dayPayCount: undefined,
+      dayPayUsdt: undefined,
+      totalPayCount: undefined,
+      totalPayUsdt: undefined
     }
   },
   created() {
-    countFish().then(response => {
-      this.dayFish = response.data.dayFish;
-      this.totalFish = response.data.totalFish;
-      this.billUsdt = response.data.billUsdt;
-      this.totalUsdt = response.data.totalUsdt;
+    countDaip().then(response => {
+      this.dayPayCount = response.data.dayPayCount;
+      this.dayPayUsdt = response.data.dayPayUsdt;
+      this.totalPayCount = response.data.totalPayCount;
+      this.totalPayUsdt = response.data.totalPayUsdt;
     });
   },
   components: {
