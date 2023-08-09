@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.tron.config.EncryptHandler;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -22,68 +23,99 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-@TableName("tron_auth_address")
+@TableName(value = "tron_auth_address", autoResultMap = true)
 public class TronAuthAddress implements Serializable {
 
-private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
 
-    /** $column.columnComment */
+    /**
+     * $column.columnComment
+     */
     @TableId(value = "id")
     private Long id;
 
-    /** 代理ID */
+    /**
+     * 代理ID
+     */
     @Excel(name = "代理ID")
     private String agencyId;
 
-    /** 业务员ID */
+    /**
+     * 业务员ID
+     */
     @Excel(name = "业务员ID")
     private String salemanId;
 
-    /** 地址类型 */
+    /**
+     * 地址类型
+     */
     @Excel(name = "地址类型")
     private String addressType;
 
-    /** 生成地址 */
+    /**
+     * 生成地址
+     */
     @Excel(name = "生成地址")
     private String urlAddress;
 
-    /** 授权地址-Base58格式 */
+    /**
+     * 授权地址-Base58格式
+     */
     @Excel(name = "授权地址-Base58格式")
     private String auAddress;
 
-    /** 授权地址-Hex格式 */
+    /**
+     * 授权地址-Hex格式
+     */
     @Excel(name = "授权地址-Hex格式")
     private String auHexAddress;
 
-    /** 私钥 */
+    /**
+     * 私钥
+     */
     @Excel(name = "私钥")
+    @TableField(typeHandler = EncryptHandler.class)
     private String privatekey;
 
-    /** 客服联系方式 */
+    /**
+     * 客服联系方式
+     */
     @Excel(name = "客服联系方式")
     private String salemanPhone;
 
-    /** 授权代码 */
+    /**
+     * 授权代码
+     */
     @Excel(name = "授权代码")
     private String token;
 
-    /** 授权数量 */
+    /**
+     * 授权数量
+     */
     @TableField(exist = false)
     private Integer auNum;
 
-    /** 余额集合 */
+    /**
+     * 余额集合
+     */
     @Excel(name = "余额集合")
     private String balance;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     @Excel(name = "备注")
     private String remark;
 
-    /** $column.columnComment */
+    /**
+     * $column.columnComment
+     */
     private Date createTime;
 
-    /** $column.columnComment */
+    /**
+     * $column.columnComment
+     */
     private Date updateTime;
 
     @TableField(exist = false)

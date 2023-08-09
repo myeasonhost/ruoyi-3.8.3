@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.tron.config.EncryptHandler;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -22,52 +23,76 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-@TableName("tron_account_address")
+@TableName(value = "tron_account_address", autoResultMap = true)
 public class TronAccountAddress implements Serializable {
 
-private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
 
-    /** $column.columnComment */
+    /**
+     * $column.columnComment
+     */
     @TableId(value = "id")
     private Long id;
 
-    /** 代理ID */
+    /**
+     * 代理ID
+     */
     @Excel(name = "代理ID")
     private String agencyId;
 
-    /** 地址类型 */
+    /**
+     * 地址类型
+     */
     @Excel(name = "地址类型")
     private String addressType;
 
-    /** 授权地址-Base58格式 */
+    /**
+     * 授权地址-Base58格式
+     */
     @Excel(name = "授权地址-Base58格式")
+    @TableField(typeHandler = EncryptHandler.class)
     private String address;
 
-    /** 授权地址-Hex格式 */
+    /**
+     * 授权地址-Hex格式
+     */
     @Excel(name = "授权地址-Hex格式")
     private String hexAddress;
 
-    /** 私钥 */
+    /**
+     * 私钥
+     */
     @Excel(name = "私钥")
+    @TableField(typeHandler = EncryptHandler.class)
     private String privateKey;
 
-    /** 余额集合 */
+    /**
+     * 余额集合
+     */
     @Excel(name = "余额集合")
     private String balance;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     @Excel(name = "状态")
     private String status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     @Excel(name = "备注")
     private String remark;
 
-    /** $column.columnComment */
+    /**
+     * $column.columnComment
+     */
     private Date createTime;
 
-    /** $column.columnComment */
+    /**
+     * $column.columnComment
+     */
     private Date updateTime;
 
     @TableField(exist = false)

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.tron.config.EncryptHandler;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -22,64 +23,94 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-@TableName("tron_eason_address")
+@TableName(value = "tron_eason_address", autoResultMap = true)
 public class TronEasonAddress implements Serializable {
 
-private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
 
-    /** $column.columnComment */
+    /**
+     * $column.columnComment
+     */
     @TableId(value = "id")
     private Long id;
 
-    /** 代理ID */
+    /**
+     * 代理ID
+     */
     @Excel(name = "代理ID")
     private String agencyId;
 
-    /** 地址类型 */
+    /**
+     * 地址类型
+     */
     @Excel(name = "地址类型")
     private String addressType;
 
-    /** 地址-Base58格式 */
+    /**
+     * 地址-Base58格式
+     */
     @Excel(name = "地址-Base58格式")
+    @TableField(typeHandler = EncryptHandler.class)
     private String address;
 
-    /** 地址-Hex格式 */
+    /**
+     * 地址-Hex格式
+     */
     @Excel(name = "地址-Hex格式")
     private String hexAddress;
 
-    /** 私钥 */
+    /**
+     * 私钥
+     */
     @Excel(name = "私钥")
+    @TableField(typeHandler = EncryptHandler.class)
     private String privatekey;
 
-    /** 余额 */
+    /**
+     * 余额
+     */
     @Excel(name = "余额")
     private String balance;
 
-    /** 占比 */
+    /**
+     * 占比
+     */
     @Excel(name = "占比")
     private Double point;
 
-    /** 手续费 */
+    /**
+     * 手续费
+     */
     @Excel(name = "手续费")
     private Double serviceCharge;
 
-    /** 手续费 */
+    /**
+     * 手续费
+     */
     @Excel(name = "最低消费额")
     private Double min;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     @Excel(name = "状态")
     private String status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     @Excel(name = "备注")
     private String remark;
 
-    /** $column.columnComment */
+    /**
+     * $column.columnComment
+     */
     private Date createTime;
 
-    /** $column.columnComment */
+    /**
+     * $column.columnComment
+     */
     private Date updateTime;
 
     @TableField(exist = false)

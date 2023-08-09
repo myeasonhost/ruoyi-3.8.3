@@ -45,7 +45,7 @@ public class TronAuthAddressServiceImpl extends ServiceImpl<TronAuthAddressMappe
         if (StringUtils.isNotBlank(tronAuthAddress.getToken())){
             lqw.eq(TronAuthAddress::getToken ,tronAuthAddress.getToken());
         }
-        lqw.select(TronAuthAddress.class,item -> !item.getColumn().equals("privatekey"));//私钥不对外开放
+        lqw.select(TronAuthAddress.class,item -> !item.getProperty().equals("privatekey"));//私钥不对外开放
         lqw.orderByDesc(TronAuthAddress::getCreateTime);
 
         List<TronAuthAddress> list= this.list(lqw).stream().map(tronAuthAddress1 -> {

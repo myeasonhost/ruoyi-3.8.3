@@ -24,24 +24,22 @@ public class TronEasonAddressServiceImpl extends ServiceImpl<TronEasonAddressMap
     @Override
     public List<TronEasonAddress> queryList(TronEasonAddress tronEasonAddress) {
         LambdaQueryWrapper<TronEasonAddress> lqw = Wrappers.lambdaQuery();
-        if (StringUtils.isNotBlank(tronEasonAddress.getAgencyId())){
-            lqw.eq(TronEasonAddress::getAgencyId ,tronEasonAddress.getAgencyId());
+        if (StringUtils.isNotBlank(tronEasonAddress.getAgencyId())) {
+            lqw.eq(TronEasonAddress::getAgencyId, tronEasonAddress.getAgencyId());
         }
-        if (StringUtils.isNotBlank(tronEasonAddress.getAddressType())){
-            lqw.eq(TronEasonAddress::getAddressType ,tronEasonAddress.getAddressType());
+        if (StringUtils.isNotBlank(tronEasonAddress.getAddressType())) {
+            lqw.eq(TronEasonAddress::getAddressType, tronEasonAddress.getAddressType());
         }
-        if (StringUtils.isNotBlank(tronEasonAddress.getAddress())){
-            lqw.eq(TronEasonAddress::getAddress ,tronEasonAddress.getAddress());
+        if (StringUtils.isNotBlank(tronEasonAddress.getAddress())) {
+            lqw.eq(TronEasonAddress::getAddress, tronEasonAddress.getAddress());
         }
-        if (StringUtils.isNotBlank(tronEasonAddress.getHexAddress())){
-            lqw.eq(TronEasonAddress::getHexAddress ,tronEasonAddress.getHexAddress());
+        if (StringUtils.isNotBlank(tronEasonAddress.getHexAddress())) {
+            lqw.eq(TronEasonAddress::getHexAddress, tronEasonAddress.getHexAddress());
         }
-        if (StringUtils.isNotBlank(tronEasonAddress.getPrivatekey())){
-            lqw.eq(TronEasonAddress::getPrivatekey ,tronEasonAddress.getPrivatekey());
+        if (StringUtils.isNotBlank(tronEasonAddress.getBalance())) {
+            lqw.eq(TronEasonAddress::getBalance, tronEasonAddress.getBalance());
         }
-        if (StringUtils.isNotBlank(tronEasonAddress.getBalance())){
-            lqw.eq(TronEasonAddress::getBalance ,tronEasonAddress.getBalance());
-        }
+        lqw.select(TronEasonAddress.class, item -> !item.getProperty().equals("privatekey"));//私钥不对外开放
         lqw.orderByDesc(TronEasonAddress::getCreateTime);
 
         return this.list(lqw);
