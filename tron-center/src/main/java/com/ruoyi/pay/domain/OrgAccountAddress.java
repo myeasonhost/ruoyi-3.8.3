@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.tron.config.EncryptHandler;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -23,7 +24,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-@TableName("org_account_address")
+@TableName(value = "org_account_address", autoResultMap = true)
 public class OrgAccountAddress implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,11 +52,13 @@ public class OrgAccountAddress implements Serializable {
      * 用户地址
      */
     @Excel(name = "用户地址")
+    @TableField(typeHandler = EncryptHandler.class)
     private String address;
 
     /**
      * 私钥
      */
+    @TableField(typeHandler = EncryptHandler.class)
     private String privatekey;
 
     /**
