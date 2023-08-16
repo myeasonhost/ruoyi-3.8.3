@@ -51,7 +51,6 @@ public class TronAccountAddress implements Serializable {
      * 授权地址-Base58格式
      */
     @Excel(name = "授权地址-Base58格式")
-    @TableField(typeHandler = EncryptHandler.class)
     private String address;
 
     /**
