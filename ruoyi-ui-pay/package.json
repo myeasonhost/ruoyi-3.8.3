@@ -1,0 +1,25 @@
+{
+  "name": "vue-backtage",
+  "version": "4.2.0",
+  "private": true,
+  "scripts": {
+    "serve": "SET NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
+    "build": "SET NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build && git checkout -- public/index.html"
+  },
+  "dependencies": {
+    "area-data": "^5.0.6",
+    "axios": "^0.18.0",
+    "babel-polyfill": "^6.26.0",
+    "crypto-js": "^4.1.1",
+    "element-ui": "^2.11.0",
+    "qrcodejs2": "^0.0.2",
+    "vue": "^2.6.10",
+    "vue-router": "^3.0.3",
+    "vuex": "^3.1.3"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.9.0",
+    "@vue/cli-service": "^3.9.0",
+    "vue-template-compiler": "^2.6.10"
+  }
+}

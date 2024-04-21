@@ -1,0 +1,14 @@
+export const siteData = JSON.parse("{\"base\":\"/\",\"lang\":\"zh\",\"title\":\"MBPAY\",\"description\":\"最佳 USDT.TRC20 收款接口服务 🚀\",\"head\":[[\"link\",{\"rel\":\"icon\",\"href\":\"/images/logo.png\"}],[\"meta\",{\"name\":\"description\",\"content\":\"最佳 USDT.TRC20 收款接口服务 🚀\"}],[\"meta\",{\"name\":\"keywords\",\"content\":\"mbpay,tronapi,波场api,波场接口,波场支付,波场回调,tron接口,tron支付,tron回调,usdt接口,usdt支付,usdt回调,USDT接口,USDT支付,USDT回调\"}]],\"locales\":{}}")
+
+if (import.meta.webpackHot) {
+  import.meta.webpackHot.accept()
+  if (__VUE_HMR_RUNTIME__.updateSiteData) {
+    __VUE_HMR_RUNTIME__.updateSiteData(siteData)
+  }
+}
+
+if (import.meta.hot) {
+  import.meta.hot.accept(({ siteData }) => {
+    __VUE_HMR_RUNTIME__.updateSiteData(siteData)
+  })
+}
