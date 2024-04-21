@@ -1,9 +1,8 @@
 package com.ruoyi.tron.service;
 
-import com.ruoyi.common.core.domain.R;
-import com.ruoyi.common.core.domain.model.LoginBody;
-import com.ruoyi.tron.domain.OrgAccountInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.common.core.domain.R;
+import com.ruoyi.tron.domain.OrgAccountInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -24,5 +23,5 @@ public interface IOrgAccountInfoService extends IService<OrgAccountInfo> {
     /**
      * 登录白名单和谷歌验证码验证
      */
-    R whiteIpAndGoogleCodeLogin(LoginBody loginBody, HttpServletRequest request);
+    R<String> whiteIpAndGoogleCodeLogin(String username, String googleCode, HttpServletRequest request);
 }

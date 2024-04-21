@@ -42,6 +42,12 @@ service.interceptors.request.use(config => {
       data: typeof config.data === 'object' ? JSON.stringify(config.data) : config.data,
       time: new Date().getTime()
     }
+    const requestSize = Object.keys(JSON.stringify(requestObj)).length; // 请求数据大小
+    const limitSize = 5 * 1024 * 1024; // 限制存放数据5M
+    if (requestSize >= limitSize) {
+      console.warn(`[${config.url}]: ` + '请求数据大小超出允许的5M限制，无法进行防重复提交验证。')
+      return config;
+    }
     const sessionObj = cache.session.getJSON('sessionObj')
     if (sessionObj === undefined || sessionObj === null || sessionObj === '') {
       cache.session.setJSON('sessionObj', requestObj)
@@ -61,8 +67,8 @@ service.interceptors.request.use(config => {
   }
   return config
 }, error => {
-  console.log(error)
-  Promise.reject(error)
+    console.log(error)
+    Promise.reject(error)
 })
 
 // 响应拦截器
@@ -83,10 +89,10 @@ service.interceptors.response.use(res => {
           store.dispatch('LogOut').then(() => {
             location.href = '/index';
           })
-        }).catch(() => {
-          isRelogin.show = false;
-        });
-      }
+      }).catch(() => {
+        isRelogin.show = false;
+      });
+    }
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
     } else if (code === 500) {
       Message({ message: msg, type: 'error' })

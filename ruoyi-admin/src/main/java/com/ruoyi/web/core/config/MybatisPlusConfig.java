@@ -1,4 +1,4 @@
-package com.ruoyi.framework.config;
+package com.ruoyi.web.core.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

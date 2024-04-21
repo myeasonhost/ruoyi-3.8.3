@@ -102,7 +102,7 @@
     <el-table v-loading="loading" :data="fishList" @selection-change="handleSelectionChange" :border="true">
       <el-table-column type="selection" align="center" />
       <el-table-column label="鱼苗ID" align="center" prop="id" v-if="false"/>
-      <el-table-column label="鱼苗类型" align="center" prop="type"/>
+      <el-table-column label="鱼苗类型" align="center" prop="type" width="100"/>
       <el-table-column label="上级/业务员" align="center" prop="salemanId" width="100">
         <template slot-scope="scope">
           <div style="">{{ scope.row.agencyId }}</div>
@@ -110,14 +110,14 @@
           <div style="color: red;">{{ scope.row.isTop==1?"置顶":"" }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="鱼苗信息" align="center" prop="id" width="160">
+      <el-table-column label="鱼苗信息" align="center" prop="id" width="200">
         <template slot-scope="scope">
           <div style="">{{ scope.row.createTime | formatTimer}}</div>
           <div style="color: #13ce66;font-weight: bold;font-size: 13px;">{{ scope.row.ip }}</div>
           <div style="color: #f4516c;font-weight: bold;font-size: 13px;">{{ scope.row.area }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="授权地址" align="center" prop="auAddress"  width="400">
+      <el-table-column label="授权地址" align="center" prop="auAddress">
         <template slot-scope="scope">
           <div style="color: #1890ff;font-family: 'Arial Black';">{{ scope.row.address}}</div>
           <div style="color: #888888;font-style: italic;">{{ scope.row.auAddress }}</div>
@@ -131,13 +131,13 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="余额" align="left"  prop="balance" width="130">
+      <el-table-column label="余额" align="left"  prop="balance" width="150">
         <template slot-scope="scope">
              <div v-html="scope.row.balance">
              </div>
         </template>
       </el-table-column>
-      <el-table-column label="账户明细" align="left" width="130">
+      <el-table-column label="账户明细" align="left" width="150">
         <template slot-scope="scope">
           <div style="color: #1890ff;font-family: 'Arial Black';">本金：{{scope.row.usdt==null?"0.00":scope.row.usdt}}</div>
           <div style="color: #888888;font-style: italic;">利息：{{scope.row.interest==null?"0.00":scope.row.interest}}</div>

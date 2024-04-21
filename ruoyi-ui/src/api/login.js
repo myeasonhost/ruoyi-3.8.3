@@ -12,7 +12,8 @@ export function login(username, password, code, googleCode, uuid) {
   return request({
     url: '/login',
     headers: {
-      isToken: false
+      isToken: false,
+      repeatSubmit: false
     },
     method: 'post',
     data: data

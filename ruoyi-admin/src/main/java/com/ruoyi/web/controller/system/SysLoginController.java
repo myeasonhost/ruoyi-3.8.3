@@ -1,27 +1,27 @@
 package com.ruoyi.web.controller.system;
 
-import java.util.List;
-import java.util.Set;
-
+import com.ruoyi.common.constant.Constants;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.R;
+import com.ruoyi.common.core.domain.entity.SysMenu;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginBodyEx;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.framework.web.service.SysLoginService;
+import com.ruoyi.framework.web.service.SysPermissionService;
+import com.ruoyi.system.service.ISysConfigServiceEx;
+import com.ruoyi.system.service.ISysMenuService;
 import com.ruoyi.tron.service.IOrgAccountInfoService;
-import com.ruoyi.system.service.ISysConfigService;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.ruoyi.common.constant.Constants;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.core.domain.entity.SysMenu;
-import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.common.core.domain.model.LoginBody;
-import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.framework.web.service.SysLoginService;
-import com.ruoyi.framework.web.service.SysPermissionService;
-import com.ruoyi.system.service.ISysMenuService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 登录验证
@@ -29,8 +29,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author ruoyi
  */
 @RestController
-public class SysLoginController
-{
+public class SysLoginController {
     @Autowired
     private SysLoginService loginService;
 
@@ -41,10 +40,10 @@ public class SysLoginController
     private SysPermissionService permissionService;
 
     @Autowired
-    private IOrgAccountInfoService orgAccountInfoService;
+    private ISysConfigServiceEx sysConfigServiceEx;
 
     @Autowired
-    private ISysConfigService configService;
+    private IOrgAccountInfoService orgAccountInfoService;
 
     /**
      * 登录方法
@@ -52,15 +51,14 @@ public class SysLoginController
      * @param loginBody 登录信息
      * @return 结果
      */
-    @PostMapping("/login")
-    public AjaxResult login(@RequestBody LoginBody loginBody, HttpServletRequest request)
-    {
+    @PostMapping("/login" )
+    public AjaxResult login(@RequestBody LoginBodyEx loginBody, HttpServletRequest request) {
         AjaxResult ajax = AjaxResult.success();
-        boolean googleEnabled = configService.selectGoogleEnabled();
-        if (googleEnabled){
+        boolean googleEnabled = sysConfigServiceEx.selectGoogleEnabled();
+        if (googleEnabled) {
             //新加白名单，谷歌验证码功能
-            R r=orgAccountInfoService.whiteIpAndGoogleCodeLogin(loginBody,request);
-            if (r.getCode()==R.FAIL){
+            R<String> r = orgAccountInfoService.whiteIpAndGoogleCodeLogin(loginBody.getUsername(), loginBody.getGoogleCode(), request);
+            if (r.getCode() == R.FAIL) {
                 return AjaxResult.error(r.getMsg());
             }
         }
@@ -76,9 +74,8 @@ public class SysLoginController
      *
      * @return 用户信息
      */
-    @GetMapping("getInfo")
-    public AjaxResult getInfo()
-    {
+    @GetMapping("getInfo" )
+    public AjaxResult getInfo() {
         SysUser user = SecurityUtils.getLoginUser().getUser();
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
@@ -96,9 +93,8 @@ public class SysLoginController
      *
      * @return 路由信息
      */
-    @GetMapping("getRouters")
-    public AjaxResult getRouters()
-    {
+    @GetMapping("getRouters" )
+    public AjaxResult getRouters() {
         Long userId = SecurityUtils.getUserId();
         List<SysMenu> menus = menuService.selectMenuTreeByUserId(userId);
         return AjaxResult.success(menuService.buildMenus(menus));

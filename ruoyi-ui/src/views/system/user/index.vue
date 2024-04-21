@@ -20,6 +20,7 @@
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             ref="tree"
+            node-key="id"
             default-expand-all
             highlight-current
             @node-click="handleNodeClick"
@@ -179,9 +180,7 @@
                 v-hasPermi="['system:user:remove']"
               >删除</el-button>
               <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:user:resetPwd', 'system:user:edit']">
-                <span class="el-dropdown-link">
-                  <i class="el-icon-d-arrow-right el-icon--right"></i>更多
-                </span>
+                <el-button size="mini" type="text" icon="el-icon-d-arrow-right">更多</el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="handleResetPwd" icon="el-icon-key"
                     v-hasPermi="['system:user:resetPwd']">重置密码</el-dropdown-item>
@@ -434,7 +433,8 @@ export default {
         ],
         password: [
           { required: true, message: "用户密码不能为空", trigger: "blur" },
-          { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' }
+          { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' },
+          { pattern: /^[^<>"'|\\]+$/, message: "不能包含非法字符：< > \" ' \\\ |", trigger: "blur" }
         ],
         email: [
           {
@@ -536,6 +536,8 @@ export default {
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForm");
+      this.queryParams.deptId = undefined;
+      this.$refs.tree.setCurrentKey(null);
       this.handleQuery();
     },
     // 多选框选中数据
@@ -576,8 +578,8 @@ export default {
         this.form = response.data;
         this.postOptions = response.posts;
         this.roleOptions = response.roles;
-        this.form.postIds = response.postIds;
-        this.form.roleIds = response.roleIds;
+        this.$set(this.form, "postIds", response.postIds);
+        this.$set(this.form, "roleIds", response.roleIds);
         this.open = true;
         this.title = "修改用户";
         this.form.password = "";
@@ -590,7 +592,12 @@ export default {
         cancelButtonText: "取消",
         closeOnClickModal: false,
         inputPattern: /^.{5,20}$/,
-        inputErrorMessage: "用户密码长度必须介于 5 和 20 之间"
+        inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
+        inputValidator: (value) => {
+          if (/<|>|"|'|\||\\/.test(value)) {
+            return "不能包含非法字符：< > \" ' \\\ |"
+          }
+        },
       }).then(({ value }) => {
           resetUserPwd(row.userId, value).then(response => {
             this.$modal.msgSuccess("修改成功，新密码是：" + value);

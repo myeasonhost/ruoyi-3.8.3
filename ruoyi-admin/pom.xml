@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ruoyi</artifactId>
         <groupId>com.ruoyi</groupId>
-        <version>3.8.3</version>
+        <version>3.8.7</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -35,6 +35,16 @@
             <groupId>io.swagger</groupId>
             <artifactId>swagger-models</artifactId>
             <version>1.6.2</version>
+        </dependency>
+
+        <!-- mybatis-plus插件 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-extension</artifactId>
         </dependency>
 
          <!-- Mysql驱动包 -->
@@ -74,10 +84,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.1.1.RELEASE</version>
+                <version>2.5.15</version>
                 <configuration>
                     <fork>true</fork> <!-- 如果没有该配置，devtools不会生效 -->
-                    <includeSystemScope>true</includeSystemScope><!--外部进行打包-->
                 </configuration>
                 <executions>
                     <execution>
@@ -96,62 +105,8 @@
                     <warName>${project.artifactId}</warName>
                 </configuration>
            </plugin>
-<!--            <plugin>-->
-<!--                <groupId>com.spotify</groupId>-->
-<!--                <artifactId>docker-maven-plugin</artifactId>-->
-<!--                <version>1.0.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>build-image</id>-->
-<!--                        <phase>install</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <imageName>server-admin</imageName>-->
-<!--                    <imageTags>-->
-<!--                        <imageTag>latest</imageTag>-->
-<!--                    </imageTags>-->
-<!--                    <baseImage>openjdk:8</baseImage>-->
-<!--                    <workdir>/ROOT</workdir>-->
-<!--    &lt;!&ndash;                    <dockerDirectory>${basedir}/src/main/resources/docker</dockerDirectory> &lt;!&ndash; 指定 Dockerfile 路径&ndash;&gt;&ndash;&gt;-->
-<!--                    <entryPoint>["java", "-jar", "${project.build.finalName}.jar","&#45;&#45;spring.profiles.active=prod"]</entryPoint>-->
-<!--                    &lt;!&ndash; 这里是复制 jar 包到 docker 容器指定目录配置，也可以写到 Docokerfile 中 &ndash;&gt;-->
-<!--                    <resources>-->
-<!--                        <resource>-->
-<!--                            <targetPath>/ROOT</targetPath>-->
-<!--                            <directory>${project.build.directory}</directory>-->
-<!--                            <include>${project.build.finalName}.jar</include>-->
-<!--                        </resource>-->
-<!--                    </resources>-->
-<!--                    <dockerHost>http://52.76.123.77:8888</dockerHost>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
         </plugins>
         <finalName>${project.artifactId}</finalName>
     </build>
 
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <!-- 环境标识，需要与配置文件的名称相对应 -->
-                <profiles.active>dev</profiles.active>
-                <logging.level>debug</logging.level>
-            </properties>
-            <activation>
-                <!-- 默认环境 -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <profiles.active>prod</profiles.active>
-                <logging.level>warn</logging.level>
-            </properties>
-        </profile>
-    </profiles>
 </project>

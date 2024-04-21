@@ -8,7 +8,7 @@ spring:
       master:
         url: jdbc:mysql://127.0.0.1:3306/tron_wallet?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
         username: root
-        password: eason
+        password: Aa123456
       # 从库数据源
       slave:
         # 从数据源开关/默认关闭
@@ -24,6 +24,10 @@ spring:
       maxActive: 20
       # 配置获取连接等待超时的时间
       maxWait: 60000
+      # 配置连接超时时间
+      connectTimeout: 30000
+      # 配置网络超时时间
+      socketTimeout: 60000
       # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
       timeBetweenEvictionRunsMillis: 60000
       # 配置一个连接在池中最小生存的时间，单位是毫秒
@@ -79,9 +83,9 @@ spring:
         max-wait: -1ms
 spring.rabbitmq.host: 127.0.0.1
 spring.rabbitmq.port: 5672
-spring.rabbitmq.username: guest
-spring.rabbitmq.password: guest
-spring.rabbitmq.virtual-host: /
+spring.rabbitmq.username: admin
+spring.rabbitmq.password: admin
+spring.rabbitmq.virtual-host: my_vhost
 spring.rabbitmq.publisher-confirm-type: correlated
 
 # 超时订单通知-发送者

@@ -1,5 +1,14 @@
 package ${packageName}.service.impl;
 
+import java.util.List;
+import java.util.Map;
+#foreach ($column in $columns)
+#if($column.javaField == 'createTime' || $column.javaField == 'updateTime')
+import com.ruoyi.common.utils.DateUtils;
+#break
+#end
+#end
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -8,9 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import ${packageName}.mapper.${ClassName}Mapper;
 import ${packageName}.domain.${ClassName};
 import ${packageName}.service.I${ClassName}Service;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * ${functionName}Service业务层处理

@@ -202,9 +202,9 @@ export function handleTree(data, id, parentId, children) {
 }
 
 /**
- * 参数处理
- * @param {*} params  参数
- */
+* 参数处理
+* @param {*} params  参数
+*/
 export function tansParams(params) {
   let result = ''
   for (const propName of Object.keys(params)) {

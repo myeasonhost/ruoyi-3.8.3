@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import com.ruoyi.common.annotation.RateLimiter;
 import com.ruoyi.common.enums.LimitType;
 import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
 
@@ -50,7 +49,6 @@ public class RateLimiterAspect
     @Before("@annotation(rateLimiter)")
     public void doBefore(JoinPoint point, RateLimiter rateLimiter) throws Throwable
     {
-        String key = rateLimiter.key();
         int time = rateLimiter.time();
         int count = rateLimiter.count();
 
@@ -63,7 +61,7 @@ public class RateLimiterAspect
             {
                 throw new ServiceException("访问过于频繁，请稍候再试");
             }
-            log.info("限制请求'{}',当前请求'{}',缓存key'{}'", count, number.intValue(), key);
+            log.info("限制请求'{}',当前请求'{}',缓存key'{}'", count, number.intValue(), combineKey);
         }
         catch (ServiceException e)
         {
@@ -80,7 +78,7 @@ public class RateLimiterAspect
         StringBuffer stringBuffer = new StringBuffer(rateLimiter.key());
         if (rateLimiter.limitType() == LimitType.IP)
         {
-            stringBuffer.append(IpUtils.getIpAddr(ServletUtils.getRequest())).append("-");
+            stringBuffer.append(IpUtils.getIpAddr()).append("-");
         }
         MethodSignature signature = (MethodSignature) point.getSignature();
         Method method = signature.getMethod();

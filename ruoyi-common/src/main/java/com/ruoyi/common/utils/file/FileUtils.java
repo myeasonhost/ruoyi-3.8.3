@@ -21,16 +21,16 @@ import org.apache.commons.io.FilenameUtils;
 
 /**
  * 文件处理工具类
- *
+ * 
  * @author ruoyi
  */
-public class FileUtils extends org.apache.commons.io.FileUtils
+public class FileUtils
 {
     public static String FILENAME_PATTERN = "[a-zA-Z0-9_\\-\\|\\.\\u4e00-\\u9fa5]+";
 
     /**
      * 输出指定文件的byte数组
-     *
+     * 
      * @param filePath 文件路径
      * @param os 输出流
      * @return
@@ -105,7 +105,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils
 
     /**
      * 删除文件
-     *
+     * 
      * @param filePath 文件
      * @return
      */
@@ -116,15 +116,14 @@ public class FileUtils extends org.apache.commons.io.FileUtils
         // 路径为文件且不为空则进行删除
         if (file.isFile() && file.exists())
         {
-            file.delete();
-            flag = true;
+            flag = file.delete();
         }
         return flag;
     }
 
     /**
      * 文件名称验证
-     *
+     * 
      * @param filename 文件名称
      * @return true 正常 false 非法
      */
@@ -135,7 +134,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils
 
     /**
      * 检查文件是否可下载
-     *
+     * 
      * @param resource 需要下载的文件
      * @return true 正常 false 非法
      */
@@ -159,7 +158,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils
 
     /**
      * 下载文件名重新编码
-     *
+     * 
      * @param request 请求对象
      * @param fileName 文件名
      * @return 编码后的文件名
@@ -229,7 +228,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils
 
     /**
      * 获取图像后缀
-     *
+     * 
      * @param photoByte 图像数据
      * @return 后缀名
      */
@@ -258,7 +257,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils
 
     /**
      * 获取文件名称 /profile/upload/2022/04/16/ruoyi.png -- ruoyi.png
-     *
+     * 
      * @param fileName 路径名称
      * @return 没有文件路径的名称
      */
@@ -276,7 +275,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils
 
     /**
      * 获取不带后缀文件名称 /profile/upload/2022/04/16/ruoyi.png -- ruoyi
-     *
+     * 
      * @param fileName 路径名称
      * @return 没有文件路径和后缀的名称
      */
@@ -289,5 +288,4 @@ public class FileUtils extends org.apache.commons.io.FileUtils
         String baseName = FilenameUtils.getBaseName(fileName);
         return baseName;
     }
-
 }

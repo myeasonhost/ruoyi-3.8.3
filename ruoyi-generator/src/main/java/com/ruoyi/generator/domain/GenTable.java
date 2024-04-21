@@ -1,17 +1,16 @@
 package com.ruoyi.generator.domain;
 
+import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import org.apache.commons.lang3.ArrayUtils;
 import com.ruoyi.common.constant.GenConstants;
 import com.ruoyi.common.core.domain.BaseEntity;
 import com.ruoyi.common.utils.StringUtils;
-import org.apache.commons.lang3.ArrayUtils;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 /**
  * 业务表 gen_table
- *
+ * 
  * @author ruoyi
  */
 public class GenTable extends BaseEntity
@@ -41,6 +40,9 @@ public class GenTable extends BaseEntity
 
     /** 使用的模板（crud单表操作 tree树表操作 sub主子表操作） */
     private String tplCategory;
+
+    /** 前端类型（element-ui模版 element-plus模版） */
+    private String tplWebType;
 
     /** 生成包路径 */
     @NotBlank(message = "生成包路径不能为空")
@@ -164,6 +166,16 @@ public class GenTable extends BaseEntity
     public void setTplCategory(String tplCategory)
     {
         this.tplCategory = tplCategory;
+    }
+
+    public String getTplWebType()
+    {
+        return tplWebType;
+    }
+
+    public void setTplWebType(String tplWebType)
+    {
+        this.tplWebType = tplWebType;
     }
 
     public String getPackageName()

@@ -1,10 +1,10 @@
 package com.ruoyi.tron.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.domain.R;
-import com.ruoyi.common.core.domain.model.LoginBody;
 import com.ruoyi.tron.domain.OrgAccountInfo;
 import com.ruoyi.tron.mapper.OrgAccountInfoMapper;
 import com.ruoyi.tron.service.IOrgAccountInfoService;
@@ -28,33 +28,33 @@ public class OrgAccountInfoServiceImpl extends ServiceImpl<OrgAccountInfoMapper,
     @Override
     public List<OrgAccountInfo> queryList(OrgAccountInfo orgAccountInfo) {
         LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
-        if (orgAccountInfo.getUserId() != null){
-            lqw.eq(OrgAccountInfo::getUserId ,orgAccountInfo.getUserId());
+        if (orgAccountInfo.getUserId() != null) {
+            lqw.eq(OrgAccountInfo::getUserId, orgAccountInfo.getUserId());
         }
-        if (StringUtils.isNotBlank(orgAccountInfo.getAgencyId())){
-            lqw.eq(OrgAccountInfo::getAgencyId ,orgAccountInfo.getAgencyId());
+        if (StringUtils.isNotBlank(orgAccountInfo.getAgencyId())) {
+            lqw.eq(OrgAccountInfo::getAgencyId, orgAccountInfo.getAgencyId());
         }
         return this.list(lqw);
     }
 
     @Override
-    public R whiteIpAndGoogleCodeLogin(LoginBody loginBody, HttpServletRequest request) {
+    public R<String> whiteIpAndGoogleCodeLogin(String username, String googleCode, HttpServletRequest request) {
         String visitedIp = IpUtil.getIpAddress(request);
         LambdaQueryWrapper<OrgAccountInfo> lqw = Wrappers.lambdaQuery();
-        if (loginBody.getUsername() != null){
-            lqw.eq(OrgAccountInfo::getAgencyId ,loginBody.getUsername());
+        if (StrUtil.isNotBlank(username)) {
+            lqw.eq(OrgAccountInfo::getAgencyId, username);
         }
         OrgAccountInfo orgAccountInfo = this.baseMapper.selectOne(lqw);
-        if (orgAccountInfo==null){
-            return R.fail("商户不存在，请联系客服申请");
+        if (orgAccountInfo == null) {
+            return R.fail("商户不存在，请联系客服申请" );
         }
-        boolean result = GoogleAuthenticatorConfig.authCode(loginBody.getGoogleCode(), orgAccountInfo.getGoogleSecretCode());
-        if (!result){
-            return R.fail("谷歌验证码错误");
+        boolean result = GoogleAuthenticatorConfig.authCode(googleCode, orgAccountInfo.getGoogleSecretCode());
+        if (!result) {
+            return R.fail("谷歌验证码错误" );
         }
-        if (StringUtils.isEmpty(orgAccountInfo.getWhiteIp()) || !orgAccountInfo.getWhiteIp().contains(visitedIp + ",")) {
-            log.error(orgAccountInfo.getWhiteIp()+"不在白名单内【"+visitedIp+"】");
-            return R.fail("白名单错误");
+        if (StringUtils.isEmpty(orgAccountInfo.getWhiteIp()) || !orgAccountInfo.getWhiteIp().contains(visitedIp + "," )) {
+            log.error(orgAccountInfo.getWhiteIp() + "不在白名单内【" + visitedIp + "】" );
+            return R.fail("白名单错误" );
         }
         return R.ok();
     }

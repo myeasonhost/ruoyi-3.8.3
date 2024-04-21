@@ -2,7 +2,7 @@ package com.ruoyi.common.core.domain.model;
 
 /**
  * 用户登录对象
- *
+ * 
  * @author ruoyi
  */
 public class LoginBody
@@ -21,11 +21,6 @@ public class LoginBody
      * 验证码
      */
     private String code;
-
-    /**
-     * 谷歌验证码
-     */
-    private String googleCode;
 
     /**
      * 唯一标识
@@ -60,14 +55,6 @@ public class LoginBody
     public void setCode(String code)
     {
         this.code = code;
-    }
-
-    public String getGoogleCode() {
-        return googleCode;
-    }
-
-    public void setGoogleCode(String googleCode) {
-        this.googleCode = googleCode;
     }
 
     public String getUuid()

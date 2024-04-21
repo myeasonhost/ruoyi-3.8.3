@@ -73,7 +73,7 @@ export default {
       number: 0,
       uploadList: [],
       baseUrl: process.env.VUE_APP_BASE_API,
-      uploadFileUrl: process.env.VUE_APP_BASE_API + "/common/upload", // 上传的图片服务器地址
+      uploadFileUrl: process.env.VUE_APP_BASE_API + "/common/upload", // 上传文件服务器地址
       headers: {
         Authorization: "Bearer " + getToken(),
       },
@@ -115,15 +115,9 @@ export default {
     handleBeforeUpload(file) {
       // 校检文件类型
       if (this.fileType) {
-        let fileExtension = "";
-        if (file.name.lastIndexOf(".") > -1) {
-          fileExtension = file.name.slice(file.name.lastIndexOf(".") + 1);
-        }
-        const isTypeOk = this.fileType.some((type) => {
-          if (file.type.indexOf(type) > -1) return true;
-          if (fileExtension && fileExtension.indexOf(type) > -1) return true;
-          return false;
-        });
+        const fileName = file.name.split('.');
+        const fileExt = fileName[fileName.length - 1];
+        const isTypeOk = this.fileType.indexOf(fileExt) >= 0;
         if (!isTypeOk) {
           this.$modal.msgError(`文件格式不正确, 请上传${this.fileType.join("/")}格式文件!`);
           return false;
@@ -147,8 +141,8 @@ export default {
     },
     // 上传失败
     handleUploadError(err) {
-      this.$modal.msgError("上传图片失败，请重试");
-      this.$modal.closeLoading()
+      this.$modal.msgError("上传文件失败，请重试");
+      this.$modal.closeLoading();
     },
     // 上传成功回调
     handleUploadSuccess(res, file) {
@@ -180,10 +174,11 @@ export default {
     },
     // 获取文件名称
     getFileName(name) {
+      // 如果是url那么取最后的名字 如果不是直接返回
       if (name.lastIndexOf("/") > -1) {
         return name.slice(name.lastIndexOf("/") + 1);
       } else {
-        return "";
+        return name;
       }
     },
     // 对象转成指定字符串分隔
