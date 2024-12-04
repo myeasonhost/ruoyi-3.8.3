@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import { addAddress, changeStatus, delAddress, getAddress, listAddress, updateAddress } from '@/api/pay/address'
+import {addAddress, changeStatus, delAddress, getAddress, listAddress, updateAddress} from '@/api/pay/address'
 
 export default {
   name: 'Address',
@@ -173,16 +173,16 @@ export default {
       // 表单校验
       rules: {
         addressType: [
-          { required: true, message: '地址类型不能为空', trigger: 'change' }
+          {required: true, message: '地址类型不能为空', trigger: 'change'}
         ],
         address: [
-          { required: true, message: '用户地址不能为空', trigger: 'blur' }
+          {required: true, message: '用户地址不能为空', trigger: 'blur'}
         ],
         remark: [
-          { required: true, message: '备注不能为空', trigger: 'blur' }
+          {required: true, message: '备注不能为空', trigger: 'blur'}
         ],
         createTime: [
-          { required: true, message: '备注不能为空', trigger: 'blur' }
+          {required: true, message: '备注不能为空', trigger: 'blur'}
         ]
       }
     }
@@ -221,11 +221,11 @@ export default {
     // 状态修改
     handleStatusChange(row) {
       let text = row.status === '0' ? '启用' : '停用'
-      this.$modal.confirm('确认要' + text + '【' + row.address + '】地址吗？').then(function() {
+      this.$modal.confirm('确认要' + text + '【' + row.address + '】地址吗？').then(function () {
         return changeStatus(row.id, row.status)
       }).then(() => {
         this.$modal.msgSuccess(text + '成功')
-      }).catch(function() {
+      }).catch(function () {
         row.status = row.status === '0' ? '1' : '0'
       })
     },
@@ -277,7 +277,7 @@ export default {
       this.reset()
       const id = row.id || this.ids
       getAddress(id, 'queryBalance').then(response => {
-        this.msgSuccess('余额查询成功')
+        this.$modal.msgSuccess('余额查询成功')
         this.getList()
       })
     },
@@ -297,13 +297,13 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateAddress(this.form).then(response => {
-              this.msgSuccess('修改成功')
+              this.$modal.msgSuccess('修改成功')
               this.open = false
               this.getList()
             })
           } else {
             addAddress(this.form).then(response => {
-              this.msgSuccess('新增成功')
+              this.$modal.msgSuccess('新增成功')
               this.open = false
               this.getList()
             })
@@ -318,11 +318,11 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(function() {
+      }).then(function () {
         return delAddress(ids)
       }).then(() => {
         this.getList()
-        this.msgSuccess('删除成功')
+        this.$modal.msgSuccess('删除成功')
       })
     }
   }
