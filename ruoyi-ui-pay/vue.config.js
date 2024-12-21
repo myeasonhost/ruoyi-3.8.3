@@ -3,8 +3,8 @@ const env = 'test' // 测试环境
 // const env = 'prePro' // 预生产环境
 // const env = 'pro' // 生产环境
 
-let v1 = 'http://52.52.144.209:8800/api'
-let v2 = 'http://52.52.144.209:8800/api'
+let v1 = 'http://192.168.0.81:8080/api'
+let v2 = 'http://192.168.0.81:8080/api'
 if (env === 'prePro') {
 } else if (env === 'pro') {
 }
@@ -13,7 +13,7 @@ out:
 for (var i in ifaces) {
   for (var j in ifaces[i]) {
     var val = ifaces[i][j]
-    if (val.family === 'IPv4' && val.address !== '127.0.0.1') {
+    if (val.family === 'IPv4' && val.address !== '192.168.0.81') {
       ip = val.address
       break out
     }
