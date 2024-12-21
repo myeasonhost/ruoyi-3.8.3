@@ -65,7 +65,7 @@ http://54.179.118.170/api/pay/create?order_id=1234&mch_id=test01&productId=1&mch
         "coin_amount": "100.28",
         "coin_address": "TQoSZZByWYwmXXXXXXacASUV2b9ZaQw",
         "qrcode_url": null,
-        "cashier_url": "http://52.52.52.209:85/?data=O96FK+SoHqqx50by98VkjOVTpCePTvtiZNlG7S6NJJTk7TZiSRQQzA==&key=/+61PS8TLkRPv+8ZcI4IW0PJEHbXRGl+",
+        "cashier_url": "http://10.8.0.2:8081/?data=3GGkSBaHlcdMngilG6GFF%20ul5190lwrovhUAbXVPw5eHAxRqujRA07Da9C0HN0q%20mpiWqFCazmg4%20sdrgkLHz5ulK3NmXugX&key=H4FGyFntqSLYrG5Ii07KAQQ%202scmjhXc&locale=en-US",
         "timeout": "30"
     }
 }

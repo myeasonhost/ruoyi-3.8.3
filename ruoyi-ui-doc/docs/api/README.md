@@ -20,5 +20,5 @@
 如你在接入过程中遇到任何问题，请优先阅读我们的 [常见问题](/faq/index.md) 文档。你还可以：
 
 1. 通过页面 `右下角` 的反馈入口和我们取得联系。
-2. 添加 `telegram` 账户：`@GaoogDoc`。
+2. 添加 `telegram` 账户：`https://t.me/mysocket`。
 

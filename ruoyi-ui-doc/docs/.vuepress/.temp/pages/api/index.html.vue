@@ -15,7 +15,7 @@
 <p>如你在接入过程中遇到任何问题，请优先阅读我们的 <RouteLink to="/faq/">常见问题</RouteLink> 文档。你还可以：</p>
 <ol>
 <li>通过页面 <code v-pre>右下角</code> 的反馈入口和我们取得联系。</li>
-<li>添加 <code v-pre>telegram</code> 账户：<code v-pre>@GaoogDoc</code>。</li>
+<li>添加 <code v-pre>telegram</code> 账户：<code v-pre>https://t.me/mysocket</code>。</li>
 </ol>
 </div></template>
 

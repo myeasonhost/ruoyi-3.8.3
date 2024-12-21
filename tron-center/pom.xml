@@ -31,9 +31,10 @@
             <systemPath>${project.basedir}/src/main/resources/lib/tron-sdk-1.0.jar</systemPath>
         </dependency>
 
+        <!-- swagger3-->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
         </dependency>
 
         <!-- mybatis-plus插件 -->

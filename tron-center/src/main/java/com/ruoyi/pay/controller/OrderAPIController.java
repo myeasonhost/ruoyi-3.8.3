@@ -13,6 +13,8 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.pay.domain.OrgAccountAddress;
 import com.ruoyi.pay.domain.OrgAccountOrder;
 import com.ruoyi.pay.domain.OrgAccountOrderDaip;
+import com.ruoyi.pay.dto.PayEntity;
+import com.ruoyi.pay.dto.PdaiEntity;
 import com.ruoyi.pay.message.MessageProducer;
 import com.ruoyi.pay.model.OrderResultModel;
 import com.ruoyi.pay.model.OrderStatusModel;
@@ -27,20 +29,17 @@ import com.ruoyi.tron.domain.TronAccountAddress;
 import com.ruoyi.tron.service.IOrgAccountInfoService;
 import com.ruoyi.tron.service.ITronAccountAddressService;
 import com.ruoyi.tron.service.ITronApiService;
-import io.swagger.annotations.*;
-import lombok.Data;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
@@ -72,21 +71,13 @@ public class OrderAPIController extends BaseController {
      * 支付订单生成
      */
     @ApiOperation(value = "支付订单生成", notes = "用于生成 USDT.TRC20 的支付数据。商户可选择直接跳转至官方收银台供用户支付，也可以使用数据自定义收银台。在用户支付成功后，系统将即时进行 回调通知。")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "mch_id", value = "商户ID", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "amount", value = "金额", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "currency", value = "订单币种（CNY/USD）", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "coin_code", value = "支付币种（USDT/RMB）", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "notify_url", value = "回调通知地址", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "redirect_url", value = "同步跳转地址", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "order_id", value = "商户订单号", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "customer_id", value = "用户ID", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "product_name", value = "产品名", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "locale", value = "语言", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "signature", value = "签名", dataType = "String", dataTypeClass = String.class)
-    })
-    @RequestMapping("/pay/create")
-    public AjaxResult payCreate(@Validated PayEntity payEntity) {
+    @PostMapping("/pay/create")
+    public AjaxResult payCreate(@Validated PayEntity payEntity, BindingResult bindingResult) {
+        //（1）基础校验
+        if (bindingResult.hasErrors()) {
+            String errorMsg = bindingResult.getFieldErrors().get(0).getDefaultMessage();
+            return AjaxResult.error(errorMsg);
+        }
         log.info("【支付订单】支付订单生成参数:{}", payEntity);
         LambdaQueryWrapper<OrgAccountInfo> lambdaQueryWrapper = new LambdaQueryWrapper();
         lambdaQueryWrapper.eq(OrgAccountInfo::getAgencyId, payEntity.getMch_id());
@@ -215,12 +206,7 @@ public class OrderAPIController extends BaseController {
      * 支付订单状态查询
      */
     @ApiOperation(value = "支付订单状态查询", notes = "用于生成 USDT.TRC20 的支付数据。商户可选择直接跳转至官方收银台供用户支付，也可以使用数据自定义收银台。在用户支付成功后，前端收银页面订单刷新订单状态。")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "mch_id", value = "商户ID", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "order_id", value = "商户订单号", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "signature", value = "签名", dataType = "String", dataTypeClass = String.class)
-    })
-    @RequestMapping("/pay/order/queryStatus")
+    @GetMapping("/pay/order/queryStatus")
     public AjaxResult payCreate(@RequestParam("mch_id") @NotNull(message = "mch_id不能为空") String mch_id,
                                 @RequestParam("order_id") @NotNull(message = "order_id不能为空") String order_id) {
         LambdaQueryWrapper<OrgAccountInfo> lambdaQueryWrapper = new LambdaQueryWrapper();
@@ -250,20 +236,13 @@ public class OrderAPIController extends BaseController {
      * 代付订单生成
      */
     @ApiOperation(value = "代付订单生成", notes = "用于生成 USDT.TRC20 的代付数据。商户发起代付的申请之后，系统将即时进行为指定账户付款。")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "mch_id", value = "商户ID", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "amount", value = "金额", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "currency", value = "订单币种（CNY/USD）", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "coin_code", value = "支付币种（USDT/RMB）", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "notify_url", value = "回调通知地址", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "order_id", value = "商户订单号", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "customer_id", value = "用户ID", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "product_name", value = "产品名", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "address", value = "用户收款地址", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "signature", value = "签名", dataType = "String", dataTypeClass = String.class)
-    })
-    @RequestMapping("/pdai/create")
-    public AjaxResult pdaiCreate(@Validated PdaiEntity payEntity) {
+    @PostMapping("/pdai/create")
+    public AjaxResult pdaiCreate(@Validated PdaiEntity payEntity, BindingResult bindingResult) {
+        //（1）基础校验
+        if (bindingResult.hasErrors()) {
+            String errorMsg = bindingResult.getFieldErrors().get(0).getDefaultMessage();
+            return AjaxResult.error(errorMsg);
+        }
         log.info("【代付订单】代付订单生成参数:{}", payEntity);
         LambdaQueryWrapper<OrgAccountInfo> lambdaQueryWrapper = new LambdaQueryWrapper();
         lambdaQueryWrapper.eq(OrgAccountInfo::getAgencyId, payEntity.getMch_id());
@@ -385,140 +364,3 @@ public class OrderAPIController extends BaseController {
     }
 }
 
-@Data
-@ApiModel(value = "PayEntity", description = "支付订单实体")
-class PayEntity {
-
-    @ApiModelProperty("商户id")
-    @NotNull(message = "mch_id不能为空")
-    private String mch_id;
-
-    @ApiModelProperty("金额")
-    @NotNull(message = "amount不能为空")
-    @DecimalMin(value = "0", message = "amount必须大于0")
-    private String amount;
-
-    @ApiModelProperty("订单币种单位（CNY/USD）")
-    private String currency = "USD";
-
-    @ApiModelProperty("支付币种（USDT/RMB）")
-    private String coin_code = "USDT";
-
-    @ApiModelProperty("回调通知地址")
-    @NotNull(message = "notify_url回调地址不能为空")
-    @URL(message = "notify_url回调地址不合法")
-    private String notify_url;
-
-    @ApiModelProperty("同步跳转地址")
-    @URL
-    private String redirect_url;
-
-    @ApiModelProperty("商户订单号")
-    @NotNull(message = "order_id不能为空")
-    private String order_id;
-
-    @ApiModelProperty("用户ID")
-    @NotNull(message = "customer_id不能为空")
-    private String customer_id;
-
-    @ApiModelProperty("产品名")
-    @NotNull(message = "product_name不能为空")
-    private String product_name;
-
-    @ApiModelProperty("语言")
-    private String locale = "en-US";
-
-    @ApiModelProperty("签名")
-    @NotNull(message = "签名不能为空")
-    private String sign;
-
-    public PayEntity() {
-    }
-
-    public PayEntity(String mch_id,
-                     String amount,
-                     String currency,
-                     String coin_code,
-                     String notify_url,
-                     String redirect_url,
-                     String order_id,
-                     String customer_id,
-                     String product_name,
-                     String locale,
-                     String sign) {
-        this.mch_id = mch_id;
-        this.amount = amount;
-        this.currency = currency;
-        this.coin_code = coin_code;
-        this.notify_url = notify_url;
-        this.redirect_url = redirect_url;
-        this.order_id = order_id;
-        this.customer_id = customer_id;
-        this.product_name = product_name;
-        this.locale = locale;
-        this.sign = sign;
-    }
-
-    @Override
-    public String toString() {
-
-        return "PayEntity{" +
-                "mch_id='" + mch_id + '\'' +
-                ", amount='" + amount + '\'' +
-                ", currency='" + currency + '\'' +
-                ", coin_code='" + coin_code + '\'' +
-                ", notify_url='" + notify_url + '\'' +
-                ", redirect_url='" + redirect_url + '\'' +
-                ", order_id='" + order_id + '\'' +
-                ", customer_id='" + customer_id + '\'' +
-                ", product_name='" + product_name + '\'' +
-                ", locale='" + locale + '\'' +
-                ", sign='" + sign + '\'' +
-                '}';
-    }
-}
-
-@Data
-@ApiModel(value = "PdaiEntity", description = "代付订单实体")
-class PdaiEntity {
-    @ApiModelProperty("商户id")
-    @NotNull(message = "mch_id不能为空")
-    private String mch_id;
-
-    @ApiModelProperty("金额")
-    @NotNull(message = "amount不能为空")
-    @DecimalMin(value = "0", message = "amount必须大于0")
-    private String amount;
-
-    @ApiModelProperty("订单币种单位（CNY/USD）")
-    private String currency = "USD";
-
-    @ApiModelProperty("支付币种（USDT/RMB）")
-    private String coin_code = "USDT";
-
-    @ApiModelProperty("回调通知地址")
-    @NotNull(message = "notify_url回调地址不能为空")
-    @URL(message = "notify_url回调地址不合法")
-    private String notify_url;
-
-    @ApiModelProperty("商户订单号")
-    @NotNull(message = "order_id不能为空")
-    private String order_id;
-
-    @ApiModelProperty("用户ID")
-    @NotNull(message = "customer_id不能为空")
-    private String customer_id;
-
-    @ApiModelProperty("产品名")
-    @NotNull(message = "product_name不能为空")
-    private String product_name;
-
-    @ApiModelProperty("用户收款地址")
-    @NotNull(message = "用户地址不能为空")
-    private String address;
-
-    @ApiModelProperty("签名")
-    @NotNull(message = "签名不能为空")
-    private String sign;
-
-}

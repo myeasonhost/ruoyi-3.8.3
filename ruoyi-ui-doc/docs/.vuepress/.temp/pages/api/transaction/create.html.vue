@@ -173,7 +173,7 @@
 <span class="line">        <span class="token property">"coin_amount"</span><span class="token operator">:</span> <span class="token string">"100.28"</span><span class="token punctuation">,</span></span>
 <span class="line">        <span class="token property">"coin_address"</span><span class="token operator">:</span> <span class="token string">"TQoSZZByWYwmXXXXXXacASUV2b9ZaQw"</span><span class="token punctuation">,</span></span>
 <span class="line">        <span class="token property">"qrcode_url"</span><span class="token operator">:</span> <span class="token null keyword">null</span><span class="token punctuation">,</span></span>
-<span class="line">        <span class="token property">"cashier_url"</span><span class="token operator">:</span> <span class="token string">"http://52.52.52.209:85/?data=O96FK+SoHqqx50by98VkjOVTpCePTvtiZNlG7S6NJJTk7TZiSRQQzA==&amp;key=/+61PS8TLkRPv+8ZcI4IW0PJEHbXRGl+"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"cashier_url"</span><span class="token operator">:</span> <span class="token string">"http://10.8.0.2:8081/?data=3GGkSBaHlcdMngilG6GFF%20ul5190lwrovhUAbXVPw5eHAxRqujRA07Da9C0HN0q%20mpiWqFCazmg4%20sdrgkLHz5ulK3NmXugX&amp;key=H4FGyFntqSLYrG5Ii07KAQQ%202scmjhXc&amp;locale=en-US"</span><span class="token punctuation">,</span></span>
 <span class="line">        <span class="token property">"timeout"</span><span class="token operator">:</span> <span class="token string">"30"</span></span>
 <span class="line">    <span class="token punctuation">}</span></span>
 <span class="line"><span class="token punctuation">}</span></span>
