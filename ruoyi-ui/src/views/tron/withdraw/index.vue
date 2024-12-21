@@ -354,7 +354,7 @@ export default {
         this.form.status = 2;
         this.form.remark = "同意提现";
         updateWithdraw(this.form).then(response => {
-          this.msgSuccess("同意提现");
+          this.$modal.msgSuccess("同意提现");
           this.getList();
         });
       }).catch(() => {
@@ -390,7 +390,7 @@ export default {
             type: "warning"
           }).then(() => {
             addTransfer(this.formTransfer).then(response => {
-              this.msgSuccess("打款成功");
+              this.$modal.msgSuccess("打款成功");
               //更新利息记录表状态
               this.form.status=3;
               this.form.remark="打款已提";
@@ -414,7 +414,7 @@ export default {
           return delWithdraw(id);
         }).then(() => {
           this.getList();
-          this.msgSuccess("拒绝成功");
+          this.$modal.msgSuccess("拒绝成功");
         })
     },
     /** 导出按钮操作 */

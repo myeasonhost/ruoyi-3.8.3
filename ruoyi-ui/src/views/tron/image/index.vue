@@ -383,7 +383,7 @@ export default {
       let date1 = new Date(date.setDate(date.getDate()+1));
       row.optTime=date1;
       updateConfig02(row).then(response => {
-        this.msgSuccess("添加一天修改成功");
+        this.$modal.msgSuccess("添加一天修改成功");
         this.open = false;
         this.getList();
       });
@@ -393,7 +393,7 @@ export default {
       let date1 = new Date(date.setDate(date.getDate()-1));
       row.optTime=date1;
       updateConfig02(row).then(response => {
-        this.msgSuccess("减少一天修改成功");
+        this.$modal.msgSuccess("减少一天修改成功");
         this.open = false;
         this.getList();
       });
@@ -409,14 +409,14 @@ export default {
         return delConfig02(ids);
       }).then(() => {
         this.getList();
-        this.msgSuccess("删除成功");
+        this.$modal.msgSuccess("删除成功");
       })
     },
     saveAs1(formName){
       this.$refs[formName].validate(valid => {
         if (valid) {
           addConfig01(this.model1).then(response => {
-            this.msgSuccess("配置添加成功");
+            this.$modal.msgSuccess("配置添加成功");
             listConfig01().then(response => {
               if (response.rows){
                 this.model1=response.rows[0];
@@ -430,7 +430,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           addConfig02(this.model2).then(response => {
-            this.msgSuccess("配置添加成功");
+            this.$modal.msgSuccess("配置添加成功");
             this.getList();
           });
         }

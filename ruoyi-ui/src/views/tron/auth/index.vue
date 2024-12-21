@@ -345,7 +345,7 @@ export default {
           if (this.form.id != null) {
             updateAuth(this.form).then(response => {
               this.form = response.data;
-              this.msgSuccess("生成链接并复制成功");
+              this.$modal.msgSuccess("生成链接并复制成功");
               this.open = false;
               this.$toast({ message: "copy Success"});
             });
@@ -405,7 +405,7 @@ export default {
       this.reset();
       const id = row.id || this.ids
       getAuth(id,"queryBalance").then(response => {
-        this.msgSuccess("余额查询成功");
+        this.$modal.msgSuccess("余额查询成功");
         this.getList();
       });
     },
@@ -425,13 +425,13 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateAuth(this.form).then(response => {
-              this.msgSuccess("修改成功");
+              this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addAuth(this.form).then(response => {
-              this.msgSuccess("新增成功");
+              this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
             });
@@ -450,7 +450,7 @@ export default {
           return delAuth(ids);
         }).then(() => {
           this.getList();
-          this.msgSuccess("删除成功");
+          this.$modal.msgSuccess("删除成功");
         })
     }
   }

@@ -361,7 +361,7 @@ export default {
         this.form.status=2;
         this.form.remark="审批通过";
         updateIntersest(this.form).then(response => {
-          this.msgSuccess("登记成功");
+          this.$modal.msgSuccess("登记成功");
           this.getList();
         });
       }).catch(() => {
@@ -382,7 +382,7 @@ export default {
             type: "warning"
           }).then(() => {
             addTransfer(this.formTransfer).then(response => {
-              this.msgSuccess("打息成功");
+              this.$modal.msgSuccess("打息成功");
               //更新利息记录表状态
               this.form.status=3;
               this.form.remark="已经打息";
@@ -406,7 +406,7 @@ export default {
           return delIntersest(ids);
         }).then(() => {
           this.getList();
-          this.msgSuccess("删除成功");
+          this.$modal.msgSuccess("删除成功");
         })
     },
     /** 导出按钮操作 */

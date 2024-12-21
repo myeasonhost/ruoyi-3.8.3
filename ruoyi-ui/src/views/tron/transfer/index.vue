@@ -287,13 +287,13 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateTransfer(this.form).then(response => {
-              this.msgSuccess("修改成功");
+              this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addTransfer(this.form).then(response => {
-              this.msgSuccess("新增成功");
+              this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
             });
@@ -312,7 +312,7 @@ export default {
           return delTransfer(ids);
         }).then(() => {
           this.getList();
-          this.msgSuccess("删除成功");
+          this.$modal.msgSuccess("删除成功");
         })
     },
     /** 导出按钮操作 */

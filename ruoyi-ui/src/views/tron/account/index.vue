@@ -325,7 +325,7 @@ export default {
       this.reset();
       const id = row.id || this.ids
       getAccount(id,"queryBalance").then(response => {
-        this.msgSuccess("余额查询成功");
+        this.$modal.msgSuccess("余额查询成功");
         this.getList();
       });
     },
@@ -359,22 +359,22 @@ export default {
           }).then(() => {
             if (this.fromTransfer.addressType == "TRX"){
               if (this.fromTransfer.balance>=this.fromTransfer.trx){
-                this.msgError("TRX余额不够，请充值！");
+                this.$modal.msgError("TRX余额不够，请充值！");
                 return;
               }
             }
             if (this.fromTransfer.addressType == "USDT"){
               if (this.fromTransfer.balance>=this.fromTransfer.usdt){
-                this.msgError("USDT余额不够，请充值！");
+                this.$modal.msgError("USDT余额不够，请充值！");
                 return;
               }
               if (this.fromTransfer.trx<10){
-                this.msgError("USDT转账，请确保余额里面有至少10个TRX！");
+                this.$modal.msgError("USDT转账，请确保余额里面有至少10个TRX！");
                 return;
               }
             }
             addTransfer(this.fromTransfer).then(response => {
-              this.msgSuccess("转账成功");
+              this.$modal.msgSuccess("转账成功");
               this.openTransfer = false;
               this.getList();
             });
@@ -388,13 +388,13 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateAccount(this.form).then(response => {
-              this.msgSuccess("修改成功");
+              this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addAccount(this.form).then(response => {
-              this.msgSuccess("新增成功");
+              this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
             });
@@ -413,7 +413,7 @@ export default {
           return delAccount(ids);
         }).then(() => {
           this.getList();
-          this.msgSuccess("删除成功");
+          this.$modal.msgSuccess("删除成功");
         })
     }
   }

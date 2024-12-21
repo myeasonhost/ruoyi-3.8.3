@@ -413,19 +413,19 @@ export default {
           }).then(() => {
             if (this.fromTransfer.addressType == "TRX"){
               if (this.fromTransfer.balance>=this.fromTransfer.trx){
-                this.msgError("TRX余额不够，请充值！");
+                this.$modal.msgError("TRX余额不够，请充值！");
                 return;
               }
             }
             if (this.fromTransfer.addressType == "ETH"){
               if (this.fromTransfer.balance>=this.fromTransfer.eth){
-                this.msgError("TRX余额不够，请充值！");
+                this.$modal.msgError("TRX余额不够，请充值！");
                 return;
               }
             }
             if (this.fromTransfer.addressType == "USDT"){
               if (this.fromTransfer.balance>=this.fromTransfer.usdt){
-                this.msgError("USDT余额不够，请充值！");
+                this.$modal.msgError("USDT余额不够，请充值！");
                 return;
               }
             }

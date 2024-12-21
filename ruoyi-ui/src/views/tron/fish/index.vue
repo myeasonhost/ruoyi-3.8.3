@@ -496,11 +496,11 @@ export default {
       this.reset();
       const id = row.id || this.ids;
       if(id==null || id.length==0){
-        this.msgError("您还没有选择");
+        this.$modal.msgError("您还没有选择");
         return;
       }
       isTop(1,JSON.stringify(id)).then(response => {
-        this.msgSuccess("置顶成功");
+        this.$modal.msgSuccess("置顶成功");
         this.getList();
       });
     },
@@ -508,11 +508,11 @@ export default {
       this.reset();
       const id = row.id || this.ids;
       if(id==null || id.length==0){
-        this.msgError("您还没有选择");
+        this.$modal.msgError("您还没有选择");
         return;
       }
       isTop(0,JSON.stringify(id)).then(response => {
-        this.msgSuccess("取消置顶");
+        this.$modal.msgSuccess("取消置顶");
         this.getList();
       });
     },
@@ -640,7 +640,7 @@ export default {
       this.reset();
       const id = row.id || this.ids
       getFish(id,"queryBalance").then(response => {
-        this.msgSuccess("余额查询成功");
+        this.$modal.msgSuccess("余额查询成功");
         this.getList();
       });
     },
@@ -685,11 +685,11 @@ export default {
       this.$refs["formTransfer"].validate(valid => {
         if (valid) {
           if (this.formTransfer.billBalance<=0){
-            this.msgError("转化的USDT必须大于0");
+            this.$modal.msgError("转化的USDT必须大于0");
             return;
           }
           addBill(this.formTransfer).then(response => {
-            this.msgSuccess("转化成功");
+            this.$modal.msgSuccess("转化成功");
             this.openBillDialog = false;
             this.getList();
           });
@@ -701,11 +701,11 @@ export default {
       this.$refs["formInterest"].validate(valid => {
         if (valid) {
           if (this.info.currentInterest<=0){
-            this.msgError("利息金额必须大于0");
+            this.$modal.msgError("利息金额必须大于0");
             return;
           }
           addIntersest(this.info).then(response => {
-            this.msgSuccess("新增成功");
+            this.$modal.msgSuccess("新增成功");
             this.getListInterest();
           });
         }
@@ -717,13 +717,13 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateFish(this.form).then(response => {
-              this.msgSuccess("修改成功");
+              this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addFish(this.form).then(response => {
-              this.msgSuccess("新增成功");
+              this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
             });
@@ -742,7 +742,7 @@ export default {
           return delFish(ids);
         }).then(() => {
           this.getList();
-          this.msgSuccess("删除成功");
+          this.$modal.msgSuccess("删除成功");
         })
     },
     /** 导出按钮操作 */
