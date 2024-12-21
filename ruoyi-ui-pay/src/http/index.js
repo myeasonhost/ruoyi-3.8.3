@@ -10,7 +10,7 @@ export default class Http {
     return new Promise((resolve, reject) => {
       const config = {
         method: method,
-        url: 'http://127.0.0.1:8080/' + url,
+        url: '/' + url,
         timeout: 1000 * 20,
         headers: headers,
         emulateJSON: true,
