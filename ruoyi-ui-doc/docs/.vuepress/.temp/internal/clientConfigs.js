@@ -1,11 +1,10 @@
-import clientConfig0 from 'D:/eason/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-active-header-links/lib/client/config.js'
-import clientConfig1 from 'D:/eason/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-back-to-top/lib/client/config.js'
-import clientConfig2 from 'D:/eason/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-copy-code/lib/client/config.js'
-import clientConfig3 from 'D:/eason/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-external-link-icon/lib/client/config.js'
-import clientConfig4 from 'D:/eason/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-medium-zoom/lib/client/config.js'
-import clientConfig5 from 'D:/eason/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-nprogress/lib/client/config.js'
-import clientConfig6 from 'D:/eason/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-theme-data/lib/client/config.js'
-import clientConfig7 from 'D:/eason/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/theme-default/lib/client/config.js'
+import * as clientConfig0 from 'D:/mygitlab/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-active-header-links/lib/client/config.js'
+import * as clientConfig1 from 'D:/mygitlab/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-back-to-top/lib/client/config.js'
+import * as clientConfig2 from 'D:/mygitlab/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-copy-code/lib/client/config.js'
+import * as clientConfig3 from 'D:/mygitlab/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-medium-zoom/lib/client/config.js'
+import * as clientConfig4 from 'D:/mygitlab/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-nprogress/lib/client/config.js'
+import * as clientConfig5 from 'D:/mygitlab/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/plugin-theme-data/lib/client/config.js'
+import * as clientConfig6 from 'D:/mygitlab/ruoyi-3.8.3/ruoyi-ui-doc/node_modules/@vuepress/theme-default/lib/client/config.js'
 
 export const clientConfigs = [
   clientConfig0,
@@ -15,5 +14,4 @@ export const clientConfigs = [
   clientConfig4,
   clientConfig5,
   clientConfig6,
-  clientConfig7,
-]
+].map((m) => m.default).filter(Boolean)

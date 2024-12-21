@@ -1,16 +1,3 @@
-import comp from "D:/eason/ruoyi-3.8.3/ruoyi-ui-doc/docs/.vuepress/.temp/pages/api/intro/safety.html.vue"
+import comp from "D:/mygitlab/ruoyi-3.8.3/ruoyi-ui-doc/docs/.vuepress/.temp/pages/api/intro/safety.html.vue"
 const data = JSON.parse("{\"path\":\"/api/intro/safety.html\",\"title\":\"1.2 安全说明\",\"lang\":\"zh\",\"frontmatter\":{},\"headers\":[{\"level\":2,\"title\":\"密钥\",\"slug\":\"密钥\",\"link\":\"#密钥\",\"children\":[]},{\"level\":2,\"title\":\"钱包私钥\",\"slug\":\"钱包私钥\",\"link\":\"#钱包私钥\",\"children\":[]},{\"level\":2,\"title\":\"signature\",\"slug\":\"signature\",\"link\":\"#signature\",\"children\":[]},{\"level\":2,\"title\":\"账户安全\",\"slug\":\"账户安全\",\"link\":\"#账户安全\",\"children\":[]},{\"level\":2,\"title\":\"接口安全\",\"slug\":\"接口安全\",\"link\":\"#接口安全\",\"children\":[]},{\"level\":2,\"title\":\"HTTPS\",\"slug\":\"https\",\"link\":\"#https\",\"children\":[]}],\"git\":{},\"filePathRelative\":\"api/intro/safety.md\"}")
 export { comp, data }
-
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept()
-  if (__VUE_HMR_RUNTIME__.updatePageData) {
-    __VUE_HMR_RUNTIME__.updatePageData(data)
-  }
-}
-
-if (import.meta.hot) {
-  import.meta.hot.accept(({ data }) => {
-    __VUE_HMR_RUNTIME__.updatePageData(data)
-  })
-}

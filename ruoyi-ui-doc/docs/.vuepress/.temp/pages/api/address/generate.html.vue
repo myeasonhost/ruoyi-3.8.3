@@ -9,8 +9,9 @@
 <p>钱包地址的私钥信息非常重要，请务必妥善保管，否则可能会导致意外的资金损失。</p>
 </div>
 <h2 id="接口地址" tabindex="-1"><a class="header-anchor" href="#接口地址"><span>接口地址</span></a></h2>
-<div class="language-bash" data-ext="sh" data-title="sh"><pre v-pre class="language-bash"><code>POST https://pro.tronapi.com/api/address/generate
-</code></pre></div><h2 id="接口参数" tabindex="-1"><a class="header-anchor" href="#接口参数"><span>接口参数</span></a></h2>
+<div class="language-bash" data-highlighter="prismjs" data-ext="sh" data-title="sh"><pre v-pre class="language-bash"><code><span class="line">POST https://pro.tronapi.com/api/address/generate</span>
+<span class="line"></span></code></pre>
+</div><h2 id="接口参数" tabindex="-1"><a class="header-anchor" href="#接口参数"><span>接口参数</span></a></h2>
 <table>
 <thead>
 <tr>
@@ -42,18 +43,19 @@
 <p><code v-pre>signature</code> 的生成规则为：<code v-pre>toLowerCase(md5(public key + private key))</code>。</p>
 </div>
 <h2 id="返回示例" tabindex="-1"><a class="header-anchor" href="#返回示例"><span>返回示例</span></a></h2>
-<div class="language-json" data-ext="json" data-title="json"><pre v-pre class="language-json"><code><span class="token punctuation">{</span>
-    <span class="token property">"code"</span><span class="token operator">:</span> <span class="token number">200</span><span class="token punctuation">,</span>
-    <span class="token property">"data"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
-        <span class="token property">"address"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
-            <span class="token property">"base58"</span><span class="token operator">:</span> <span class="token string">"TWsqYHJt97XcQ1m2FBgjSTmVkCy5vZWMNi"</span><span class="token punctuation">,</span>
-            <span class="token property">"hex"</span><span class="token operator">:</span> <span class="token string">"41E556A5771684C967C66AE3CAA047A017A90E3775"</span>
-        <span class="token punctuation">}</span><span class="token punctuation">,</span>
-        <span class="token property">"privateKey"</span><span class="token operator">:</span> <span class="token string">"0189BBADCA8B8BBB8B97F920BA3472C4A0F4A56371E6CAFCC82F32DDF210AB24"</span><span class="token punctuation">,</span>
-        <span class="token property">"publicKey"</span><span class="token operator">:</span> <span class="token string">"04B1384AE0887DEAAE3C35E4A36E489A81E7A93547A041CBD306E3FD935A2757EA394E65051E60F6FB625C3D9BCC7B57544BFDE6BB5F49E5DB6ED665E9AC98F6B3"</span>
-    <span class="token punctuation">}</span><span class="token punctuation">,</span>
-    <span class="token property">"success"</span><span class="token operator">:</span> <span class="token boolean">true</span>
-<span class="token punctuation">}</span>
-</code></pre></div></div></template>
+<div class="language-json" data-highlighter="prismjs" data-ext="json" data-title="json"><pre v-pre class="language-json"><code><span class="line"><span class="token punctuation">{</span></span>
+<span class="line">    <span class="token property">"code"</span><span class="token operator">:</span> <span class="token number">200</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token property">"data"</span><span class="token operator">:</span> <span class="token punctuation">{</span></span>
+<span class="line">        <span class="token property">"address"</span><span class="token operator">:</span> <span class="token punctuation">{</span></span>
+<span class="line">            <span class="token property">"base58"</span><span class="token operator">:</span> <span class="token string">"TWsqYHJt97XcQ1m2FBgjSTmVkCy5vZWMNi"</span><span class="token punctuation">,</span></span>
+<span class="line">            <span class="token property">"hex"</span><span class="token operator">:</span> <span class="token string">"41E556A5771684C967C66AE3CAA047A017A90E3775"</span></span>
+<span class="line">        <span class="token punctuation">}</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"privateKey"</span><span class="token operator">:</span> <span class="token string">"0189BBADCA8B8BBB8B97F920BA3472C4A0F4A56371E6CAFCC82F32DDF210AB24"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"publicKey"</span><span class="token operator">:</span> <span class="token string">"04B1384AE0887DEAAE3C35E4A36E489A81E7A93547A041CBD306E3FD935A2757EA394E65051E60F6FB625C3D9BCC7B57544BFDE6BB5F49E5DB6ED665E9AC98F6B3"</span></span>
+<span class="line">    <span class="token punctuation">}</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token property">"success"</span><span class="token operator">:</span> <span class="token boolean">true</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span></code></pre>
+</div></div></template>
 
 

@@ -3,8 +3,9 @@
 <p>商户支付完成后，系统会自动向订单关联的回调地址（<code v-pre>notify_url</code>）发送通知消息，告知该笔订单已支付完成。</p>
 </div>
 <h2 id="回调地址" tabindex="-1"><a class="header-anchor" href="#回调地址"><span>回调地址</span></a></h2>
-<div class="language-bash" data-ext="sh" data-title="sh"><pre v-pre class="language-bash"><code>POST notify_url（商户在订单创建接口中指定）
-</code></pre></div><h2 id="通知参数" tabindex="-1"><a class="header-anchor" href="#通知参数"><span>通知参数</span></a></h2>
+<div class="language-bash" data-highlighter="prismjs" data-ext="sh" data-title="sh"><pre v-pre class="language-bash"><code><span class="line">POST notify_url（商户在订单创建接口中指定）</span>
+<span class="line"></span></code></pre>
+</div><h2 id="通知参数" tabindex="-1"><a class="header-anchor" href="#通知参数"><span>通知参数</span></a></h2>
 <table>
 <thead>
 <tr>
@@ -82,12 +83,14 @@
 <code v-pre>sign</code> 的生成规则为：<code v-pre>toLowerCase(md5(pay_id + order_id + amount + currency + coin_code + coin_amount + pay_time + hash + api key))</code>。</p>
 </div>
 <h2 id="通知示例" tabindex="-1"><a class="header-anchor" href="#通知示例"><span>通知示例</span></a></h2>
-<div class="language-text line-numbers-mode" data-ext="text" data-title="text"><pre v-pre class="language-text"><code>amount=1&amp;coin_amount=10&amp;coin_code=USDT&amp;currency=USD&amp;hash=32421c1dd697913b31320be41da74a82b1bc45535daf7e08d24e0140b947f1ec
-&amp;order_id=1&amp;pay_id=MB1626960689799114752&amp;pay_time=1675352103000&amp;status=2&amp;sign=400152aa1a1d3002552585e1849daba9
-</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div></div></div><h2 id="通知返回" tabindex="-1"><a class="header-anchor" href="#通知返回"><span>通知返回</span></a></h2>
+<div class="language-text line-numbers-mode" data-highlighter="prismjs" data-ext="text" data-title="text"><pre v-pre class="language-text"><code><span class="line">amount=1&amp;coin_amount=10&amp;coin_code=USDT&amp;currency=USD&amp;hash=32421c1dd697913b31320be41da74a82b1bc45535daf7e08d24e0140b947f1ec</span>
+<span class="line">&amp;order_id=1&amp;pay_id=MB1626960689799114752&amp;pay_time=1675352103000&amp;status=2&amp;sign=400152aa1a1d3002552585e1849daba9</span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div></div></div><h2 id="通知返回" tabindex="-1"><a class="header-anchor" href="#通知返回"><span>通知返回</span></a></h2>
 <p>商户在收到通知信息后，可返回以下内容，告知已收到回调通知：</p>
-<div class="language-text line-numbers-mode" data-ext="text" data-title="text"><pre v-pre class="language-text"><code>SUCCESS
-</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div><h2 id="通知重试" tabindex="-1"><a class="header-anchor" href="#通知重试"><span>通知重试</span></a></h2>
+<div class="language-text line-numbers-mode" data-highlighter="prismjs" data-ext="text" data-title="text"><pre v-pre class="language-text"><code><span class="line">SUCCESS</span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div></div></div><h2 id="通知重试" tabindex="-1"><a class="header-anchor" href="#通知重试"><span>通知重试</span></a></h2>
 <p>系统向商户创建订单时指定的 <code v-pre>notify_url</code> 发送 <code v-pre>回调通知</code> 后，如该 <code v-pre>notify_url</code> 回调返回的返回值不为 <code v-pre>SUCCESS</code>，则系统会触发 <code v-pre>重试机制</code>。相关规则如下：</p>
 <ol>
 <li>第一次通知：距离第一次10秒钟;。</li>

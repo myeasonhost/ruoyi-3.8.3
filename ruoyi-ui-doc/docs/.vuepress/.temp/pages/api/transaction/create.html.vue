@@ -4,8 +4,9 @@
 （2）需要商户在后台配置<code v-pre>商户管理-&gt;收款地址</code>其中一个收款地址需要是开启状态 <br></p>
 </div>
 <h2 id="接口地址" tabindex="-1"><a class="header-anchor" href="#接口地址"><span>接口地址</span></a></h2>
-<div class="language-bash" data-ext="sh" data-title="sh"><pre v-pre class="language-bash"><code>POST http://54.179.118.170/api/pay/create
-</code></pre></div><h2 id="接口参数" tabindex="-1"><a class="header-anchor" href="#接口参数"><span>接口参数</span></a></h2>
+<div class="language-bash" data-highlighter="prismjs" data-ext="sh" data-title="sh"><pre v-pre class="language-bash"><code><span class="line">POST http://54.179.118.170/api/pay/create</span>
+<span class="line"></span></code></pre>
+</div><h2 id="接口参数" tabindex="-1"><a class="header-anchor" href="#接口参数"><span>接口参数</span></a></h2>
 <table>
 <thead>
 <tr>
@@ -155,27 +156,29 @@
 </tbody>
 </table>
 <p>请求示例：</p>
-<div class="language-bash" data-ext="sh" data-title="sh"><pre v-pre class="language-bash"><code>http://54.179.118.170/api/pay/create?order_id<span class="token operator">=</span><span class="token number">1234</span><span class="token operator">&amp;</span><span class="token assign-left variable">mch_id</span><span class="token operator">=</span>test01<span class="token operator">&amp;</span><span class="token assign-left variable">productId</span><span class="token operator">=</span><span class="token number">1</span><span class="token operator">&amp;</span><span class="token assign-left variable">mchOrderNo</span><span class="token operator">=</span><span class="token number">1</span>
-<span class="token operator">&amp;</span><span class="token assign-left variable">sign</span><span class="token operator">=</span>ddcd227a1d915d01eda45e6ea3c57d3e<span class="token operator">&amp;</span><span class="token assign-left variable">notify_url</span><span class="token operator">=</span>http://23123<span class="token operator">&amp;</span><span class="token assign-left variable">amount</span><span class="token operator">=</span><span class="token number">100</span><span class="token operator">&amp;</span><span class="token assign-left variable">customer_id</span><span class="token operator">=</span><span class="token number">22</span><span class="token operator">&amp;</span><span class="token assign-left variable">product_name</span><span class="token operator">=</span>测试
-</code></pre></div><div class="custom-container tip"><p class="custom-container-title">说明</p>
+<div class="language-bash" data-highlighter="prismjs" data-ext="sh" data-title="sh"><pre v-pre class="language-bash"><code><span class="line">http://54.179.118.170/api/pay/create?order_id<span class="token operator">=</span><span class="token number">1234</span><span class="token operator">&amp;</span><span class="token assign-left variable">mch_id</span><span class="token operator">=</span>test01<span class="token operator">&amp;</span><span class="token assign-left variable">productId</span><span class="token operator">=</span><span class="token number">1</span><span class="token operator">&amp;</span><span class="token assign-left variable">mchOrderNo</span><span class="token operator">=</span><span class="token number">1</span></span>
+<span class="line"><span class="token operator">&amp;</span><span class="token assign-left variable">sign</span><span class="token operator">=</span>ddcd227a1d915d01eda45e6ea3c57d3e<span class="token operator">&amp;</span><span class="token assign-left variable">notify_url</span><span class="token operator">=</span>http://23123<span class="token operator">&amp;</span><span class="token assign-left variable">amount</span><span class="token operator">=</span><span class="token number">100</span><span class="token operator">&amp;</span><span class="token assign-left variable">customer_id</span><span class="token operator">=</span><span class="token number">22</span><span class="token operator">&amp;</span><span class="token assign-left variable">product_name</span><span class="token operator">=</span>测试</span>
+<span class="line"></span></code></pre>
+</div><div class="custom-container tip"><p class="custom-container-title">说明</p>
 <p>订单支付金额（<code v-pre>coin_amount</code>），由 <code v-pre>订单金额</code> + <code v-pre>订单币种</code> + <code v-pre>支付币种</code> 按照实时行情转换而来。</p>
 </div>
 <h3 id="返回示例" tabindex="-1"><a class="header-anchor" href="#返回示例"><span>返回示例</span></a></h3>
-<div class="language-json" data-ext="json" data-title="json"><pre v-pre class="language-json"><code><span class="token punctuation">{</span>
-    <span class="token property">"msg"</span><span class="token operator">:</span> <span class="token string">"操作成功"</span><span class="token punctuation">,</span>
-    <span class="token property">"code"</span><span class="token operator">:</span> <span class="token number">200</span><span class="token punctuation">,</span>
-    <span class="token property">"data"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
-        <span class="token property">"amount"</span><span class="token operator">:</span> <span class="token string">"100"</span><span class="token punctuation">,</span>
-        <span class="token property">"currency"</span><span class="token operator">:</span> <span class="token string">"USD"</span><span class="token punctuation">,</span>
-        <span class="token property">"coin_code"</span><span class="token operator">:</span> <span class="token string">"USDT"</span><span class="token punctuation">,</span>
-        <span class="token property">"coin_amount"</span><span class="token operator">:</span> <span class="token string">"100.28"</span><span class="token punctuation">,</span>
-        <span class="token property">"coin_address"</span><span class="token operator">:</span> <span class="token string">"TQoSZZByWYwmXXXXXXacASUV2b9ZaQw"</span><span class="token punctuation">,</span>
-        <span class="token property">"qrcode_url"</span><span class="token operator">:</span> <span class="token null keyword">null</span><span class="token punctuation">,</span>
-        <span class="token property">"cashier_url"</span><span class="token operator">:</span> <span class="token string">"http://52.52.52.209:85/?data=O96FK+SoHqqx50by98VkjOVTpCePTvtiZNlG7S6NJJTk7TZiSRQQzA==&amp;key=/+61PS8TLkRPv+8ZcI4IW0PJEHbXRGl+"</span><span class="token punctuation">,</span>
-        <span class="token property">"timeout"</span><span class="token operator">:</span> <span class="token string">"30"</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
-</code></pre></div><div class="custom-container tip"><p class="custom-container-title">说明</p>
+<div class="language-json" data-highlighter="prismjs" data-ext="json" data-title="json"><pre v-pre class="language-json"><code><span class="line"><span class="token punctuation">{</span></span>
+<span class="line">    <span class="token property">"msg"</span><span class="token operator">:</span> <span class="token string">"操作成功"</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token property">"code"</span><span class="token operator">:</span> <span class="token number">200</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token property">"data"</span><span class="token operator">:</span> <span class="token punctuation">{</span></span>
+<span class="line">        <span class="token property">"amount"</span><span class="token operator">:</span> <span class="token string">"100"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"currency"</span><span class="token operator">:</span> <span class="token string">"USD"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"coin_code"</span><span class="token operator">:</span> <span class="token string">"USDT"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"coin_amount"</span><span class="token operator">:</span> <span class="token string">"100.28"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"coin_address"</span><span class="token operator">:</span> <span class="token string">"TQoSZZByWYwmXXXXXXacASUV2b9ZaQw"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"qrcode_url"</span><span class="token operator">:</span> <span class="token null keyword">null</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"cashier_url"</span><span class="token operator">:</span> <span class="token string">"http://52.52.52.209:85/?data=O96FK+SoHqqx50by98VkjOVTpCePTvtiZNlG7S6NJJTk7TZiSRQQzA==&amp;key=/+61PS8TLkRPv+8ZcI4IW0PJEHbXRGl+"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"timeout"</span><span class="token operator">:</span> <span class="token string">"30"</span></span>
+<span class="line">    <span class="token punctuation">}</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span></code></pre>
+</div><div class="custom-container tip"><p class="custom-container-title">说明</p>
 <p>code=200为成功返回，msg=&quot;操作成功&quot;<br>
 code=500为错误返回，msg=&quot;错误原因&quot;<br></p>
 </div>

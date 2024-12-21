@@ -1,14 +1,1 @@
 export const themeData = JSON.parse("{\"logo\":\"/images/logo.png\",\"editLink\":false,\"lastUpdated\":false,\"docsDir\":\"docs\",\"contributors\":false,\"locales\":{\"/\":{\"navbar\":[{\"text\":\"接入文档\",\"link\":\"/api/\"},{\"text\":\"常见问题\",\"link\":\"/faq/\"},{\"text\":\"商户登录\",\"link\":\"http://goaboss.info:8090/\"}],\"sidebar\":{\"/api/\":[{\"text\":\"接入文档\",\"children\":[\"/api/README.md\",{\"text\":\"1）接口说明\",\"children\":[\"/api/intro/convention.md\",\"/api/intro/safety.md\"]},{\"text\":\"2）代收订单\",\"children\":[\"/api/transaction/create.md\",\"/api/transaction/notify.md\",\"/api/transaction/query.md\",\"/api/transaction/cashier.md\"]},{\"text\":\"3）代付订单\",\"children\":[\"/api/dpai/create.md\",\"/api/dpai/notify.md\"]}]}],\"/faq/\":[\"/faq/index.md\"],\"/upgrade/\":[\"/upgrade/index.md\"]},\"sidebarDepth\":1,\"tip\":\"说明\",\"warning\":\"注意\",\"danger\":\"警告\",\"backToHome\":\"返回首页\",\"selectLanguageName\":\"English\"}},\"colorMode\":\"auto\",\"colorModeSwitch\":true,\"navbar\":[],\"repo\":null,\"selectLanguageText\":\"Languages\",\"selectLanguageAriaLabel\":\"Select language\",\"sidebar\":\"auto\",\"sidebarDepth\":2,\"editLinkText\":\"Edit this page\",\"lastUpdatedText\":\"Last Updated\",\"contributorsText\":\"Contributors\",\"notFound\":[\"There's nothing here.\",\"How did we get here?\",\"That's a Four-Oh-Four.\",\"Looks like we've got some broken links.\"],\"backToHome\":\"Take me home\",\"openInNewWindow\":\"open in new window\",\"toggleColorMode\":\"toggle color mode\",\"toggleSidebar\":\"toggle sidebar\"}")
-
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept()
-  if (__VUE_HMR_RUNTIME__.updateThemeData) {
-    __VUE_HMR_RUNTIME__.updateThemeData(themeData)
-  }
-}
-
-if (import.meta.hot) {
-  import.meta.hot.accept(({ themeData }) => {
-    __VUE_HMR_RUNTIME__.updateThemeData(themeData)
-  })
-}

@@ -5,7 +5,7 @@
 <h2 id="商户后台" tabindex="-1"><a class="header-anchor" href="#商户后台"><span>商户后台</span></a></h2>
 <p>欢迎阅读 <code v-pre>MBUSDTPAY</code> 技术接入文档。在开始接入之前，你需要：</p>
 <ol>
-<li>访问并登录 <a href="http://goaboss.info:8090/" target="_blank" rel="noopener noreferrer">商户后台<ExternalLinkIcon/></a>。</li>
+<li>访问并登录 <a href="http://goaboss.info:8090/" target="_blank" rel="noopener noreferrer">商户后台</a>。</li>
 <li>在商户后台查看技术接入必需的 <code v-pre>api key</code>。</li>
 <li>支付收U自动回调上分+提现出U自动回调下分。</li>
 <li>阅读我们有关 <RouteLink to="/api/intro/convention.html">接口约定</RouteLink> 及 <RouteLink to="/api/intro/safety.html">安全说明</RouteLink> 相关的说明。</li>

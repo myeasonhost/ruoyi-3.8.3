@@ -1,16 +1,3 @@
-import comp from "D:/eason/ruoyi-3.8.3/ruoyi-ui-doc/docs/.vuepress/.temp/pages/api/intro/convention.html.vue"
+import comp from "D:/mygitlab/ruoyi-3.8.3/ruoyi-ui-doc/docs/.vuepress/.temp/pages/api/intro/convention.html.vue"
 const data = JSON.parse("{\"path\":\"/api/intro/convention.html\",\"title\":\"1.1 接口约定\",\"lang\":\"zh\",\"frontmatter\":{},\"headers\":[{\"level\":2,\"title\":\"编码\",\"slug\":\"编码\",\"link\":\"#编码\",\"children\":[]},{\"level\":2,\"title\":\"密钥\",\"slug\":\"密钥\",\"link\":\"#密钥\",\"children\":[]},{\"level\":2,\"title\":\"字段选填\",\"slug\":\"字段选填\",\"link\":\"#字段选填\",\"children\":[]},{\"level\":2,\"title\":\"sign\",\"slug\":\"sign\",\"link\":\"#sign\",\"children\":[]},{\"level\":2,\"title\":\"数据提交\",\"slug\":\"数据提交\",\"link\":\"#数据提交\",\"children\":[]},{\"level\":2,\"title\":\"交易查询\",\"slug\":\"交易查询\",\"link\":\"#交易查询\",\"children\":[]}],\"git\":{},\"filePathRelative\":\"api/intro/convention.md\"}")
 export { comp, data }
-
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept()
-  if (__VUE_HMR_RUNTIME__.updatePageData) {
-    __VUE_HMR_RUNTIME__.updatePageData(data)
-  }
-}
-
-if (import.meta.hot) {
-  import.meta.hot.accept(({ data }) => {
-    __VUE_HMR_RUNTIME__.updatePageData(data)
-  })
-}

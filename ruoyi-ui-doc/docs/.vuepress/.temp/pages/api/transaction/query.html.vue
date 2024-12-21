@@ -3,8 +3,9 @@
 <p>该接口供商户主动查询订单状态。多用于商户自定义收银台的场景。</p>
 </div>
 <h2 id="接口地址" tabindex="-1"><a class="header-anchor" href="#接口地址"><span>接口地址</span></a></h2>
-<div class="language-bash" data-ext="sh" data-title="sh"><pre v-pre class="language-bash"><code>GET/POST http://54.179.118.170/api/pay/order/queryStatus
-</code></pre></div><h2 id="接口参数" tabindex="-1"><a class="header-anchor" href="#接口参数"><span>接口参数</span></a></h2>
+<div class="language-bash" data-highlighter="prismjs" data-ext="sh" data-title="sh"><pre v-pre class="language-bash"><code><span class="line">GET/POST http://54.179.118.170/api/pay/order/queryStatus</span>
+<span class="line"></span></code></pre>
+</div><h2 id="接口参数" tabindex="-1"><a class="header-anchor" href="#接口参数"><span>接口参数</span></a></h2>
 <table>
 <thead>
 <tr>
@@ -43,19 +44,20 @@
 <p><code v-pre>URL</code> 请求示例：<code v-pre>http://54.179.118.170/api/pay/order/queryStatus?mch_id=test01&amp;order_id=C15S6S3S1221&amp;sign=baa4370b721b12fd2a44ecfffd0c09a4</code></p>
 </div>
 <h2 id="接口返回" tabindex="-1"><a class="header-anchor" href="#接口返回"><span>接口返回</span></a></h2>
-<div class="language-json" data-ext="json" data-title="json"><pre v-pre class="language-json"><code><span class="token punctuation">{</span>
-    <span class="token property">"msg"</span><span class="token operator">:</span> <span class="token string">"操作成功"</span><span class="token punctuation">,</span>
-    <span class="token property">"code"</span><span class="token operator">:</span> <span class="token number">200</span><span class="token punctuation">,</span>
-    <span class="token property">"data"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
-        <span class="token property">"mchId"</span><span class="token operator">:</span> <span class="token string">"test01"</span><span class="token punctuation">,</span>
-        <span class="token property">"orderId"</span><span class="token operator">:</span> <span class="token string">"C15S6S3S1221"</span><span class="token punctuation">,</span>
-        <span class="token property">"status"</span><span class="token operator">:</span> <span class="token string">"3"</span><span class="token punctuation">,</span>
-        <span class="token property">"notify_succeed"</span><span class="token operator">:</span> <span class="token null keyword">null</span><span class="token punctuation">,</span>
-        <span class="token property">"amount"</span><span class="token operator">:</span> <span class="token string">"8.5"</span><span class="token punctuation">,</span>
-        <span class="token property">"coin_amount"</span><span class="token operator">:</span> <span class="token string">"8.80"</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
-</code></pre></div><div class="custom-container tip"><p class="custom-container-title">说明</p>
+<div class="language-json" data-highlighter="prismjs" data-ext="json" data-title="json"><pre v-pre class="language-json"><code><span class="line"><span class="token punctuation">{</span></span>
+<span class="line">    <span class="token property">"msg"</span><span class="token operator">:</span> <span class="token string">"操作成功"</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token property">"code"</span><span class="token operator">:</span> <span class="token number">200</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token property">"data"</span><span class="token operator">:</span> <span class="token punctuation">{</span></span>
+<span class="line">        <span class="token property">"mchId"</span><span class="token operator">:</span> <span class="token string">"test01"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"orderId"</span><span class="token operator">:</span> <span class="token string">"C15S6S3S1221"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"status"</span><span class="token operator">:</span> <span class="token string">"3"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"notify_succeed"</span><span class="token operator">:</span> <span class="token null keyword">null</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"amount"</span><span class="token operator">:</span> <span class="token string">"8.5"</span><span class="token punctuation">,</span></span>
+<span class="line">        <span class="token property">"coin_amount"</span><span class="token operator">:</span> <span class="token string">"8.80"</span></span>
+<span class="line">    <span class="token punctuation">}</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span></code></pre>
+</div><div class="custom-container tip"><p class="custom-container-title">说明</p>
 <p>当 <code v-pre>data.status</code> 字段值为 <code v-pre>1=支付中,2=支付成功，3=支付超时</code> 时，代表订单已支付，否则代表订单未支付。<br>
 当 <code v-pre>notify_succeed</code> 字段值为 <code v-pre>0=未通知（null），1=通知成功，2=通知失败 </code> 时，代表回调已成功，否则代表回调未成功。<br>
 code=200为成功返回，msg=&quot;操作成功&quot;<br>
