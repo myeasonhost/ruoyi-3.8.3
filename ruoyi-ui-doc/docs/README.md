@@ -31,5 +31,5 @@ features:
     details: 一次对接，全球收款，天然匿名，拒绝追踪。
 
 
-footer: Copyright © 2024 MBPAY - telegram:@GaoogDoc
+footer: Copyright © 2024 MBPAY - telegram:@mysocket
 ---
